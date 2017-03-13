@@ -641,6 +641,11 @@ function Hello($scope, $http) {
       $scope.avaliando_objeto = id;
       $scope.setConteudo("avaliando_nota2");
     }
+	
+	$scope.indicadores = function(id){
+      $scope.avaliando = id;
+      $scope.setConteudo("indicadores");
+    }
 
     $scope.deletar_objeto = function(id){
       url = ""+"objetoavaliacao-delete"+"/"+$scope.username+"/"+$scope.password+"/"+id;
@@ -657,4 +662,14 @@ function Hello($scope, $http) {
         $scope.setConteudo("avaliacoes");
       })
     }
+	
+	//source: http://stackoverflow.com/a/18646795
+	angular.element(document).ready(function () {
+		/* TODO: remover - pulando etapa de login */
+		$("#username").val('victor');
+		$("#password").val('123');
+		$scope.logar();
+		$scope.indicadores();
+		/* */
+	});
 };

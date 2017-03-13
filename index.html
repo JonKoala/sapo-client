@@ -227,13 +227,15 @@
                                   <ul class="list-unstyled" data-ng-repeat="subnivel in nivel.subniveis">
                                     <form role="form">
                                       <li class="nomes">
-                                        <button type="button" class="btn btn-primary fullwidth_button" data-toggle="collapse" data-target="#subnivel-{{subnivel.subnivel}}"> {{subnivel.subnivel}}</button>
+                                        <button type="button" class="btn btn-primary fullwidth_button" data-toggle="collapse" data-target="#subnivel-{{subnivel.subnivel}}"> 
+{{subnivel.subnivel}}</button>
                                         <div id="subnivel-{{subnivel.subnivel}}" class="collapse p2">
                                           <ul class="list-unstyled">
                                             <form role="form">
 
                                               <li class="nomes" data-ng-repeat="item in subnivel.itens">
-                                                  <button type="button" class="btn btn-default fullwidth_button botao_item" data-toggle="collapse" data-target="#item-{{item.id}}"> {{item.nome}}</button>
+                                                  <button type="button" class="btn btn-default fullwidth_button botao_item" data-toggle="collapse" data-target="#item-{{item.id}}"> 
+{{item.nome}}</button>
                                                   <div id="item-{{item.id}}" class="collapse p2" name="{{item.nota_id}}">
                                                     <h5>{{item.exigencia}}</h5>
                                                     <br/>
@@ -343,116 +345,114 @@
           </div>
 
 
-          <!-- NOVA AVALIACAO -->
-          <div class="container" ng-switch-when="nova_avaliacao">
-            <form class="form-horizontal">
-              <fieldset>
+			<!-- NOVA AVALIACAO -->
+			<div class="container" ng-switch-when="nova_avaliacao">
+				<form class="form-horizontal">
+					<fieldset>
 
-              <!-- Form Name -->
-              <legend>Nova Avaliação</legend>
-              <!-- Select Basic -->
-              <div class="form-group">
-              <label class="col-md-1 control-label" for="indicador">Indicador: </label>
-              <div class="col-md-11">
-                <select id="indicador" name="indicador" class="form-control">
-                </select>
-              </div>
-              </div>
+					<!-- Form Name -->
+					<legend>Nova Avaliação</legend>
+					<!-- Select Basic -->
+					<div class="form-group">
+						<label class="col-md-1 control-label" for="indicador">Indicador: </label>
+						<div class="col-md-11">
+							<select id="indicador" name="indicador" class="form-control"></select>
+						</div>
+					</div>
 
-              <!-- Text input-->
-              <div class="form-group">
-              <label class="col-md-1 control-label" for="nome">Nome:</label>
-              <div class="col-md-11">
-                <input id="nome" name="nome" class="form-control input-md" type="text" ng-model="nova_avaliacao_nome">
-              </div>
-              </div>
+					<!-- Text input-->
+					<div class="form-group">
+						<label class="col-md-1 control-label" for="nome">Nome:</label>
+						<div class="col-md-11">
+							<input id="nome" name="nome" class="form-control input-md" type="text" ng-model="nova_avaliacao_nome">
+						</div>
+					</div>
 
-              <!-- Text input-->
-              <div class="form-group">
-              <label class="col-md-1 control-label" for="objetivos">Objetivos: </label>
-              <div class="col-md-11">
-                <input id="objetivos" name="objetivos" placeholder="" class="form-control input-md" type="text">
-              </div>
-              </div>
+					<!-- Text input-->
+					<div class="form-group">
+						<label class="col-md-1 control-label" for="objetivos">Objetivos: </label>
+						<div class="col-md-11">
+							<input id="objetivos" name="objetivos" placeholder="" class="form-control input-md" type="text">
+						</div>
+					</div>
 
-              <!-- Text input-->
-              <div class="form-group">
-              <label class="col-md-1 control-label" for="observacoes">Observações: </label>
-              <div class="col-md-11">
-                <input id="observacoes" name="observacoes" placeholder="" class="form-control input-md" type="text">
-              </div>
-              </div>
+					<!-- Text input-->
+					<div class="form-group">
+						<label class="col-md-1 control-label" for="observacoes">Observações: </label>
+						<div class="col-md-11">
+							<input id="observacoes" name="observacoes" placeholder="" class="form-control input-md" type="text">
+						</div>
+					</div>
 
-              <!-- Multiple Checkboxes -->
-              <div class="form-group" id="select_entidades">
-                <label class="col-md-1 control-label" for="entidades">Entidades: </label>
-                <div class="col-md-11">
+					<!-- Multiple Checkboxes -->
+					<div class="form-group" id="select_entidades">
+					<label class="col-md-1 control-label" for="entidades">Entidades: </label>
+					<div class="col-md-11">
 
-<div class="btn-group" data-toggle="buttons">
-  <label class="btn btn-primary" onclick="seleciona_entidades(0)">
-    <input type="checkbox" autocomplete="off" checked>Selecionar Todos Legislativos
-  </label>
-  <label class="btn btn-primary" onclick="seleciona_entidades(1)">
-    <input type="checkbox" autocomplete="off">Selecionar Todos Executivos
-  </label>
-</div>
-                </div>
-              </div>
+					<div class="btn-group" data-toggle="buttons">
+					<label class="btn btn-primary" onclick="seleciona_entidades(0)">
+					<input type="checkbox" autocomplete="off" checked>Selecionar Todos Legislativos
+					</label>
+					<label class="btn btn-primary" onclick="seleciona_entidades(1)">
+					<input type="checkbox" autocomplete="off">Selecionar Todos Executivos
+					</label>
+					</div>
+					</div>
+					</div>
 
-              <!-- Multiple Checkboxes -->
-              <div class="form-group">
-                <label for="itens" class="col-md-1 control-label">Itens: </label>
-                <div class="col-md-11">
-                <button class="btn btn-primary" onclick="seleciona_itens()">Selecionar Todos</button>
-                <table class="table table-striped">
-                  <thead>
-                    <tr>
-                      <th>Selecionar</th>
-                      <th>Nome</th>
-                      <th>Exigência</th>
-                      <th>Nota Máxima</th>
-                    </tr>
-                  </thead>
-                  <tbody id="select_itens">
-                  </tbody>
-                </table>
-                </div>
-              </div>
-
-
-              <!-- Button (Double) -->
-              <div class="form-group">
-                <label class="col-md-1 control-label" for="confirmar"></label>
-                <div class="col-md-11">
-                  <script>
-                    $(".btn").click(function(){
-                            $(this).button('loading').delay(3000).queue(function() {
-                                $(this).button('reset');
-                                $(this).dequeue();
-                            });
-                        });
-                  </script>
-                  <button id="confirmar" name="confirmar" class="btn btn-success" ng-click="nova_avaliacao_confirma()">Confirmar</button>
-                  <button id="cancelar" name="cancelar" class="btn btn-danger" data-loading-text="Carregando ...">Cancelar</button>
-                </div>
-              </div>
-
-            </fieldset>
-          </form>
-        </div>
+					<!-- Multiple Checkboxes -->
+					<div class="form-group">
+					<label for="itens" class="col-md-1 control-label">Itens: </label>
+					<div class="col-md-11">
+					<button class="btn btn-primary" onclick="seleciona_itens()">Selecionar Todos</button>
+					<table class="table table-striped">
+					  <thead>
+						<tr>
+						  <th>Selecionar</th>
+						  <th>Nome</th>
+						  <th>Exigência</th>
+						  <th>Nota Máxima</th>
+						</tr>
+					  </thead>
+					  <tbody id="select_itens">
+					  </tbody>
+					</table>
+					</div>
+					</div>
 
 
+					<!-- Button (Double) -->
+					<div class="form-group">
+					<label class="col-md-1 control-label" for="confirmar"></label>
+					<div class="col-md-11">
+					  <script>
+						$(".btn").click(function(){
+								$(this).button('loading').delay(3000).queue(function() {
+									$(this).button('reset');
+									$(this).dequeue();
+								});
+							});
+					  </script>
+					  <button id="confirmar" name="confirmar" class="btn btn-success" ng-click="nova_avaliacao_confirma()">Confirmar</button>
+					  <button id="cancelar" name="cancelar" class="btn btn-danger" data-loading-text="Carregando ...">Cancelar</button>
+					</div>
+					</div>
 
-
-
-          <!--  -->
-
-
-
-
-
-
-
+					</fieldset>
+				</form>
+			</div>
+			
+			<div class="container" ng-switch-when="indicadores">
+				<form class="form-horizontal">
+					<fieldset>
+						<legend>Novo Indicador</legend>
+						
+						
+					
+					</fieldset>
+				</form>
+			</div>
+			
         </div>
     </div>
 
