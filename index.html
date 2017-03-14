@@ -227,14 +227,14 @@
                                   <ul class="list-unstyled" data-ng-repeat="subnivel in nivel.subniveis">
                                     <form role="form">
                                       <li class="nomes">
-                                        <button type="button" class="btn btn-primary fullwidth_button" data-toggle="collapse" data-target="#subnivel-{{subnivel.subnivel}}"> 
+                                        <button type="button" class="btn btn-primary fullwidth_button" data-toggle="collapse" data-target="#subnivel-{{subnivel.subnivel}}">
 {{subnivel.subnivel}}</button>
                                         <div id="subnivel-{{subnivel.subnivel}}" class="collapse p2">
                                           <ul class="list-unstyled">
                                             <form role="form">
 
                                               <li class="nomes" data-ng-repeat="item in subnivel.itens">
-                                                  <button type="button" class="btn btn-default fullwidth_button botao_item" data-toggle="collapse" data-target="#item-{{item.id}}"> 
+                                                  <button type="button" class="btn btn-default fullwidth_button botao_item" data-toggle="collapse" data-target="#item-{{item.id}}">
 {{item.nome}}</button>
                                                   <div id="item-{{item.id}}" class="collapse p2" name="{{item.nota_id}}">
                                                     <h5>{{item.exigencia}}</h5>
@@ -441,18 +441,79 @@
 					</fieldset>
 				</form>
 			</div>
-			
+
 			<div class="container" ng-switch-when="indicadores">
 				<form class="form-horizontal">
 					<fieldset>
-						<legend>Novo Indicador</legend>
-						
-						
-					
+						<legend>Novo Item</legend>
+
+              <div class="form-group">
+              	<label class="col-md-1 control-label">Indicador: </label>
+              	<div class="col-md-11">
+              		<select name="indicador" class="form-control"></select>
+              	</div>
+              </div>
+
+              <div class="form-group">
+              	<label class="col-md-1 control-label">Pilar: </label>
+              	<div class="col-md-11">
+              		<select name="pilar" class="form-control"></select>
+              	</div>
+              </div>
+
+              <div class="form-group">
+              	<label class="col-md-1 control-label">Nível: </label>
+              	<div class="col-md-11">
+              		<select name="nivel" class="form-control"></select>
+              	</div>
+              </div>
+
+              <div class="form-group">
+              	<label class="col-md-1 control-label">Subnível: </label>
+              	<div class="col-md-11">
+              		<select name="subnivel" class="form-control"></select>
+              	</div>
+              </div>
+
+              <div class="form-group">
+              	<label class="col-md-1 control-label">Item: </label>
+              	<div class="col-md-11">
+              		<input name="item" class="form-control input-md" type="text">
+              	</div>
+              </div>
+
+              <div class="form-group">
+              	<label class="col-md-1 control-label">Exigência: </label>
+              	<div class="col-md-11">
+              		<input name="exigencia" class="form-control input-md" type="text">
+              	</div>
+              </div>
+
+              <div class="form-group">
+              	<label class="col-md-1 control-label">Nota Máxima: </label>
+              	<div class="col-md-11">
+              		<input name="notaMaxima" class="form-control input-md" type="number">
+              	</div>
+              </div>
+
+              <div class="col-md-11">
+                <button ng-click="add()">Adicionar Pontuação</button>
+              </div>
+
+              <div ng-repeat="pontuacao in pontuacoes">
+                <input type="text" placeholder="descrição" ng-model="pontuacao.descricao">
+                <input type="number" placeholder="nota" ng-model="pontuacao.nota">
+                <button ng-click="remove(pontuacao.index)">Remover</button>
+              </div>
+
+              <div class="col-md-11">
+                <button ng-click="save()">Salvar</button>
+              </div>
+
 					</fieldset>
 				</form>
 			</div>
-			
+
         </div>
     </div>
 

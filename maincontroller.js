@@ -624,6 +624,26 @@ function Hello($scope, $http) {
             }
         });
       }
+
+      if(caminho == "indicadores"){
+        $scope.pontuacoes = [];
+        var index = 0;
+
+        $scope.add = function() {
+          $scope.pontuacoes.push({index:index});
+          index++;
+        }
+        $scope.remove = function(index) {
+          for (var i=0;i<$scope.pontuacoes.length;i++) {
+            var pontuacao = $scope.pontuacoes[i];
+            if (pontuacao.index == index) {
+              $scope.pontuacoes.splice(i, 1);
+              break;
+            }
+          }
+        }
+      }
+
       // Fim da funcao setConteudo
     }
 
@@ -641,11 +661,6 @@ function Hello($scope, $http) {
       $scope.avaliando_objeto = id;
       $scope.setConteudo("avaliando_nota2");
     }
-	
-	$scope.indicadores = function(id){
-      $scope.avaliando = id;
-      $scope.setConteudo("indicadores");
-    }
 
     $scope.deletar_objeto = function(id){
       url = ""+"objetoavaliacao-delete"+"/"+$scope.username+"/"+$scope.password+"/"+id;
@@ -662,14 +677,14 @@ function Hello($scope, $http) {
         $scope.setConteudo("avaliacoes");
       })
     }
-	
+
 	//source: http://stackoverflow.com/a/18646795
 	angular.element(document).ready(function () {
 		/* TODO: remover - pulando etapa de login */
 		$("#username").val('victor');
 		$("#password").val('123');
 		$scope.logar();
-		$scope.indicadores();
+		$scope.setConteudo("indicadores");
 		/* */
 	});
 };
