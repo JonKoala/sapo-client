@@ -485,7 +485,8 @@
               		<select class="form-control"
                     ng-disabled="model.nivel.id == 0 || options.subniveis.length == 0"
                     ng-model="model.subnivel"
-                    ng-options="option.nome for option in options.subniveis | orderBy:'id' track by option.id"></select>
+                    ng-options="option.nome for option in options.subniveis | orderBy:'id' track by option.id"
+                    ng-change="actions.updateSubnivel(model.subnivel.id)"></select>
               	</div>
               </div>
 
@@ -495,21 +496,24 @@
                 <div class="form-group">
                 	<label class="col-md-1 control-label">Item: </label>
                 	<div class="col-md-11">
-                		<input name="item" class="form-control input-md" type="text">
+                		<input class="form-control input-md" type="text"
+                      ng-model="model.item.nome">
                 	</div>
                 </div>
 
                 <div class="form-group">
                 	<label class="col-md-1 control-label">Exigência: </label>
                 	<div class="col-md-11">
-                		<input name="exigencia" class="form-control input-md" type="text">
+                		<input name="exigencia" class="form-control input-md" type="text"
+                      ng-model="model.item.exigencia">
                 	</div>
                 </div>
 
                 <div class="form-group">
                 	<label class="col-md-1 control-label">Nota Máxima: </label>
                 	<div class="col-md-11">
-                		<input name="notaMaxima" class="form-control input-md" type="number">
+                		<input name="notaMaxima" class="form-control input-md" type="number"
+                      ng-model="model.item.notaMaxima">
                 	</div>
                 </div>
 
@@ -524,7 +528,7 @@
                 </div>
 
                 <div class="col-md-11">
-                  <button ng-click="save()">Salvar</button>
+                  <button ng-click="actions.saveItem()">Salvar</button>
                 </div>
 
               </fieldset>

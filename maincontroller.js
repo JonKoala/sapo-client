@@ -635,6 +635,7 @@ function Hello($scope, $http) {
           pilar: {},
           nivel: {},
           subnivel: {},
+          item: {},
           pontuacoes: []
         };
 
@@ -707,7 +708,26 @@ function Hello($scope, $http) {
               $scope.model.subnivel = defaultOption;
               $scope.options.subniveis = result;
             });
+          },
+
+          updateSubnivel: function(id) {
+            $scope.model.item.subnivelId = id;
+          },
+
+          saveItem: function() {
+
+            //save the item
+            $http({
+                method: 'POST',
+                url: 'item'+'/'+$scope.username+'/'+$scope.password,
+                data: $scope.model.item
+            }).success(function (result) {
+              $scope.model.item.id = result.id;
+
+              //TODO: salvar as pontuacoes
+            });
           }
+
         };
 
         //loading indicadores
@@ -767,15 +787,3 @@ function Hello($scope, $http) {
 		/* */
 	});
 };
-
-function removeFromArray(array, variable, value) {
-  for (var i=0; i<array.length; i++) {
-    var item = array[i];
-    if (item[variable] === value) {
-      array.splice(i, 1);
-      break;
-    }
-  }
-
-  return array;
-}

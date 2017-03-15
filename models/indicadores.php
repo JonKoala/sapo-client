@@ -499,7 +499,7 @@ $db=new DB\SQL($conexao,$f3->get("db_user"),$f3->get("db_password"));
     function postItem($f3){
       // VALIDA USER
       $conexao =     'mysql:host='.$f3->get("db_host").';port=3306;dbname='.$f3->get("db_name");
-$db=new DB\SQL($conexao,$f3->get("db_user"),$f3->get("db_password"));
+      $db=new DB\SQL($conexao,$f3->get("db_user"),$f3->get("db_password"));
       $user = $f3->get('PARAMS.usuario');
       $senha = $f3->get('PARAMS.senha');
       $tabela=new DB\SQL\Mapper($db,'usuario');
@@ -514,13 +514,21 @@ $db=new DB\SQL($conexao,$f3->get("db_user"),$f3->get("db_password"));
       }
       // CASO PERMITIDO
       if($permissao == 1){
-        $subnivel_id = $f3->get('PARAMS.subnivel_id');
-        $nome = $f3->get('PARAMS.nome');
-        $exigencia = $f3->get('PARAMS.exigencia');
-        $notamaxima = $f3->get('PARAMS.notamaxima');
+
+        $POST = json_decode($f3->BODY,TRUE);
+        $id = $POST['id'];
+        $subnivel_id = $POST['subnivelId'];
+        $nome = $POST['nome'];
+        $exigencia = $POST['exigencia'];
+        $notamaxima = $POST['notaMaxima'];
+
         $conexao =     'mysql:host='.$f3->get("db_host").';port=3306;dbname='.$f3->get("db_name");
-$db=new DB\SQL($conexao,$f3->get("db_user"),$f3->get("db_password"));
+        $db=new DB\SQL($conexao,$f3->get("db_user"),$f3->get("db_password"));
         $tabela=new DB\SQL\Mapper($db,'item');
+
+        if ($id) {
+          $tabela->load(array('id=?', $id));
+        }
         $tabela->nome = $nome;
         $tabela->Subnivel_id = (int)$subnivel_id;
         $tabela->exigencia = $exigencia;
@@ -530,6 +538,7 @@ $db=new DB\SQL($conexao,$f3->get("db_user"),$f3->get("db_password"));
           $data['Status'] = "Erro.";
         }else{
           $data['Status'] = "Inserido com sucesso.";
+          $data['id'] = $tabela->id;
         }
       }else{
         $data['Status'] = "Permissao Negada.";
@@ -543,7 +552,7 @@ $db=new DB\SQL($conexao,$f3->get("db_user"),$f3->get("db_password"));
     function postPontuacao($f3){
       // VALIDA USER
       $conexao =     'mysql:host='.$f3->get("db_host").';port=3306;dbname='.$f3->get("db_name");
-$db=new DB\SQL($conexao,$f3->get("db_user"),$f3->get("db_password"));
+      $db=new DB\SQL($conexao,$f3->get("db_user"),$f3->get("db_password"));
       $user = $f3->get('PARAMS.usuario');
       $senha = $f3->get('PARAMS.senha');
       $tabela=new DB\SQL\Mapper($db,'usuario');
@@ -558,12 +567,20 @@ $db=new DB\SQL($conexao,$f3->get("db_user"),$f3->get("db_password"));
       }
       // CASO PERMITIDO
       if($permissao == 1){
-        $item_id = $f3->get('PARAMS.item_id');
-        $descricao = $f3->get('PARAMS.descricao');
-        $nota = $f3->get('PARAMS.nota');
+
+        $POST = json_decode($f3->BODY,TRUE);
+        $id = $POST['id'];
+        $item_id = $POST['itemId'];
+        $descricao = $POST['descricao'];
+        $nota = $POST['nota'];
+
         $conexao =     'mysql:host='.$f3->get("db_host").';port=3306;dbname='.$f3->get("db_name");
-$db=new DB\SQL($conexao,$f3->get("db_user"),$f3->get("db_password"));
+        $db=new DB\SQL($conexao,$f3->get("db_user"),$f3->get("db_password"));
         $tabela=new DB\SQL\Mapper($db,'pontuacao');
+
+        if ($id) {
+          $tabela->load(array('id=?', $id));
+        }
         $tabela->Item_id = (int)$item_id;
         $tabela->descricao = $descricao;
         $tabela->nota = floatval($nota);
@@ -572,6 +589,7 @@ $db=new DB\SQL($conexao,$f3->get("db_user"),$f3->get("db_password"));
           $data['Status'] = "Erro ao inserir registro.";
         }else{
           $data['Status'] = "Inserido com sucesso.";
+          $data['id'] = $tabela->id;
         }
       }else{
         $data['Status'] = "Permissao Negada.";
