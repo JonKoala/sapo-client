@@ -104,7 +104,7 @@ class Indicadores{
          $resultado = array();
         foreach ($result as $Get_search) {
           $data['id'] = $Get_search['id'];
-          $data['Pilar_id'] = $Get_search['Pilar_id'];
+          $data['Pilar_id'] = $Get_search['Tipo_id'];
           $data['nome'] = $Get_search['nome'];
           $data['descricao'] = $Get_search['descricao'];
           $resultado[] = $data;

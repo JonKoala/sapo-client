@@ -41,7 +41,7 @@ function Hello($scope, $http) {
     $scope.usuario_id = 0;
 
     $scope.usuarios = [];
-    $scope.logar = function(){
+    $scope.logar = function(callback){
       // usuario/luciano/123456
       var username = $("#username").val();
       var password = $("#password").val();
@@ -65,6 +65,7 @@ function Hello($scope, $http) {
             $("#status").empty();
             $("#status").append(menssagem);
           }
+        if (callback) callback();
       });
     }
 
@@ -626,22 +627,99 @@ function Hello($scope, $http) {
       }
 
       if(caminho == "indicadores"){
-        $scope.pontuacoes = [];
-        var index = 0;
+        var defaultOption = {nome: 'Selecione', id: 0}
+        var pontuacoesIndex = 0;
 
-        $scope.add = function() {
-          $scope.pontuacoes.push({index:index});
-          index++;
-        }
-        $scope.remove = function(index) {
-          for (var i=0;i<$scope.pontuacoes.length;i++) {
-            var pontuacao = $scope.pontuacoes[i];
-            if (pontuacao.index == index) {
-              $scope.pontuacoes.splice(i, 1);
-              break;
-            }
+        $scope.model = {
+          indicador: {},
+          pilar: {},
+          nivel: {},
+          subnivel: {},
+          pontuacoes: []
+        };
+
+        $scope.options = {
+          indicadores: [],
+          pilares: [],
+          niveis: [],
+          subniveis: []
+        };
+
+        $scope.actions = {
+          addPontuacao: function() {
+            $scope.model.pontuacoes.push({index:pontuacoesIndex});
+            pontuacoesIndex++;
+          },
+
+          removePontuacao: function(index) {
+            $scope.model.pontuacoes = $scope.model.pontuacoes.filter(function (pontuacao) {return pontuacao.index != index});
+          },
+
+          resetModels: function() {
+            models = [].concat.apply([], arguments);
+            for (model of models)
+              $scope.model[model] = {};
+          },
+
+          resetOptions: function() {
+            options = [].concat.apply([], arguments);
+            for (option of options)
+              $scope.options[option] = [];
+          },
+
+          updateIndicador: function(id) {
+            $scope.actions.resetModels('pilar', 'nivel', 'subnivel');
+            $scope.actions.resetOptions('pilares', 'niveis', 'subniveis');
+
+            if (id == 0) { return; }
+
+            $http.get('pilar'+'/'+$scope.username+'/'+$scope.password).success(function (result) {
+              result = result.filter(function(pilar) {return pilar.Indicador_id === $scope.model.indicador.id});
+              result.push(defaultOption);
+              $scope.model.pilar = defaultOption;
+              $scope.options.pilares = result;
+            });
+          },
+
+          updatePilar: function(id) {
+            $scope.actions.resetModels('nivel', 'subnivel');
+            $scope.actions.resetOptions('niveis', 'subniveis');
+
+            if (id == 0) { return; }
+
+            $http.get('nivel'+'/'+$scope.username+'/'+$scope.password).success(function (result) {
+              result = result.filter(function(nivel) {return nivel.Pilar_id === $scope.model.pilar.id});
+              result.push(defaultOption);
+              $scope.model.nivel = defaultOption;
+              $scope.options.niveis = result;
+            });
+          },
+
+          updateNivel: function(id) {
+            $scope.actions.resetModels('subnivel');
+            $scope.actions.resetOptions('subniveis');
+
+            if (id == 0) { return; }
+
+            $http.get('subnivel'+'/'+$scope.username+'/'+$scope.password).success(function (result) {
+              result = result.filter(function(subnivel) {return subnivel.Nivel_id === $scope.model.nivel.id});
+              result.push(defaultOption);
+              $scope.model.subnivel = defaultOption;
+              $scope.options.subniveis = result;
+            });
           }
-        }
+        };
+
+        //loading indicadores
+        $http({
+            method: 'GET',
+            url: 'indicador'+'/'+$scope.username+'/'+$scope.password,
+            data: {}
+        }).success(function (result) {
+          result.push(defaultOption);
+          $scope.model.indicador = defaultOption;
+          $scope.options.indicadores = result;
+        });
       }
 
       // Fim da funcao setConteudo
@@ -683,8 +761,21 @@ function Hello($scope, $http) {
 		/* TODO: remover - pulando etapa de login */
 		$("#username").val('victor');
 		$("#password").val('123');
-		$scope.logar();
-		$scope.setConteudo("indicadores");
+		$scope.logar(function() {
+      $scope.setConteudo("indicadores");
+    });
 		/* */
 	});
 };
+
+function removeFromArray(array, variable, value) {
+  for (var i=0; i<array.length; i++) {
+    var item = array[i];
+    if (item[variable] === value) {
+      array.splice(i, 1);
+      break;
+    }
+  }
+
+  return array;
+}
