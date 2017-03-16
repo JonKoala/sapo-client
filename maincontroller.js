@@ -28,6 +28,23 @@ function seleciona_itens(){
   console.log("Pronto..");
 }
 
+function toggleSucessMsg(show) {
+  var msg = $('#msg-sucesso');
+
+  if (show) {
+    msg.css('opacity', 0).slideDown('slow')
+      .animate(
+        { opacity: 1 },
+        { queue: false, duration: 'slow', complete: function() {setTimeout(function() {toggleSucessMsg(false)}, 3000)}}
+      );
+  } else {
+    msg.css('opacity', 1).slideUp('slow')
+      .animate(
+        { opacity: 0 },
+        { queue: false, duration: 'slow'}
+      );
+  }
+}
 
 
 
@@ -747,6 +764,8 @@ function Hello($scope, $http) {
                   pontuacaoIndex++;
                   savePontuacaoRoutine();
                 });
+              } else {
+                toggleSucessMsg(true);
               }
             }
 

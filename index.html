@@ -444,12 +444,12 @@
 
 			<div class="container" ng-switch-when="indicadores">
 				<form class="form-horizontal">
-					<fieldset>
-						<legend>Novo Item</legend>
+					<fieldset class="col-md-6">
+						<legend>Indicadores<i style="visibility:hidden">a</i></legend>
 
               <div class="form-group">
-              	<label class="col-md-1 control-label">Indicador: </label>
-              	<div class="col-md-11">
+              	<label class="col-md-2 control-label">Indicador: </label>
+              	<div class="col-md-10">
               		<select class="form-control"
                     ng-model="model.indicador"
                     ng-options="option.nome for option in options.indicadores | orderBy:'id' track by option.id"
@@ -458,8 +458,8 @@
               </div>
 
               <div class="form-group">
-              	<label class="col-md-1 control-label">Pilar: </label>
-              	<div class="col-md-11">
+              	<label class="col-md-2 control-label">Pilar: </label>
+              	<div class="col-md-10">
               		<select class="form-control"
                     ng-disabled="model.indicador.id == 0 || options.pilares.length == 0"
                     ng-model="model.pilar"
@@ -469,8 +469,8 @@
               </div>
 
               <div class="form-group">
-              	<label class="col-md-1 control-label">Tipo: </label>
-              	<div class="col-md-11">
+              	<label class="col-md-2 control-label">Tipo: </label>
+              	<div class="col-md-10">
               		<select class="form-control"
                     ng-disabled="model.pilar.id == 0 || options.tipos.length == 0"
                     ng-model="model.tipo"
@@ -480,8 +480,8 @@
               </div>
 
               <div class="form-group">
-              	<label class="col-md-1 control-label">Nível: </label>
-              	<div class="col-md-11">
+              	<label class="col-md-2 control-label">Nível: </label>
+              	<div class="col-md-10">
               		<select class="form-control"
                     ng-disabled="model.tipo.id == 0 || options.niveis.length == 0"
                     ng-model="model.nivel"
@@ -491,8 +491,8 @@
               </div>
 
               <div class="form-group">
-              	<label class="col-md-1 control-label">Subnível: </label>
-              	<div class="col-md-11">
+              	<label class="col-md-2 control-label">Subnível: </label>
+              	<div class="col-md-10">
               		<select class="form-control"
                     ng-disabled="model.nivel.id == 0 || options.subniveis.length == 0"
                     ng-model="model.subnivel"
@@ -500,52 +500,72 @@
                     ng-change="actions.updateSubnivel(model.subnivel.id)"></select>
               	</div>
               </div>
+            </fieldset>
 
-              <!-- ITEM AREA -->
-              <fieldset ng-disabled="model.subnivel.id == 0 || options.subniveis.length == 0">
+            <!-- ITEM AREA -->
+            <fieldset class="col-md-6"
+              ng-disabled="model.subnivel.id == 0 || options.subniveis.length == 0">
+              <legend>Item</legend>
 
-                <div class="form-group">
-                	<label class="col-md-1 control-label">Item: </label>
-                	<div class="col-md-11">
-                		<input class="form-control input-md" type="text"
-                      ng-model="model.item.nome">
-                	</div>
+              <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-10">
+                  <button class="btn btn-primary" ng-click="actions.saveItem()">Salvar</button>
+                  <button class="btn btn-success" ng-click="actions.newItem()">Novo</button>
                 </div>
+              </div>
 
-                <div class="form-group">
-                	<label class="col-md-1 control-label">Exigência: </label>
-                	<div class="col-md-11">
-                		<input name="exigencia" class="form-control input-md" type="text"
-                      ng-model="model.item.exigencia">
-                	</div>
+              <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-10">
+                  <div id="msg-sucesso" style="display:none" class="alert alert-success alert-dismissable">
+                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                    <strong>Success!</strong> Item salvo com sucesso no sistema.
+                  </div>
                 </div>
+              </div>
 
-                <div class="form-group">
-                	<label class="col-md-1 control-label">Nota Máxima: </label>
-                	<div class="col-md-11">
-                		<input name="notaMaxima" class="form-control input-md" type="number"
-                      ng-model="model.item.notaMaxima">
-                	</div>
+              <div class="form-group">
+              	<label class="col-md-2 text-left control-label">Nome: </label>
+              	<div class="col-md-10">
+              		<input class="form-control input-md" type="text"
+                    ng-model="model.item.nome">
+              	</div>
+              </div>
+
+              <div class="form-group">
+              	<label class="col-md-2 control-label">Exigência: </label>
+              	<div class="col-md-10">
+              		<input name="exigencia" class="form-control input-md" type="text"
+                    ng-model="model.item.exigencia">
+              	</div>
+              </div>
+
+              <div class="form-group">
+              	<label class="col-md-2 control-label">Nota Máxima: </label>
+              	<div class="col-md-2">
+              		<input name="notaMaxima" class="form-control input-md" type="number"
+                    ng-model="model.item.notaMaxima">
+              	</div>
+              </div>
+
+              <legend>Pontuação <button class="btn btn-success" ng-click="actions.addPontuacao()">+</button></legend>
+
+              <div class="form-horizontal">
+                <div class="form-group" ng-repeat="pontuacao in model.pontuacoes">
+                  <div class="col-sm-2">
+                    <input class="form-control input-md" type="text" placeholder="nota" ng-model="pontuacao.nota">
+                  </div>
+                  <div class="col-sm-9">
+                    <input class="form-control input-md" type="text" placeholder="descrição" ng-model="pontuacao.descricao">
+                  </div>
+                  <div class="col-sm-1">
+                    <button class="btn btn-danger" ng-click="actions.removePontuacao(pontuacao.index)" tabIndex="-1">-</button>
+                  </div>
                 </div>
+              </div>
 
-                <div class="col-md-11">
-                  <button ng-click="actions.addPontuacao()">Adicionar Pontuação</button>
-                </div>
+            </fieldset>
 
-                <div ng-repeat="pontuacao in model.pontuacoes">
-                  <input type="text" placeholder="descrição" ng-model="pontuacao.descricao">
-                  <input type="text" placeholder="nota" ng-model="pontuacao.nota">
-                  <button ng-click="actions.removePontuacao(pontuacao.index)">Remover</button>
-                </div>
 
-                <div class="col-md-11">
-                  <button ng-click="actions.saveItem()">Salvar</button>
-                  <button ng-click="actions.newItem()">Novo</button>
-                </div>
-
-              </fieldset>
-
-					</fieldset>
 				</form>
 			</div>
 
