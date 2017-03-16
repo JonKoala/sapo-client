@@ -633,6 +633,7 @@ function Hello($scope, $http) {
         $scope.model = {
           indicador: {},
           pilar: {},
+          tipo: {},
           nivel: {},
           subnivel: {},
           item: {},
@@ -642,6 +643,7 @@ function Hello($scope, $http) {
         $scope.options = {
           indicadores: [],
           pilares: [],
+          tipos: [],
           niveis: [],
           subniveis: []
         };
@@ -669,8 +671,8 @@ function Hello($scope, $http) {
           },
 
           updateIndicador: function(id) {
-            $scope.actions.resetModels('pilar', 'nivel', 'subnivel');
-            $scope.actions.resetOptions('pilares', 'niveis', 'subniveis');
+            $scope.actions.resetModels('pilar', 'tipo', 'nivel', 'subnivel');
+            $scope.actions.resetOptions('pilares', 'tipos', 'niveis', 'subniveis');
 
             if (id == 0) { return; }
 
@@ -683,13 +685,27 @@ function Hello($scope, $http) {
           },
 
           updatePilar: function(id) {
+            $scope.actions.resetModels('tipo', 'nivel', 'subnivel');
+            $scope.actions.resetOptions('tipos', 'niveis', 'subniveis');
+
+            if (id == 0) { return; }
+
+            $http.get('tipo'+'/'+$scope.username+'/'+$scope.password).success(function (result) {
+              result = result.filter(function(tipo) {return tipo.Pilar_id === $scope.model.pilar.id});
+              result.push(defaultOption);
+              $scope.model.tipo = defaultOption;
+              $scope.options.tipos = result;
+            });
+          },
+
+          updateTipo: function(id) {
             $scope.actions.resetModels('nivel', 'subnivel');
             $scope.actions.resetOptions('niveis', 'subniveis');
 
             if (id == 0) { return; }
 
             $http.get('nivel'+'/'+$scope.username+'/'+$scope.password).success(function (result) {
-              result = result.filter(function(nivel) {return nivel.Pilar_id === $scope.model.pilar.id});
+              result = result.filter(function(nivel) {return nivel.Tipo_id === $scope.model.tipo.id});
               result.push(defaultOption);
               $scope.model.nivel = defaultOption;
               $scope.options.niveis = result;
@@ -716,6 +732,24 @@ function Hello($scope, $http) {
 
           saveItem: function() {
 
+            var pontuacaoIndex = 0;
+            var savePontuacaoRoutine = function() {
+
+              if (pontuacaoIndex < $scope.model.pontuacoes.length) {
+
+                $http({
+                    method: 'POST',
+                    url: 'pontuacao'+'/'+$scope.username+'/'+$scope.password,
+                    data: $scope.model.pontuacoes[pontuacaoIndex]
+                }).success(function (result) {
+                  $scope.model.pontuacoes[pontuacaoIndex].id = result.id;
+
+                  pontuacaoIndex++;
+                  savePontuacaoRoutine();
+                });
+              }
+            }
+
             //save the item
             $http({
                 method: 'POST',
@@ -723,11 +757,18 @@ function Hello($scope, $http) {
                 data: $scope.model.item
             }).success(function (result) {
               $scope.model.item.id = result.id;
+              for(pontuacao of $scope.model.pontuacoes)
+                pontuacao.itemId = $scope.model.item.id;
 
-              //TODO: salvar as pontuacoes
+              savePontuacaoRoutine();
             });
-          }
+          },
 
+          newItem: function() {
+              $scope.model.item = {};
+              $scope.model.item.subnivelId = $scope.model.subnivel.id;
+              $scope.model.pontuacoes = [];
+          }
         };
 
         //loading indicadores

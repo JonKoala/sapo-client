@@ -469,10 +469,21 @@
               </div>
 
               <div class="form-group">
+              	<label class="col-md-1 control-label">Tipo: </label>
+              	<div class="col-md-11">
+              		<select class="form-control"
+                    ng-disabled="model.pilar.id == 0 || options.tipos.length == 0"
+                    ng-model="model.tipo"
+                    ng-options="option.nome for option in options.tipos | orderBy:'id' track by option.id"
+                    ng-change="actions.updateTipo(model.tipo.id)"></select>
+              	</div>
+              </div>
+
+              <div class="form-group">
               	<label class="col-md-1 control-label">Nível: </label>
               	<div class="col-md-11">
               		<select class="form-control"
-                    ng-disabled="model.pilar.id == 0 || options.niveis.length == 0"
+                    ng-disabled="model.tipo.id == 0 || options.niveis.length == 0"
                     ng-model="model.nivel"
                     ng-options="option.nome for option in options.niveis | orderBy:'id' track by option.id"
                     ng-change="actions.updateNivel(model.nivel.id)"></select>
@@ -523,12 +534,13 @@
 
                 <div ng-repeat="pontuacao in model.pontuacoes">
                   <input type="text" placeholder="descrição" ng-model="pontuacao.descricao">
-                  <input type="number" placeholder="nota" ng-model="pontuacao.nota">
+                  <input type="text" placeholder="nota" ng-model="pontuacao.nota">
                   <button ng-click="actions.removePontuacao(pontuacao.index)">Remover</button>
                 </div>
 
                 <div class="col-md-11">
                   <button ng-click="actions.saveItem()">Salvar</button>
+                  <button ng-click="actions.newItem()">Novo</button>
                 </div>
 
               </fieldset>

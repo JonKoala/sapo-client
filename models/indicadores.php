@@ -79,6 +79,42 @@ class Indicadores{
       echo json_encode($resultado);
     }
 
+    /*Modulo responsavel por validar usuario e responder com os Pilares no banco*/
+    function getTipos($f3){
+      // VALIDA USER
+      $conexao =     'mysql:host='.$f3->get("db_host").';port=3306;dbname='.$f3->get("db_name");
+      $db=new DB\SQL($conexao,$f3->get("db_user"),$f3->get("db_password"));
+      $user = $f3->get('PARAMS.usuario');
+      $senha = $f3->get('PARAMS.senha');
+      $tabela=new DB\SQL\Mapper($db,'usuario');
+      $tabela->load(array('usuario=? AND senha=?', $user , $senha));
+      $perfil = $tabela->Perfil_id;
+      $permissao = null;
+      $data = '';
+      if($perfil != null){
+        $tabela=new DB\SQL\Mapper($db,'perfil');
+        $tabela->load(array('id=?', $perfil));
+        $permissao = $tabela->permissao;
+      }
+      // CASO PERMITIDO
+      if($permissao == 1){
+        $tabela=new DB\SQL\Mapper($db,'tipo');
+         $result=$tabela->find('id>0');
+         $resultado = array();
+        foreach ($result as $Get_search) {
+          $data['id'] = $Get_search['id'];
+          $data['Pilar_id'] = $Get_search['Pilar_id'];
+          $data['nome'] = $Get_search['nome'];
+          $data['descricao'] = $Get_search['descricao'];
+          $resultado[] = $data;
+        }
+      }else{
+        $resultado['Permissao'] = "Permissao Negada.";
+      }
+      // RESPONDE JSON
+      echo json_encode($resultado);
+    }
+
 
     /*Modulo responsavel por validar usuario e responder com os Niveis no banco*/
     function getNiveis($f3){
@@ -104,7 +140,7 @@ class Indicadores{
          $resultado = array();
         foreach ($result as $Get_search) {
           $data['id'] = $Get_search['id'];
-          $data['Pilar_id'] = $Get_search['Tipo_id'];
+          $data['Tipo_id'] = $Get_search['Tipo_id'];
           $data['nome'] = $Get_search['nome'];
           $data['descricao'] = $Get_search['descricao'];
           $resultado[] = $data;
