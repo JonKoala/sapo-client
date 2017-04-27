@@ -1,0 +1,22 @@
+
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+
+<link rel="import" href="./new-item.html">
+
+<dom-module id="sapo-app">
+
+  <template>
+    <new-item></new-item>
+  </template>
+
+  <script>
+    class SapoApp extends Polymer.Element {
+
+      static get is() { return 'sapo-app'; }
+
+    }
+
+    window.customElements.define(SapoApp.is, SapoApp);
+  </script>
+
+</dom-module>

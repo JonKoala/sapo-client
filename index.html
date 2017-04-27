@@ -14,10 +14,22 @@
     <link rel="stylesheet" type="text/css" href="treecontroll/tree-control.css">
     <link rel="stylesheet" type="text/css" href="treecontroll/tree-control-attribute.css">
 
+    <link rel="icon" href="./images/favicon.ico">
+
+    <!-- Polymer dependencies -->
+
+    <!-- Load webcomponents-loader.js to check and load any polyfills your browser needs -->
+    <script src="./bower_components/webcomponentsjs/webcomponents-loader.js"></script>
+
+    <link rel="import" href="./bower_components/neon-animation/web-animations.html">
+
+    <!-- Load your application shell -->
+    <link rel="import" href="./views/sapo-app.html">
+
   </head>
 
-  <body data-ng-app="MyTutorialApp" >
-    <div data-ng-controller="Hello" id="app-body" ng-switch="logado">
+  <body data-ng-app="MyTutorialApp" style="min-height:100vh" >
+    <div data-ng-controller="Hello" id="app-body" ng-switch="logado" style="min-height:100vh" >
 
           <!-- LOGIN -->
           <div class="container" style="margin-top:40px" ng-switch-when="0">
@@ -70,7 +82,7 @@
 
     <!-- SISTEMA -->
         <!-- MENU -->
-          <div  ng-switch-when="1">
+          <div  ng-switch-when="1" style="display:flex;flex-direction:column;min-height:100vh" >
             <nav class="navbar navbar-default">
               <div class="container-fluid">
                 <div class="navbar-header">
@@ -88,7 +100,10 @@
               </div>
             </nav>
           <!-- CONTEUDO -->
-          <div id="conteudo-geral" ng-switch="conteudo">
+          <div id="conteudo-geral" ng-switch="conteudo" style="flex:1" >
+
+            <sapo-app></sapo-app>
+
             <!-- INICIO -->
             <div class="container" ng-switch-when="inicio">
               <div class="jumbotron">
@@ -443,6 +458,10 @@
 			</div>
 
 			<div class="container" ng-switch-when="indicadores">
+
+
+
+        <!--
 				<form class="form-horizontal">
 					<fieldset class="col-md-6">
 						<legend>Indicadores<i style="visibility:hidden">a</i></legend>
@@ -502,7 +521,6 @@
               </div>
             </fieldset>
 
-            <!-- ITEM AREA -->
             <fieldset class="col-md-6"
               ng-disabled="model.subnivel.id == 0 || options.subniveis.length == 0">
               <legend>Item</legend>
@@ -567,6 +585,7 @@
 
 
 				</form>
+        -->
 			</div>
 
         </div>

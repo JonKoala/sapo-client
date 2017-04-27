@@ -1,0 +1,85 @@
+
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../bower_components/paper-item/paper-item.html">
+
+<dom-module id="new-item">
+
+  <template>
+
+    <style include="iron-flex iron-flex-factors">
+      paper-card {
+        margin-left: 80px;
+        margin-right: 80px;
+      }
+      paper-dropdown-menu {
+        width: 200px;
+      }
+      paper-item {
+        min-width: 150px;
+      }
+      
+      #my-dropdown {
+        display: var(--my-elem-visibility);
+      }
+    </style>
+
+
+    <paper-card heading="TESTE1" class="layout vertical fit">
+
+      <paper-dropdown-menu id="my-dropdown" label="Data Selector">
+        <paper-listbox slot="dropdown-content" selected="{{selected}}" attr-for-selected="value" class="dropdown-content">
+          <template is="dom-repeat" items="{{data}}">
+            <paper-item value="{{item.id}}" >{{item.name}}</paper-item>
+          </template>
+        </paper-listbox>
+      </paper-dropdown-menu>
+
+    </paper-card>
+
+
+  </template>
+
+  <script>
+    class NewItem extends Polymer.Element {
+
+      static get is() { return 'new-item'; }
+
+      static get properties() {
+        return {
+          data: {
+            type: Array,
+            value() {
+              return [
+                {id: 1, name: "data 1"},
+                {id: 2, name: "data 2"},
+                {id: 3, name: "data 3"},
+                {id: 4, name: "data 4"}
+              ];
+            }
+          },
+          selected: {
+            type: Number,
+            observer: '_selectedChanged'
+          }
+        }
+      }
+
+      _selectedChanged(selected) {
+        console.log(selected);
+        console.log(this.data.find(function(obj) { return obj.id === selected; }));
+
+        //this.push('data', {id: this.data.length + 1, name: 'data ' + (this.data.length + 1)});
+        //this.set('display', "hidden");
+
+        this.updateStyles({'--my-elem-visibility': 'none'});
+      }
+
+    }
+
+    window.customElements.define(NewItem.is, NewItem);
+  </script>
+</dom-module>
