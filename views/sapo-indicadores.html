@@ -6,7 +6,7 @@
 <link rel="import" href="../bower_components/paper-listbox/paper-listbox.html">
 <link rel="import" href="../bower_components/paper-item/paper-item.html">
 
-<dom-module id="new-item">
+<dom-module id="sapo-indicadores">
 
   <template>
 
@@ -21,14 +21,15 @@
       paper-item {
         min-width: 150px;
       }
-      
+
       #my-dropdown {
         display: var(--my-elem-visibility);
       }
     </style>
 
+    <app-location route="{{route}}"></app-location>
 
-    <paper-card heading="TESTE1" class="layout vertical fit">
+    <paper-card heading="TESTE" class="layout vertical fit">
 
       <paper-dropdown-menu id="my-dropdown" label="Data Selector">
         <paper-listbox slot="dropdown-content" selected="{{selected}}" attr-for-selected="value" class="dropdown-content">
@@ -44,9 +45,9 @@
   </template>
 
   <script>
-    class NewItem extends Polymer.Element {
+    class SapoIndicadores extends Polymer.Element {
 
-      static get is() { return 'new-item'; }
+      static get is() { return 'sapo-indicadores'; }
 
       static get properties() {
         return {
@@ -80,6 +81,6 @@
 
     }
 
-    window.customElements.define(NewItem.is, NewItem);
+    window.customElements.define(SapoIndicadores.is, SapoIndicadores);
   </script>
 </dom-module>

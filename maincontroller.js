@@ -46,8 +46,6 @@ function toggleSucessMsg(show) {
   }
 }
 
-
-
 function Hello($scope, $http) {
 
     $scope.username = "";
@@ -195,6 +193,9 @@ function Hello($scope, $http) {
     $scope.pilares = [];
 
     $scope.setConteudo = function(caminho){
+      if ($scope.conteudo == caminho)
+        return;
+
       $scope.conteudo = caminho;
       $("#menu_topo").children().removeClass("active");
       $("#"+caminho).addClass("active");
@@ -643,7 +644,7 @@ function Hello($scope, $http) {
         });
       }
 
-      if(caminho == "indicadores"){
+      if(caminho == "indicadores") {
         var defaultOption = {nome: 'Selecione', id: 0}
         var pontuacoesIndex = 0;
 
@@ -838,11 +839,13 @@ function Hello($scope, $http) {
 
 	//source: http://stackoverflow.com/a/18646795
 	angular.element(document).ready(function () {
+    window.angularScope = $scope;
+
 		/* TODO: remover - pulando etapa de login */
 		$("#username").val('victor');
 		$("#password").val('123');
-		$scope.logar(function() {
-      $scope.setConteudo("indicadores");
+    $scope.logar(function() {
+      //console.log('logado');
     });
 		/* */
 	});

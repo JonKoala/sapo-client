@@ -3,8 +3,10 @@ class Indicadores{
 
     function helloWorld($f3){
       echo 'Hello world!!';
+      echo file_get_contents("index.html");
     }
 
+    
 
     // GETTERS
     /*Modulo responsavel por validar usuario e responder com os Indicadores no banco*/

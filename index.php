@@ -1,4 +1,5 @@
 <?php
+
 header('Content-Type: text/html; charset=UTF-8');
 header("Access-Control-Allow-Origin: *");
 $f3 = require('../frameworks/f3/lib/base.php');

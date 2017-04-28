@@ -1,18 +1,78 @@
 
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
-
-<link rel="import" href="./new-item.html">
+<link rel="import" href="../bower_components/app-route/app-location.html">
+<link rel="import" href="../bower_components/app-route/app-route.html">
+<link rel="import" href="../bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="../bower_components/iron-selector/iron-selector.html">
 
 <dom-module id="sapo-app">
 
   <template>
-    <new-item></new-item>
+
+    <app-location route="{{route}}"></app-location>
+    <app-route
+        route="{{route}}"
+        pattern="/sapo/:page"
+        data="{{routeData}}"
+        tail="{{subroute}}"></app-route>
+
+    <iron-pages selected="[[page]]" attr-for-selected="name">
+        <sapo-indicadores name="indicadores"></sapo-indicadores>
+        <sapo-nothing name="nothing" ></sapo-nothing>
+    </iron-pages>
+
+
   </template>
 
   <script>
     class SapoApp extends Polymer.Element {
 
       static get is() { return 'sapo-app'; }
+
+      static get properties() {
+        return {
+          page: {
+            type: String,
+            reflectToAttribute: true,
+            observer: '_pageChanged',
+          }
+        };
+      }
+
+      static get observers() {
+        return [
+          '_routePageChanged(routeData.page)',
+        ];
+      }
+
+      _routePageChanged(page) {
+
+        if (page === undefined) {
+          return;
+        }
+
+        this.page = page || 'nothing';
+      }
+
+      _pageChanged(page) {
+
+        if (window.angularScope) {
+          let conteudo = (page === 'nothing') ? 'inicio' : page;
+          if ($('#menu_topo #'+ conteudo + ' a').length > 0) {
+              $('#menu_topo #'+ conteudo + ' a').click();
+              window.angularScope.setConteudo(conteudo);
+          }
+        }
+
+        // Load page import on demand. Show 404 page if fails
+        var resolvedPageUrl = this.resolveUrl('sapo-' + page + '.html');
+        //console.log('resolvedPageUrl ' + resolvedPageUrl);
+        Polymer.importHref(
+            resolvedPageUrl,
+            null,
+            null,
+            true);
+      }
 
     }
 
