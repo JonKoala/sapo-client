@@ -46,6 +46,7 @@ function toggleSucessMsg(show) {
   }
 }
 
+const SapoApiURL = 'http://localhost:8080/sapo/';
 function Hello($scope, $http) {
 
     $scope.username = "";
@@ -56,12 +57,12 @@ function Hello($scope, $http) {
     $scope.usuario_id = 0;
 
     $scope.usuarios = [];
-    $scope.logar = function(callback){
+    $scope.logar = function(callback) {
       // usuario/luciano/123456
       var username = $("#username").val();
       var password = $("#password").val();
       $scope.url = "usuario/"+username +"/"+password;
-      $http.get($scope.url).
+      $http.get(SapoApiURL + $scope.url).
       success(function(data) {
           $scope.usuarios = data;
           $.each($scope.usuarios, function(key,objeto){
@@ -143,7 +144,7 @@ function Hello($scope, $http) {
       // Primeiro passo criar avaliacao.
       // avaliacao/luciano/123456/1/AvalPostTeste/ObjetivoTeste/2016-01-01/null
       url = ""+"avaliacao"+"/"+$scope.username+"/"+$scope.password+"/"+$scope.na_indicador+"/"+$scope.na_nome+"/"+$scope.na_objetivos+"/"+today;
-      $http.post(url).
+      $http.post(SapoApiURL + url).
       success(function(data) {
         // Segundo passo criar ObjetoDeAvaliacao.
         avaliacao_id = data.id;
@@ -156,7 +157,7 @@ function Hello($scope, $http) {
           }else{
             url_objetoavaliacao = ""+"objetoavaliacao"+"/"+$scope.username+"/"+$scope.password+"/"+$scope.na_entidades[i]+"/"+avaliacao_id;
           }
-          $http.post(url_objetoavaliacao).
+          $http.post(SapoApiURL + url_objetoavaliacao).
           success(function(data2) {
             objetoavaliacao_id = data2.id;
             // Criar tabela de nota.
@@ -164,7 +165,7 @@ function Hello($scope, $http) {
             // url_nota = ""+"nota"+"/"+$scope.username+"/"+$scope.password+"/"+$scope.usuario_id+"/"+MUDARR+"/"+objetoavaliacao_id+"/null";
             for(var j = 0 ; j<$scope.na_itens.length;j++){
               url_nota = ""+"nota"+"/"+$scope.username+"/"+$scope.password+"/"+$scope.usuario_id+"/"+$scope.na_itens[j]+"/"+objetoavaliacao_id;
-              $http.post(url_nota).
+              $http.post(SapoApiURL + url_nota).
               success(function(data3) {
                 console.log("Inseri um item");
               });
@@ -202,11 +203,11 @@ function Hello($scope, $http) {
       // Avaliacoes
       if(caminho == "avaliacoes"){
         url = ""+"avaliacao"+"/"+$scope.username+"/"+$scope.password;
-        $http.get(url).
+        $http.get(SapoApiURL + url).
         success(function(data) {
           $scope.avaliacoes = data;
           url2 = ""+"indicador"+"/"+$scope.username+"/"+$scope.password;
-          $http.get(url2).
+          $http.get(SapoApiURL + url2).
           success(function(data2) {
             $scope.indicadores = data2;
             $.each($scope.avaliacoes, function(key,objeto){
@@ -222,7 +223,7 @@ function Hello($scope, $http) {
         // Carrega indicadores
         url = ""+"indicador"+"/"+$scope.username+"/"+$scope.password;
         $("#indicador").empty();
-        $http.get(url).
+        $http.get(SapoApiURL + url).
         success(function(data) {
           $scope.indicadores = data;
           $.each($scope.indicadores, function(key,objeto){
@@ -233,7 +234,7 @@ function Hello($scope, $http) {
         // Carrega entidades
         url = ""+"entidades"+"/"+$scope.username+"/"+$scope.password;
         $("#select_entidades > .col-md-11").empty();
-        $http.get(url).
+        $http.get(SapoApiURL + url).
         success(function(data) {
           $scope.entidades = data;
           $.each($scope.entidades, function(key,objeto){
@@ -245,7 +246,7 @@ function Hello($scope, $http) {
         // Carrega Itens
         url = ""+"itens_indicador"+"/"+$scope.username+"/"+$scope.password+"/1";
         $("#select_itens").empty();
-        $http.get(url).
+        $http.get(SapoApiURL + url).
         success(function(data) {
           $scope.itens = data;
           $.each($scope.itens, function(key,objeto){
@@ -256,7 +257,7 @@ function Hello($scope, $http) {
           $("#indicador").on("change",function(){
             url = ""+"itens_indicador"+"/"+$scope.username+"/"+$scope.password+"/"+$("#indicador").val();
             $("#select_itens").empty();
-            $http.get(url).
+            $http.get(SapoApiURL + url).
             success(function(data) {
               $scope.itens = data;
               $.each($scope.itens, function(key,objeto){
@@ -282,11 +283,11 @@ function Hello($scope, $http) {
       if(caminho == "avaliando"){
 
         url = ""+"objetoavaliacao"+"/"+$scope.username+"/"+$scope.password+"/"+$scope.avaliando;
-        $http.get(url).
+        $http.get(SapoApiURL + url).
         success(function(data) {
           $scope.objetosdeavaliacao = data;
           url2 = ""+"entidades"+"/"+$scope.username+"/"+$scope.password;
-          $http.get(url2).
+          $http.get(SapoApiURL + url2).
           success(function(data2) {
             $scope.entidades = data2;
             $.each($scope.objetosdeavaliacao, function(key,objeto){
@@ -294,7 +295,7 @@ function Hello($scope, $http) {
                 objeto.entidade_nome = entidade.nome;
                 // GET /nota/@usuario/@senha/@objeto_id=Avaliacoes
                 url3 = ""+"nota"+"/"+$scope.username+"/"+$scope.password+"/"+objeto.id;
-                $http.get(url3).
+                $http.get(SapoApiURL + url3).
                 success(function(data3) {
                     notas = data3;
                     percent = 0;
@@ -315,7 +316,7 @@ function Hello($scope, $http) {
       // Avaliando nota com accordion
       if(caminho == "avaliando_nota"){
         url = ""+"itemrelacionado"+"/"+$scope.username+"/"+$scope.password+"/"+$scope.avaliando_objeto;
-        $http.get(url).
+        $http.get(SapoApiURL + url).
         success(function(data) {
           $scope.itensAvaliados = data;
           var pilares = [];
@@ -441,7 +442,7 @@ function Hello($scope, $http) {
                   }
                   var today = yyyy+'-'+mm+'-'+dd;
                   url = ""+"nota"+"/"+$scope.username+"/"+$scope.password+"/"+nota_id+"/"+$scope.usuario_id+"/"+pontuacao_id+"/"+today;
-                  $http.put(url).
+                  $http.put(SapoApiURL + url).
                   success(function(data) {
                     objeto = objectFindByKey($scope.itensAvaliados, 'nota_id', nota_id);
                     objeto.pontuacao_id = pontuacao_id;
@@ -492,7 +493,7 @@ function Hello($scope, $http) {
                    nota_id = $(this).attr('name');
                    pontuacao_id = $(this).val();
                    url_atualiza = ""+"nota"+"/"+$scope.username+"/"+$scope.password+"/"+nota_id+"/"+$scope.usuario_id+"/"+pontuacao_id+"/"+today;
-                   $http.put(url_atualiza).success(function(data_atualiza){
+                   $http.put(SapoApiURL + url_atualiza).success(function(data_atualiza){
                      console.log("Atualizado");
                    });
                  });
@@ -515,7 +516,7 @@ function Hello($scope, $http) {
           $scope.expandedNodes  = [];
 
           url = ""+"itemrelacionado"+"/"+$scope.username+"/"+$scope.password+"/"+$scope.avaliando_objeto;
-          $http.get(url).
+          $http.get(SapoApiURL + url).
           success(function(data) {
             $scope.itensAvaliados = data;
             var pilares = [];
@@ -645,6 +646,8 @@ function Hello($scope, $http) {
       }
 
       if(caminho == "indicadores") {
+        return;
+
         var defaultOption = {nome: 'Selecione', id: 0}
         var pontuacoesIndex = 0;
 
@@ -694,7 +697,7 @@ function Hello($scope, $http) {
 
             if (id == 0) { return; }
 
-            $http.get('pilar'+'/'+$scope.username+'/'+$scope.password).success(function (result) {
+            $http.get(SapoApiURL + 'pilar'+'/'+$scope.username+'/'+$scope.password).success(function (result) {
               result = result.filter(function(pilar) {return pilar.Indicador_id === $scope.model.indicador.id});
               result.push(defaultOption);
               $scope.model.pilar = defaultOption;
@@ -708,7 +711,7 @@ function Hello($scope, $http) {
 
             if (id == 0) { return; }
 
-            $http.get('tipo'+'/'+$scope.username+'/'+$scope.password).success(function (result) {
+            $http.get(SapoApiURL + 'tipo'+'/'+$scope.username+'/'+$scope.password).success(function (result) {
               result = result.filter(function(tipo) {return tipo.Pilar_id === $scope.model.pilar.id});
               result.push(defaultOption);
               $scope.model.tipo = defaultOption;
@@ -722,7 +725,7 @@ function Hello($scope, $http) {
 
             if (id == 0) { return; }
 
-            $http.get('nivel'+'/'+$scope.username+'/'+$scope.password).success(function (result) {
+            $http.get(SapoApiURL + 'nivel'+'/'+$scope.username+'/'+$scope.password).success(function (result) {
               result = result.filter(function(nivel) {return nivel.Tipo_id === $scope.model.tipo.id});
               result.push(defaultOption);
               $scope.model.nivel = defaultOption;
@@ -736,7 +739,7 @@ function Hello($scope, $http) {
 
             if (id == 0) { return; }
 
-            $http.get('subnivel'+'/'+$scope.username+'/'+$scope.password).success(function (result) {
+            $http.get(SapoApiURL + 'subnivel'+'/'+$scope.username+'/'+$scope.password).success(function (result) {
               result = result.filter(function(subnivel) {return subnivel.Nivel_id === $scope.model.nivel.id});
               result.push(defaultOption);
               $scope.model.subnivel = defaultOption;
@@ -757,7 +760,7 @@ function Hello($scope, $http) {
 
                 $http({
                     method: 'POST',
-                    url: 'pontuacao'+'/'+$scope.username+'/'+$scope.password,
+                    url: SapoApiURL + 'pontuacao'+'/'+$scope.username+'/'+$scope.password,
                     data: $scope.model.pontuacoes[pontuacaoIndex]
                 }).success(function (result) {
                   $scope.model.pontuacoes[pontuacaoIndex].id = result.id;
@@ -773,7 +776,7 @@ function Hello($scope, $http) {
             //save the item
             $http({
                 method: 'POST',
-                url: 'item'+'/'+$scope.username+'/'+$scope.password,
+                url: SapoApiURL + 'item'+'/'+$scope.username+'/'+$scope.password,
                 data: $scope.model.item
             }).success(function (result) {
               $scope.model.item.id = result.id;
@@ -794,7 +797,7 @@ function Hello($scope, $http) {
         //loading indicadores
         $http({
             method: 'GET',
-            url: 'indicador'+'/'+$scope.username+'/'+$scope.password,
+            url: SapoApiURL + 'indicador'+'/'+$scope.username+'/'+$scope.password,
             data: {}
         }).success(function (result) {
           result.push(defaultOption);
@@ -823,7 +826,7 @@ function Hello($scope, $http) {
 
     $scope.deletar_objeto = function(id){
       url = ""+"objetoavaliacao-delete"+"/"+$scope.username+"/"+$scope.password+"/"+id;
-      $http.delete(url).
+      $http.delete(SapoApiURL + url).
       success(function(data) {
         $scope.setConteudo("avaliando");
       })
@@ -831,7 +834,7 @@ function Hello($scope, $http) {
 
     $scope.deletar_avaliacao = function(id){
       url = ""+"avaliacao-delete"+"/"+$scope.username+"/"+$scope.password+"/"+id;
-      $http.delete(url).
+      $http.delete(SapoApiURL + url).
       success(function(data) {
         $scope.setConteudo("avaliacoes");
       })
@@ -844,8 +847,10 @@ function Hello($scope, $http) {
 		/* TODO: remover - pulando etapa de login */
 		$("#username").val('victor');
 		$("#password").val('123');
+    $("#entrar-btn").click();
+    /* *
     $scope.logar(function() {
-      //console.log('logado');
+      console.log('logado');
     });
 		/* */
 	});

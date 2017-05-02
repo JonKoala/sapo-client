@@ -12,7 +12,7 @@
     <app-location route="{{route}}"></app-location>
     <app-route
         route="{{route}}"
-        pattern="/sapo/:page"
+        pattern="/:page"
         data="{{routeData}}"
         tail="{{subroute}}"></app-route>
 
@@ -59,8 +59,8 @@
         if (window.angularScope) {
           let conteudo = (page === 'nothing') ? 'inicio' : page;
           if ($('#menu_topo #'+ conteudo + ' a').length > 0) {
-              $('#menu_topo #'+ conteudo + ' a').click();
               window.angularScope.setConteudo(conteudo);
+              $('#menu_topo #'+ conteudo + ' a').click(); //caso especial - view inicio
           }
         }
 
