@@ -5,11 +5,31 @@ app.get('/', function(req, res) {
    res.sendfile('index.html')
 });
 
-app.get('/indicadores', function(req, res) {
+app.get('/inicio', function(req, res) {
+  res.sendfile('index.html')
+});
+app.get('/inicio/*', function(req, res) {
   res.sendfile('index.html')
 });
 
 app.get('/avaliacoes', function(req, res) {
+  res.sendfile('index.html')
+});
+app.get('/avaliacoes/*', function(req, res) {
+  res.sendfile('index.html')
+});
+
+app.get('/nova_avaliacao', function(req, res) {
+  res.sendfile('index.html')
+});
+app.get('/nova_avaliacao/*', function(req, res) {
+  res.sendfile('index.html')
+});
+
+app.get('/indicadores', function(req, res) {
+  res.sendfile('index.html')
+});
+app.get('/indicadores/*', function(req, res) {
   res.sendfile('index.html')
 });
 
