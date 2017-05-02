@@ -848,10 +848,7 @@ function Hello($scope, $http) {
 		$("#username").val('victor');
 		$("#password").val('123');
     $("#entrar-btn").click();
-    /* *
-    $scope.logar(function() {
-      console.log('logado');
-    });
-		/* */
+    /* */
 	});
-};
+
+}
