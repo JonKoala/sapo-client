@@ -1,6 +1,9 @@
 
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../bower_components/paper-card/paper-card.html">
 <link rel="import" href="../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
 <link rel="import" href="../bower_components/paper-listbox/paper-listbox.html">
@@ -22,25 +25,67 @@
         min-width: 150px;
       }
 
-      #my-dropdown {
-        display: var(--my-elem-visibility);
+      paper-button {
+        color: white;
       }
+
+      paper-button.green {
+        background-color: #5cb85c;
+      }
+
+      paper-button.orange {
+        background-color: #f0ad4e;
+      }
+
+      paper-button.red {
+        background-color: #d9534f;
+      }
+
     </style>
 
-    <app-location route="{{route}}"></app-location>
+    <app-route
+      route="{{route}}"
+      pattern="/:indicador"
+      data="{{routeData}}"
+      tail="{{subroute}}">
+    </app-route>
 
-    <paper-card heading="TESTE" class="layout vertical fit">
+    <iron-ajax auto url="http://localhost:8080/sapo-api/indicador/[[usuario]]/[[senha]]" last-response="{{indicadores}}"></iron-ajax>
+    <iron-ajax id="getPilaresAjax" url="http://localhost:8080/sapo-api/pilar/[[usuario]]/[[senha]]" last-response="{{pilares}}"></iron-ajax>
+    <iron-ajax id="getTiposAjax" url="http://localhost:8080/sapo-api/tipo/[[usuario]]/[[senha]]" last-response="{{tipos}}"></iron-ajax>
 
-      <paper-dropdown-menu id="my-dropdown" label="Data Selector">
-        <paper-listbox slot="dropdown-content" selected="{{selected}}" attr-for-selected="value" class="dropdown-content">
-          <template is="dom-repeat" items="{{data}}">
-            <paper-item value="{{item.id}}" >{{item.name}}</paper-item>
+    <paper-card class="layout vertical fit">
+
+      <div>
+        <paper-dropdown-menu label="Indicador">
+          <paper-listbox slot="dropdown-content" selected="{{selectedIndicador}}" attr-for-selected="value" class="dropdown-content">
+            <template is="dom-repeat" items="[[indicadores]]">
+              <paper-item value="[[item.id]]" >[[item.nome]]</paper-item>
+            </template>
+          </paper-listbox>
+        </paper-dropdown-menu>
+        <paper-button raised class="green" ><iron-icon icon="add"></iron-icon>Novo</paper-button>
+        <paper-button raised class="orange" ><iron-icon icon="create"></iron-icon>Editar</paper-button>
+        <paper-button raised class="red" ><iron-icon icon="delete"></iron-icon>Remover</paper-button>
+      </div>
+
+      <paper-dropdown-menu label="Pilar">
+        <paper-listbox slot="dropdown-content" selected="{{selectedPilar}}" attr-for-selected="value" class="dropdown-content">
+          <template is="dom-repeat" items="[[pilares]]" filter="_filterPilares" >
+            <paper-item value="[[item.id]]" >[[item.nome]]</paper-item>
+          </template>
+        </paper-listbox>
+      </paper-dropdown-menu>
+
+      <paper-dropdown-menu label="Tipo">
+        <paper-listbox slot="dropdown-content" selected="{{selectedTipo}}" attr-for-selected="value" class="dropdown-content">
+          <template is="dom-repeat" items="[[tipos]]" filter="_filterTipos" >
+            <paper-item value="[[item.id]]" >[[item.nome]]</paper-item>
           </template>
         </paper-listbox>
       </paper-dropdown-menu>
 
     </paper-card>
-
 
   </template>
 
@@ -51,32 +96,50 @@
 
       static get properties() {
         return {
-          data: {
-            type: Array,
-            value() {
-              return [
-                {id: 1, name: "data 1"},
-                {id: 2, name: "data 2"},
-                {id: 3, name: "data 3"},
-                {id: 4, name: "data 4"}
-              ];
-            }
+          usuario: {
+            type: String,
+            value: 'victor'
           },
-          selected: {
+          senha: {
+            type: String,
+            value: '123'
+          },
+          selectedIndicador: {
             type: Number,
-            observer: '_selectedChanged'
+            observer: '_indicadorChanged'
+          },
+          selectedPilar: {
+            type: Number,
+            observer: '_pilarChanged'
+          },
+          selectedTipo: {
+            type: Number,
+            observer: '_tipoChanged'
           }
         }
       }
 
-      _selectedChanged(selected) {
-        console.log(selected);
-        console.log(this.data.find(function(obj) { return obj.id === selected; }));
+      _indicadorChanged(newId, oldId) {
+        this.$.getPilaresAjax.generateRequest();
+        this.selectedPilar = 0;
+        this.selectedTipo = 0;
+      }
 
-        //this.push('data', {id: this.data.length + 1, name: 'data ' + (this.data.length + 1)});
-        //this.set('display', "hidden");
+      _pilarChanged(newId, oldId) {
+        this.$.getTiposAjax.generateRequest();
+        this.selectedTipo = 0;
+      }
 
-        this.updateStyles({'--my-elem-visibility': 'none'});
+      _tipoChanged(newId, oldId) {
+
+      }
+
+      _filterPilares(pilar) {
+        return pilar.Indicador_id === this.selectedIndicador;
+      }
+
+      _filterTipos(tipo) {
+        return tipo.Pilar_id === this.selectedPilar;
       }
 
     }
