@@ -1,0 +1,72 @@
+
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../bower_components/paper-item/paper-item.html">
+
+<dom-module id="sapo-selector-crud">
+
+  <template>
+
+    <style>
+      paper-dropdown-menu {
+        width: 200px;
+      }
+      paper-item {
+        min-width: 150px;
+      }
+
+      paper-button {
+        color: white;
+      }
+
+      paper-button.green {
+        background-color: #5cb85c;
+      }
+
+      paper-button.orange {
+        background-color: #f0ad4e;
+      }
+
+      paper-button.red {
+        background-color: #d9534f;
+      }
+    </style>
+
+    <paper-dropdown-menu label="[[label]]">
+      <paper-listbox slot="dropdown-content" selected="{{selected}}" attr-for-selected="value" class="dropdown-content">
+        <template is="dom-repeat" items="[[data]]">
+          <paper-item value="[[item.id]]">[[item.nome]]</paper-item>
+        </template>
+      </paper-listbox>
+    </paper-dropdown-menu>
+
+    <paper-button raised class="green"><iron-icon icon="add"></iron-icon>Novo</paper-button>
+    <paper-button raised class="orange"><iron-icon icon="create"></iron-icon>Editar</paper-button>
+    <paper-button raised class="red"><iron-icon icon="delete"></iron-icon>Remover</paper-button>
+
+  </template>
+
+  <script>
+    class SapoSelectorCrud extends Polymer.Element {
+
+      static get is() { return 'sapo-selector-crud'; }
+
+      static get properties() {
+        return {
+          label: String,
+          data: Array,
+          selected: {
+            type: Number,
+            notify: true
+          }
+        }
+      }
+
+    }
+
+    window.customElements.define(SapoSelectorCrud.is, SapoSelectorCrud);
+  </script>
+</dom-module>

@@ -2,12 +2,8 @@
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 <link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
-<link rel="import" href="../bower_components/iron-icons/iron-icons.html">
-<link rel="import" href="../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../bower_components/paper-card/paper-card.html">
-<link rel="import" href="../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
-<link rel="import" href="../bower_components/paper-listbox/paper-listbox.html">
-<link rel="import" href="../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../elements/sapo-selector-crud.html">
 
 <dom-module id="sapo-indicadores">
 
@@ -18,29 +14,6 @@
         margin-left: 80px;
         margin-right: 80px;
       }
-      paper-dropdown-menu {
-        width: 200px;
-      }
-      paper-item {
-        min-width: 150px;
-      }
-
-      paper-button {
-        color: white;
-      }
-
-      paper-button.green {
-        background-color: #5cb85c;
-      }
-
-      paper-button.orange {
-        background-color: #f0ad4e;
-      }
-
-      paper-button.red {
-        background-color: #d9534f;
-      }
-
     </style>
 
     <app-route
@@ -51,39 +24,18 @@
     </app-route>
 
     <iron-ajax auto url="http://localhost:8080/sapo-api/indicador/[[usuario]]/[[senha]]" last-response="{{indicadores}}"></iron-ajax>
-    <iron-ajax id="getPilaresAjax" url="http://localhost:8080/sapo-api/pilar/[[usuario]]/[[senha]]" last-response="{{pilares}}"></iron-ajax>
-    <iron-ajax id="getTiposAjax" url="http://localhost:8080/sapo-api/tipo/[[usuario]]/[[senha]]" last-response="{{tipos}}"></iron-ajax>
+    <iron-ajax id="getPilaresAjax" url="http://localhost:8080/sapo-api/pilar/[[usuario]]/[[senha]]" on-response="_filterPilares"></iron-ajax>
+    <iron-ajax id="getTiposAjax" url="http://localhost:8080/sapo-api/tipo/[[usuario]]/[[senha]]" on-response="_filterTipos"></iron-ajax>
+    <iron-ajax id="getNiveisAjax" url="http://localhost:8080/sapo-api/nivel/[[usuario]]/[[senha]]" on-response="_filterNiveis"></iron-ajax>
+    <iron-ajax id="getSubniveisAjax" url="http://localhost:8080/sapo-api/subnivel/[[usuario]]/[[senha]]" on-response="_filterSubniveis"></iron-ajax>
 
     <paper-card class="layout vertical fit">
 
-      <div>
-        <paper-dropdown-menu label="Indicador">
-          <paper-listbox slot="dropdown-content" selected="{{selectedIndicador}}" attr-for-selected="value" class="dropdown-content">
-            <template is="dom-repeat" items="[[indicadores]]">
-              <paper-item value="[[item.id]]" >[[item.nome]]</paper-item>
-            </template>
-          </paper-listbox>
-        </paper-dropdown-menu>
-        <paper-button raised class="green" ><iron-icon icon="add"></iron-icon>Novo</paper-button>
-        <paper-button raised class="orange" ><iron-icon icon="create"></iron-icon>Editar</paper-button>
-        <paper-button raised class="red" ><iron-icon icon="delete"></iron-icon>Remover</paper-button>
-      </div>
-
-      <paper-dropdown-menu label="Pilar">
-        <paper-listbox slot="dropdown-content" selected="{{selectedPilar}}" attr-for-selected="value" class="dropdown-content">
-          <template is="dom-repeat" items="[[pilares]]" filter="_filterPilares" >
-            <paper-item value="[[item.id]]" >[[item.nome]]</paper-item>
-          </template>
-        </paper-listbox>
-      </paper-dropdown-menu>
-
-      <paper-dropdown-menu label="Tipo">
-        <paper-listbox slot="dropdown-content" selected="{{selectedTipo}}" attr-for-selected="value" class="dropdown-content">
-          <template is="dom-repeat" items="[[tipos]]" filter="_filterTipos" >
-            <paper-item value="[[item.id]]" >[[item.nome]]</paper-item>
-          </template>
-        </paper-listbox>
-      </paper-dropdown-menu>
+      <sapo-selector-crud label="Indicador" data="[[indicadores]]" selected="{{selectedIndicador}}"></sapo-selector-crud>
+      <sapo-selector-crud label="Pilar" data="[[pilares]]" selected="{{selectedPilar}}"></sapo-selector-crud>
+      <sapo-selector-crud label="Tipo" data="[[tipos]]" selected="{{selectedTipo}}"></sapo-selector-crud>
+      <sapo-selector-crud label="Nivel" data="[[niveis]]" selected="{{selectedNivel}}"></sapo-selector-crud>
+      <sapo-selector-crud label="Subnível" data="[[subniveis]]" selected="{{selectedSubnivel}}"></sapo-selector-crud>
 
     </paper-card>
 
@@ -115,7 +67,20 @@
           selectedTipo: {
             type: Number,
             observer: '_tipoChanged'
-          }
+          },
+          selectedNivel: {
+            type: Number,
+            observer: '_nivelChanged'
+          },
+          selectedSubnivel: {
+            type: Number,
+            observer: '_subnivelChanged'
+          },
+          indicadores: Array,
+          pilares: Array,
+          tipos: Array,
+          niveis: Array,
+          subniveis: Array
         }
       }
 
@@ -123,23 +88,50 @@
         this.$.getPilaresAjax.generateRequest();
         this.selectedPilar = 0;
         this.selectedTipo = 0;
+        this.selectedNivel = 0;
+        this.selectedSubnivel = 0;
       }
 
       _pilarChanged(newId, oldId) {
         this.$.getTiposAjax.generateRequest();
         this.selectedTipo = 0;
+        this.selectedNivel = 0;
+        this.selectedSubnivel = 0;
       }
 
       _tipoChanged(newId, oldId) {
+        this.$.getNiveisAjax.generateRequest();
+        this.selectedNivel = 0;
+        this.selectedSubnivel = 0;
+      }
+
+      _nivelChanged(newId, oldId) {
+        this.$.getSubniveisAjax.generateRequest();
+        this.selectedSubnivel = 0;
+      }
+
+      _subnivelChanged(newId, oldId) {
 
       }
 
-      _filterPilares(pilar) {
-        return pilar.Indicador_id === this.selectedIndicador;
+      _filterPilares(e) {
+        let pilares = e.detail.response;
+        this.pilares = pilares.filter((pilar) => { return pilar.Indicador_id === this.selectedIndicador; });
       }
 
-      _filterTipos(tipo) {
-        return tipo.Pilar_id === this.selectedPilar;
+      _filterTipos(e) {
+        let tipos = e.detail.response;
+        this.tipos = tipos.filter((tipo) => { return tipo.Pilar_id === this.selectedPilar; });
+      }
+
+      _filterNiveis(e) {
+        let niveis = e.detail.response;
+        this.niveis = niveis.filter((nivel) => { return nivel.Tipo_id === this.selectedTipo; });
+      }
+
+      _filterSubniveis(e) {
+        let subniveis = e.detail.response;
+        this.subniveis = subniveis.filter((subnivel) => { return subnivel.Nivel_id === this.selectedNivel; });
       }
 
     }
