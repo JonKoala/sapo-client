@@ -46,7 +46,7 @@ function toggleSucessMsg(show) {
   }
 }
 
-const SapoApiURL = 'http://localhost:8080/sapo-api/';
+const SapoApiURL = 'http://N350i-22878:8082/sapo-api-php/';
 function Hello($scope, $http) {
 
     $scope.username = "";
