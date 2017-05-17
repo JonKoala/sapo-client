@@ -46,7 +46,7 @@ function toggleSucessMsg(show) {
   }
 }
 
-const SapoApiURL = 'http://N350i-22878:8082/sapo-api-php/';
+const SapoApiURL = 'http://N350i-22878:8080/legacy/';
 function Hello($scope, $http) {
 
     $scope.username = "";
@@ -61,7 +61,7 @@ function Hello($scope, $http) {
       // usuario/luciano/123456
       var username = $("#username").val();
       var password = $("#password").val();
-      $scope.url = "usuario/"+username +"/"+password;
+      $scope.url = "usuario";
       $http.get(SapoApiURL + $scope.url).
       success(function(data) {
           $scope.usuarios = data;
@@ -202,11 +202,11 @@ function Hello($scope, $http) {
       $("#"+caminho).addClass("active");
       // Avaliacoes
       if(caminho == "avaliacoes"){
-        url = ""+"avaliacao"+"/"+$scope.username+"/"+$scope.password;
+        url = ""+"avaliacao";
         $http.get(SapoApiURL + url).
         success(function(data) {
           $scope.avaliacoes = data;
-          url2 = ""+"indicador"+"/"+$scope.username+"/"+$scope.password;
+          url2 = ""+"indicador";
           $http.get(SapoApiURL + url2).
           success(function(data2) {
             $scope.indicadores = data2;
@@ -221,7 +221,7 @@ function Hello($scope, $http) {
       // Nova avaliacao
       if(caminho == "nova_avaliacao"){
         // Carrega indicadores
-        url = ""+"indicador"+"/"+$scope.username+"/"+$scope.password;
+        url = ""+"indicador";
         $("#indicador").empty();
         $http.get(SapoApiURL + url).
         success(function(data) {
@@ -232,7 +232,7 @@ function Hello($scope, $http) {
           });
         });
         // Carrega entidades
-        url = ""+"entidades"+"/"+$scope.username+"/"+$scope.password;
+        url = ""+"entidades";
         $("#select_entidades > .col-md-11").empty();
         $http.get(SapoApiURL + url).
         success(function(data) {
@@ -244,7 +244,7 @@ function Hello($scope, $http) {
           });
         });
         // Carrega Itens
-        url = ""+"itens_indicador"+"/"+$scope.username+"/"+$scope.password+"/1";
+        url = ""+"itens_indicador/1";
         $("#select_itens").empty();
         $http.get(SapoApiURL + url).
         success(function(data) {
@@ -255,7 +255,7 @@ function Hello($scope, $http) {
                 $("#select_itens").append(check_box_preenchido);
           });
           $("#indicador").on("change",function(){
-            url = ""+"itens_indicador"+"/"+$scope.username+"/"+$scope.password+"/"+$("#indicador").val();
+            url = ""+"itens_indicador"+"/"+$("#indicador").val();
             $("#select_itens").empty();
             $http.get(SapoApiURL + url).
             success(function(data) {
@@ -282,11 +282,11 @@ function Hello($scope, $http) {
       // Proxima aba
       if(caminho == "avaliando"){
 
-        url = ""+"objetoavaliacao"+"/"+$scope.username+"/"+$scope.password+"/"+$scope.avaliando;
+        url = ""+"objetoavaliacao"+"/"+$scope.avaliando;
         $http.get(SapoApiURL + url).
         success(function(data) {
           $scope.objetosdeavaliacao = data;
-          url2 = ""+"entidades"+"/"+$scope.username+"/"+$scope.password;
+          url2 = ""+"entidades";
           $http.get(SapoApiURL + url2).
           success(function(data2) {
             $scope.entidades = data2;
@@ -294,7 +294,7 @@ function Hello($scope, $http) {
                 entidade = objectFindByKey($scope.entidades, "id", objeto.Entidade_id );
                 objeto.entidade_nome = entidade.nome;
                 // GET /nota/@usuario/@senha/@objeto_id=Avaliacoes
-                url3 = ""+"nota"+"/"+$scope.username+"/"+$scope.password+"/"+objeto.id;
+                url3 = ""+"nota"+"/"+objeto.id;
                 $http.get(SapoApiURL + url3).
                 success(function(data3) {
                     notas = data3;
@@ -315,7 +315,7 @@ function Hello($scope, $http) {
 
       // Avaliando nota com accordion
       if(caminho == "avaliando_nota"){
-        url = ""+"itemrelacionado"+"/"+$scope.username+"/"+$scope.password+"/"+$scope.avaliando_objeto;
+        url = ""+"itemrelacionado"+"/"+$scope.avaliando_objeto;
         $http.get(SapoApiURL + url).
         success(function(data) {
           $scope.itensAvaliados = data;
@@ -515,7 +515,7 @@ function Hello($scope, $http) {
           }
           $scope.expandedNodes  = [];
 
-          url = ""+"itemrelacionado"+"/"+$scope.username+"/"+$scope.password+"/"+$scope.avaliando_objeto;
+          url = ""+"itemrelacionado"+"/"+$scope.avaliando_objeto;
           $http.get(SapoApiURL + url).
           success(function(data) {
             $scope.itensAvaliados = data;
@@ -697,7 +697,7 @@ function Hello($scope, $http) {
 
             if (id == 0) { return; }
 
-            $http.get(SapoApiURL + 'pilar'+'/'+$scope.username+'/'+$scope.password).success(function (result) {
+            $http.get(SapoApiURL + 'pilar').success(function (result) {
               result = result.filter(function(pilar) {return pilar.Indicador_id === $scope.model.indicador.id});
               result.push(defaultOption);
               $scope.model.pilar = defaultOption;
@@ -711,7 +711,7 @@ function Hello($scope, $http) {
 
             if (id == 0) { return; }
 
-            $http.get(SapoApiURL + 'tipo'+'/'+$scope.username+'/'+$scope.password).success(function (result) {
+            $http.get(SapoApiURL + 'tipo').success(function (result) {
               result = result.filter(function(tipo) {return tipo.Pilar_id === $scope.model.pilar.id});
               result.push(defaultOption);
               $scope.model.tipo = defaultOption;
@@ -725,7 +725,7 @@ function Hello($scope, $http) {
 
             if (id == 0) { return; }
 
-            $http.get(SapoApiURL + 'nivel'+'/'+$scope.username+'/'+$scope.password).success(function (result) {
+            $http.get(SapoApiURL + 'nivel').success(function (result) {
               result = result.filter(function(nivel) {return nivel.Tipo_id === $scope.model.tipo.id});
               result.push(defaultOption);
               $scope.model.nivel = defaultOption;
@@ -739,7 +739,7 @@ function Hello($scope, $http) {
 
             if (id == 0) { return; }
 
-            $http.get(SapoApiURL + 'subnivel'+'/'+$scope.username+'/'+$scope.password).success(function (result) {
+            $http.get(SapoApiURL + 'subnivel').success(function (result) {
               result = result.filter(function(subnivel) {return subnivel.Nivel_id === $scope.model.nivel.id});
               result.push(defaultOption);
               $scope.model.subnivel = defaultOption;
