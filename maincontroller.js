@@ -143,7 +143,7 @@ function Hello($scope, $http) {
       // Variaveis carregadas, hora de criar as tabelas de notas.
       // Primeiro passo criar avaliacao.
       // avaliacao/luciano/123456/1/AvalPostTeste/ObjetivoTeste/2016-01-01/null
-      url = ""+"avaliacao"+"/"+$scope.na_indicador+"/"+$scope.na_nome+"/"+$scope.na_objetivos+"/"+today;
+      url = ""+"avaliacao"+"/"+$scope.na_indicador+"/"+$scope.na_nome+"/"+today+"/"+$scope.na_objetivos;
       $http.post(SapoApiURL + url).
       success(function(data) {
         // Segundo passo criar ObjetoDeAvaliacao.
