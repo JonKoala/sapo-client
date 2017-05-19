@@ -143,7 +143,7 @@ function Hello($scope, $http) {
       // Variaveis carregadas, hora de criar as tabelas de notas.
       // Primeiro passo criar avaliacao.
       // avaliacao/luciano/123456/1/AvalPostTeste/ObjetivoTeste/2016-01-01/null
-      url = ""+"avaliacao"+"/"+$scope.username+"/"+$scope.password+"/"+$scope.na_indicador+"/"+$scope.na_nome+"/"+$scope.na_objetivos+"/"+today;
+      url = ""+"avaliacao"+"/"+$scope.na_indicador+"/"+$scope.na_nome+"/"+$scope.na_objetivos+"/"+today;
       $http.post(SapoApiURL + url).
       success(function(data) {
         // Segundo passo criar ObjetoDeAvaliacao.
@@ -153,9 +153,9 @@ function Hello($scope, $http) {
           // console.log($scope.na_entidades[i]);
           // POST /objetoavaliacao/@usuario/@senha/@entidade_id/@avaliacao_id/@observacoes=Avaliacoes->postObjetoAvaliacao
           if($scope.na_observacoes.length>1){
-            url_objetoavaliacao = ""+"objetoavaliacao"+"/"+$scope.username+"/"+$scope.password+"/"+$scope.na_entidades[i]+"/"+avaliacao_id+"/"+$scope.na_observacoes;
+            url_objetoavaliacao = ""+"objetoavaliacao"+"/"+$scope.na_entidades[i]+"/"+avaliacao_id+"/"+$scope.na_observacoes;
           }else{
-            url_objetoavaliacao = ""+"objetoavaliacao"+"/"+$scope.username+"/"+$scope.password+"/"+$scope.na_entidades[i]+"/"+avaliacao_id;
+            url_objetoavaliacao = ""+"objetoavaliacao"+"/"+$scope.na_entidades[i]+"/"+avaliacao_id;
           }
           $http.post(SapoApiURL + url_objetoavaliacao).
           success(function(data2) {
@@ -164,7 +164,7 @@ function Hello($scope, $http) {
             // POST /nota/@usuario/@senha/@usuario_id/@item_id/@objetodeavaliacao_id/@observacoes=Avaliacoes->postNota
             // url_nota = ""+"nota"+"/"+$scope.username+"/"+$scope.password+"/"+$scope.usuario_id+"/"+MUDARR+"/"+objetoavaliacao_id+"/null";
             for(var j = 0 ; j<$scope.na_itens.length;j++){
-              url_nota = ""+"nota"+"/"+$scope.username+"/"+$scope.password+"/"+$scope.usuario_id+"/"+$scope.na_itens[j]+"/"+objetoavaliacao_id;
+              url_nota = ""+"nota"+"/"+$scope.usuario_id+"/"+$scope.na_itens[j]+"/"+objetoavaliacao_id;
               $http.post(SapoApiURL + url_nota).
               success(function(data3) {
                 console.log("Inseri um item");
@@ -300,7 +300,7 @@ function Hello($scope, $http) {
                     notas = data3;
                     percent = 0;
                     $.each(notas, function(key,objeto2){
-                      if(objeto2.Pontuacao_id != 0){
+                      if(objeto2.Pontuacao_id != 0 && objeto2.Pontuacao_id != null){
                         percent = percent + 1;
                       }
                     });
@@ -327,7 +327,7 @@ function Hello($scope, $http) {
 
           var qtd = 0;
           $.each($scope.itensAvaliados, function(key,objeto){
-            if(objeto.pontuacao_id != 0){
+            if(objeto.pontuacao_id != 0 && objeto.pontuacao_id != null){
               qtd = qtd + 1;
             }
           });
@@ -402,7 +402,7 @@ function Hello($scope, $http) {
             // ProgressBar
             var qtd = 0;
             $.each($scope.itensAvaliados, function(key,objeto){
-              if(objeto.pontuacao_id != 0){
+              if(objeto.pontuacao_id != 0 && objeto.pontuacao_id != null){
                 $(".checkbox_tabela[name="+objeto.nota_id+"]").filter("[value='"+objeto.pontuacao_id+"']").attr('checked', true);
                 qtd = qtd + 1;
                 botao_a_mudar = $(".checkbox_tabela[name="+objeto.nota_id+"]").filter("[value='"+objeto.pontuacao_id+"']").parent().parent().parent().parent().parent().parent().parent().prev();
@@ -441,14 +441,14 @@ function Hello($scope, $http) {
                       mm='0'+mm
                   }
                   var today = yyyy+'-'+mm+'-'+dd;
-                  url = ""+"nota"+"/"+$scope.username+"/"+$scope.password+"/"+nota_id+"/"+$scope.usuario_id+"/"+pontuacao_id+"/"+today;
+                  url = ""+"nota"+"/"+nota_id+"/"+$scope.usuario_id+"/"+pontuacao_id+"/"+today;
                   $http.put(SapoApiURL + url).
                   success(function(data) {
                     objeto = objectFindByKey($scope.itensAvaliados, 'nota_id', nota_id);
                     objeto.pontuacao_id = pontuacao_id;
                     qtd = 0;
                     $.each($scope.itensAvaliados, function(key,objeto){
-                      if(objeto.pontuacao_id != 0){
+                      if(objeto.pontuacao_id != 0 && objeto.pontuacao_id != null){
                         qtd = qtd + 1;
                         botao_a_mudar = $(".checkbox_tabela[name="+objeto.nota_id+"]").filter("[value='"+objeto.pontuacao_id+"']").parent().parent().parent().parent().parent().parent().parent().prev();
                         $(botao_a_mudar).removeClass("btn-default").addClass("btn-success");
@@ -492,7 +492,7 @@ function Hello($scope, $http) {
                    var today = yyyy+'-'+mm+'-'+dd;
                    nota_id = $(this).attr('name');
                    pontuacao_id = $(this).val();
-                   url_atualiza = ""+"nota"+"/"+$scope.username+"/"+$scope.password+"/"+nota_id+"/"+$scope.usuario_id+"/"+pontuacao_id+"/"+today;
+                   url_atualiza = ""+"nota"+"/"+nota_id+"/"+$scope.usuario_id+"/"+pontuacao_id+"/"+today;
                    $http.put(SapoApiURL + url_atualiza).success(function(data_atualiza){
                      console.log("Atualizado");
                    });
@@ -629,7 +629,7 @@ function Hello($scope, $http) {
                 // Filhos
                 var status = 0;
                 $.each(e.itens,function(key,obj){
-                  if(obj.pontuacao_id != 0){
+                  if(obj.pontuacao_id != 0 && obj.pontuacao_id != null){
                     status = status + 1;
                   }
                 });
@@ -825,7 +825,7 @@ function Hello($scope, $http) {
     }
 
     $scope.deletar_objeto = function(id){
-      url = ""+"objetoavaliacao-delete"+"/"+$scope.username+"/"+$scope.password+"/"+id;
+      url = ""+"objetoavaliacao-delete"+"/"+id;
       $http.delete(SapoApiURL + url).
       success(function(data) {
         $scope.setConteudo("avaliando");
@@ -833,7 +833,7 @@ function Hello($scope, $http) {
     }
 
     $scope.deletar_avaliacao = function(id){
-      url = ""+"avaliacao-delete"+"/"+$scope.username+"/"+$scope.password+"/"+id;
+      url = ""+"avaliacao-delete"+"/"+id;
       $http.delete(SapoApiURL + url).
       success(function(data) {
         $scope.setConteudo("avaliacoes");
