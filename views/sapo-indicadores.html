@@ -23,19 +23,19 @@
       tail="{{subroute}}">
     </app-route>
 
-    <iron-ajax auto url="http://N350i-22878:8082/sapo-api-php/indicador/[[usuario]]/[[senha]]" last-response="{{indicadores}}"></iron-ajax>
-    <iron-ajax id="getPilaresAjax" url="http://N350i-22878:8082/sapo-api-php/pilar/[[usuario]]/[[senha]]" on-response="_filterPilares"></iron-ajax>
-    <iron-ajax id="getTiposAjax" url="http://N350i-22878:8082/sapo-api-php/tipo/[[usuario]]/[[senha]]" on-response="_filterTipos"></iron-ajax>
-    <iron-ajax id="getNiveisAjax" url="http://N350i-22878:8082/sapo-api-php/nivel/[[usuario]]/[[senha]]" on-response="_filterNiveis"></iron-ajax>
-    <iron-ajax id="getSubniveisAjax" url="http://N350i-22878:8082/sapo-api-php/subnivel/[[usuario]]/[[senha]]" on-response="_filterSubniveis"></iron-ajax>
+    <iron-ajax auto url="http://N350i-22878:8080/indicadores/" last-response="{{indicadores}}"></iron-ajax>
+    <iron-ajax id="getPilaresAjax" url="http://N350i-22878:8080/pilares/indicador/[[selectedIndicador]]" last-response="{{pilares}}"></iron-ajax>
+    <iron-ajax id="getTiposAjax" url="http://N350i-22878:8080/tipos/pilar/[[selectedPilar]]" last-response="{{tipos}}"></iron-ajax>
+    <iron-ajax id="getNiveisAjax" url="http://N350i-22878:8080/niveis/tipo/[[selectedTipo]]" last-response="{{niveis}}"></iron-ajax>
+    <iron-ajax id="getSubniveisAjax" url="http://N350i-22878:8080/subniveis/nivel/[[selectedNivel]]" last-response="{{subniveis}}"></iron-ajax>
 
     <paper-card class="layout vertical fit">
 
-      <sapo-selector-crud label="Indicador" data="[[indicadores]]" selected="{{selectedIndicador}}"></sapo-selector-crud>
-      <sapo-selector-crud label="Pilar" data="[[pilares]]" selected="{{selectedPilar}}"></sapo-selector-crud>
-      <sapo-selector-crud label="Tipo" data="[[tipos]]" selected="{{selectedTipo}}"></sapo-selector-crud>
-      <sapo-selector-crud label="Nivel" data="[[niveis]]" selected="{{selectedNivel}}"></sapo-selector-crud>
-      <sapo-selector-crud label="Subnível" data="[[subniveis]]" selected="{{selectedSubnivel}}"></sapo-selector-crud>
+      <sapo-selector-crud id="indicadorSelector" label="Indicador" data="[[indicadores]]" selected="{{selectedIndicador}}" ></sapo-selector-crud>
+      <sapo-selector-crud id="pilarSelector" label="Pilar" data="[[pilares]]" selected="{{selectedPilar}}"></sapo-selector-crud>
+      <sapo-selector-crud id="tipoSelector" label="Tipo" data="[[tipos]]" selected="{{selectedTipo}}"></sapo-selector-crud>
+      <sapo-selector-crud id="nivelSelector" label="Nivel" data="[[niveis]]" selected="{{selectedNivel}}"></sapo-selector-crud>
+      <sapo-selector-crud id="subnivelSelector" label="Subnível" data="[[subniveis]]" selected="{{selectedSubnivel}}"></sapo-selector-crud>
 
     </paper-card>
 
@@ -48,14 +48,6 @@
 
       static get properties() {
         return {
-          usuario: {
-            type: String,
-            value: 'victor'
-          },
-          senha: {
-            type: String,
-            value: '123'
-          },
           selectedIndicador: {
             type: Number,
             observer: '_indicadorChanged'
@@ -84,54 +76,32 @@
         }
       }
 
+      constructor() {
+        super();
+      }
+
       _indicadorChanged(newId, oldId) {
+        this.$.pilarSelector.disabled = (newId === 0);
         this.$.getPilaresAjax.generateRequest();
-        this.selectedPilar = 0;
-        this.selectedTipo = 0;
-        this.selectedNivel = 0;
-        this.selectedSubnivel = 0;
       }
 
       _pilarChanged(newId, oldId) {
+        this.$.tipoSelector.disabled = (newId === 0);
         this.$.getTiposAjax.generateRequest();
-        this.selectedTipo = 0;
-        this.selectedNivel = 0;
-        this.selectedSubnivel = 0;
       }
 
       _tipoChanged(newId, oldId) {
+        this.$.nivelSelector.disabled = (newId === 0);
         this.$.getNiveisAjax.generateRequest();
-        this.selectedNivel = 0;
-        this.selectedSubnivel = 0;
       }
 
       _nivelChanged(newId, oldId) {
+        this.$.subnivelSelector.disabled = (newId === 0);
         this.$.getSubniveisAjax.generateRequest();
-        this.selectedSubnivel = 0;
       }
 
       _subnivelChanged(newId, oldId) {
 
-      }
-
-      _filterPilares(e) {
-        let pilares = e.detail.response;
-        this.pilares = pilares.filter((pilar) => { return pilar.Indicador_id === this.selectedIndicador; });
-      }
-
-      _filterTipos(e) {
-        let tipos = e.detail.response;
-        this.tipos = tipos.filter((tipo) => { return tipo.Pilar_id === this.selectedPilar; });
-      }
-
-      _filterNiveis(e) {
-        let niveis = e.detail.response;
-        this.niveis = niveis.filter((nivel) => { return nivel.Tipo_id === this.selectedTipo; });
-      }
-
-      _filterSubniveis(e) {
-        let subniveis = e.detail.response;
-        this.subniveis = subniveis.filter((subnivel) => { return subnivel.Nivel_id === this.selectedNivel; });
       }
 
     }
