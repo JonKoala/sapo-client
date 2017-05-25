@@ -49,7 +49,7 @@
       </paper-listbox>
     </paper-dropdown-menu>
 
-    <paper-button id="addButton" raised disabled="[[disabled]]" class="green"><iron-icon icon="add"></iron-icon>Novo</paper-button>
+    <paper-button id="addButton" raised disabled="[[disabled]]" on-click="_addClicked" class="green"><iron-icon icon="add"></iron-icon>Novo</paper-button>
     <paper-button id="editButton" raised disabled class="orange"><iron-icon icon="create"></iron-icon>Editar</paper-button>
     <paper-button id="deleteButton" raised disabled class="red"><iron-icon icon="delete"></iron-icon>Remover</paper-button>
 
@@ -70,15 +70,11 @@
           selected: {
             type: Number,
             notify: true,
+            value: 0,
             observer: '_selectedChanged'
           },
           disabled: Boolean
         }
-      }
-
-      constructor() {
-        super();
-        this.selected = 0;
       }
 
       _dataChanged(newData) {
@@ -89,6 +85,10 @@
       _selectedChanged(newValue) {
         this.$.editButton.disabled = (newValue === 0);
         this.$.deleteButton.disabled = (newValue === 0);
+      }
+
+      _addClicked() {
+        this.dispatchEvent(new CustomEvent('add'));
       }
 
     }

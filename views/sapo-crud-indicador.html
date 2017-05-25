@@ -1,0 +1,109 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/iron-form/iron-form.html">
+<link rel="import" href="../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../bower_components/paper-input/paper-textarea.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+
+
+<dom-module id="sapo-crud-indicador">
+
+  <template>
+
+    <style>
+
+      div {
+        padding-top: 50px;
+      }
+
+      paper-button {
+        color: white;
+      }
+
+      .blue {
+        background: #337ab7;
+      }
+
+      .gray {
+        background: #616161;
+      }
+
+      paper-button[disabled] {
+        background: #eaeaea;
+        color: #a8a8a8;
+      }
+
+    </style>
+
+    <iron-ajax id="postIndicadorAjax"
+      url="http://N350i-22878:8080/indicadores/new/"
+      method="POST"
+      content-type="application/json"
+      handle-as="json"
+      on-response="_ajaxResponse">
+    </iron-ajax>
+
+    <paper-input name="nome" label="Nome" value="{{nome}}" required></paper-input>
+    <paper-textarea id="objetivosInput" name="objetivos" label="Objetivos" value="{{objetivos}}" rows="3" ></paper-textarea>
+
+    <div>
+      <paper-button disabled=[[saveDisabled]] class="blue" on-click="_submitClicked" raised><iron-icon icon="save"></iron-icon>Salvar</paper-button>
+      <paper-button class="gray" on-click="_clearClicked" raised><iron-icon icon="rounded-corner"></iron-icon>Limpar</paper-button>
+    </div>
+
+  </template>
+
+  <script>
+    class SapoCrudIndicador extends Polymer.Element {
+
+      static get is() { return 'sapo-crud-indicador'; }
+
+      static get properties() {
+        return {
+          nome: String,
+          objetivos: String,
+          saveDisabled: {
+            type: Boolean,
+            value: true,
+            computed: '_checkRequired(nome)'
+          }
+        }
+      }
+
+      _checkRequired(nome) {
+        return (!nome.trim());
+      }
+
+      _clearClicked() {
+        this.clear();
+      }
+
+      _submitClicked() {
+        this.$.postIndicadorAjax.body = {
+          nome: this.nome,
+          objetivos: this.objetivos
+        };
+
+        this.$.postIndicadorAjax.generateRequest();
+      }
+
+      _ajaxResponse(e) {
+        this.dispatchEvent(new CustomEvent('save', {detail: e.detail.response}));
+        this.clear();
+      }
+
+      clear() {
+        this.nome = "";
+        this.objetivos = "";
+
+        //paper-textarea não da blur quando seu valor fica nulo (because fuck you, that's why)
+        this.$.objetivosInput.focus();
+        this.$.objetivosInput.blur();
+      }
+
+    }
+
+    window.customElements.define(SapoCrudIndicador.is, SapoCrudIndicador);
+  </script>
+</dom-module>

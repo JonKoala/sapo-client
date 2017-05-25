@@ -1,0 +1,57 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/iron-overlay-behavior/iron-overlay-behavior.html">
+
+<dom-module id="sapo-overlay">
+
+  <template>
+    <style>
+
+      div {
+        border-radius: 5px;
+        padding: 20px;
+        background: white;
+        height: 100%;
+      }
+
+      .close {
+        width: 40px;
+        height: 40px;
+        position: absolute;
+        left: -20px;
+        top: -20px;
+        background: white;
+        border: 1px solid #ededed;
+        border-radius: 50%;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
+      }
+    </style>
+
+    <div>
+      <div class="close" on-click="_closeClicked" ><iron-icon icon="close"></iron-icon></div>
+      <slot></slot>
+    </div>
+
+  </template>
+
+  <script>
+    class SapoOverlay extends Polymer.mixinBehaviors([Polymer.IronOverlayBehavior], Polymer.Element) {
+
+      static get is() { return 'sapo-overlay'; }
+
+      _closeClicked() {
+        this.close();
+      }
+
+    }
+
+    window.customElements.define(SapoOverlay.is, SapoOverlay);
+  </script>
+</dom-module>

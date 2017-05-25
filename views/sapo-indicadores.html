@@ -4,6 +4,8 @@
 <link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
 <link rel="import" href="../bower_components/paper-card/paper-card.html">
 <link rel="import" href="../elements/sapo-selector-crud.html">
+<link rel="import" href="../elements/sapo-overlay.html">
+<link rel="import" href="./sapo-crud-indicador.html">
 
 <dom-module id="sapo-indicadores">
 
@@ -14,6 +16,10 @@
         margin-left: 80px;
         margin-right: 80px;
       }
+      sapo-overlay {
+        margin: 80px;
+        min-width: 500px;
+      }
     </style>
 
     <app-route
@@ -23,7 +29,7 @@
       tail="{{subroute}}">
     </app-route>
 
-    <iron-ajax auto url="http://N350i-22878:8080/indicadores/" last-response="{{indicadores}}"></iron-ajax>
+    <iron-ajax auto id="getIndicadoresAjax" url="http://N350i-22878:8080/indicadores/" last-response="{{indicadores}}"></iron-ajax>
     <iron-ajax id="getPilaresAjax" url="http://N350i-22878:8080/pilares/indicador/[[selectedIndicador]]" last-response="{{pilares}}"></iron-ajax>
     <iron-ajax id="getTiposAjax" url="http://N350i-22878:8080/tipos/pilar/[[selectedPilar]]" last-response="{{tipos}}"></iron-ajax>
     <iron-ajax id="getNiveisAjax" url="http://N350i-22878:8080/niveis/tipo/[[selectedTipo]]" last-response="{{niveis}}"></iron-ajax>
@@ -31,13 +37,17 @@
 
     <paper-card class="layout vertical fit">
 
-      <sapo-selector-crud id="indicadorSelector" label="Indicador" data="[[indicadores]]" selected="{{selectedIndicador}}" ></sapo-selector-crud>
+      <sapo-selector-crud id="indicadorSelector" label="Indicador" data="[[indicadores]]" selected="{{selectedIndicador}}" on-add="_newIndicador" ></sapo-selector-crud>
       <sapo-selector-crud id="pilarSelector" label="Pilar" data="[[pilares]]" selected="{{selectedPilar}}"></sapo-selector-crud>
       <sapo-selector-crud id="tipoSelector" label="Tipo" data="[[tipos]]" selected="{{selectedTipo}}"></sapo-selector-crud>
       <sapo-selector-crud id="nivelSelector" label="Nivel" data="[[niveis]]" selected="{{selectedNivel}}"></sapo-selector-crud>
       <sapo-selector-crud id="subnivelSelector" label="Subnível" data="[[subniveis]]" selected="{{selectedSubnivel}}"></sapo-selector-crud>
 
     </paper-card>
+
+    <sapo-overlay id="overlayArea" with-backdrop>
+      <sapo-crud-indicador on-save="_indicadorSaved" ></sapo-crud-indicador>
+    </sapo-overlay>
 
   </template>
 
@@ -76,10 +86,6 @@
         }
       }
 
-      constructor() {
-        super();
-      }
-
       _indicadorChanged(newId, oldId) {
         this.$.pilarSelector.disabled = (newId === 0);
         this.$.getPilaresAjax.generateRequest();
@@ -102,6 +108,21 @@
 
       _subnivelChanged(newId, oldId) {
 
+      }
+
+      _newIndicador() {
+        this.$.overlayArea.open();
+      }
+
+      _indicadorSaved(e) {
+        this.$.overlayArea.close();
+
+        let indicador = e.detail;
+
+        this.$.getIndicadoresAjax.generateRequest().completes
+          .then(() => {
+            this.selectedIndicador = indicador.id;
+          });
       }
 
     }
