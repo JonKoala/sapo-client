@@ -335,7 +335,6 @@ function Hello($scope, $http) {
           $(".progress-bar-striped").css("width",status+"%");
           $(".progress-bar-striped").html(status+"%");
 
-
           // Preenche pilares
           for (var i = 0; i < $scope.itensAvaliados.length; i++) {
             temp = $scope.itensAvaliados[i];
@@ -490,11 +489,16 @@ function Hello($scope, $http) {
                        mm='0'+mm
                    }
                    var today = yyyy+'-'+mm+'-'+dd;
+                   var item_id = $(this).attr('item-id');
                    nota_id = $(this).attr('name');
                    pontuacao_id = $(this).val();
                    url_atualiza = ""+"nota"+"/"+nota_id+"/"+$scope.usuario_id+"/"+pontuacao_id+"/"+today;
                    $http.put(SapoApiURL + url_atualiza).success(function(data_atualiza){
-                     console.log("Atualizado");
+
+                     //atualiza o scope
+                     let selectedItem = $scope.selectedNode.itens.find((item) => {return item.id == item_id});
+                     selectedItem.pontuacao_id = pontuacao_id;
+                     selectedItem.nota_id = nota_id;
                    });
                  });
                },100);

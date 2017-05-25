@@ -341,7 +341,7 @@
                         <td>{{item.nome}}</td>
                         <td>{{item.exigencia}}</td>
                         <td>
-                          <select name="{{item.nota_id}}" class="form-control">
+                          <select name="{{item.nota_id}}" item-id="{{item.id}}" class="form-control">
                             <option ng-selected="{{pontuacao.id == item.pontuacao_id}}" value="0">
                               Não avaliado
                             </option>
