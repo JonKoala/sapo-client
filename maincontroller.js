@@ -496,7 +496,7 @@ function Hello($scope, $http) {
                    $http.put(SapoApiURL + url_atualiza).success(function(data_atualiza){
 
                      //atualiza o scope
-                     let selectedItem = $scope.selectedNode.itens.find((item) => {return item.id == item_id});
+                     let selectedItem = $scope.selectedNode.itens.find(item => {return item.id == item_id});
                      selectedItem.pontuacao_id = pontuacao_id;
                      selectedItem.nota_id = nota_id;
                    });
@@ -531,6 +531,67 @@ function Hello($scope, $http) {
 
             var objtemp = $scope.itensAvaliados[0];
             $scope.entidade_avaliada = objtemp.entidade;
+
+
+            pilares = data.map(item => { return item.pilar; });
+            pilares = pilares.filter((v, i) => { return pilares.indexOf(v) == i;});
+
+            tipos = data.map(item => { return item.tipo; });
+            tipos = tipos.filter((v, i) => { return tipos.indexOf(v) == i;});
+
+            niveis = data.map(item => { return item.nivel; });
+            niveis = niveis.filter((v, i) => { return niveis.indexOf(v) == i;});
+
+            subniveis = data.map(item => { return item.subnivel; });
+            subniveis = subniveis.filter((v, i) => { return subniveis.indexOf(v) == i;});
+
+            var treeData = [];
+            data.forEach((item) => {
+
+              if (!treeData.find(e => e.name == item.pilar)) {
+
+                treeData.push({name: item.pilar, children: []});
+              }
+
+              if (!treeData.find(e => e.name == item.pilar)
+              .children.find(c => c.name == item.tipo)) {
+
+                treeData.find(e => e.name == item.pilar)
+                  .children.push({name: item.tipo, children: []});
+              }
+
+              if (!treeData.find(e => e.name == item.pilar)
+              .children.find(c => c.name == item.tipo)
+              .children.find(c => c.name == item.nivel)) {
+
+                treeData.find(e => e.name == item.pilar)
+                .children.find(c => c.name == item.tipo)
+                .children.push({name: item.nivel, children: []});
+              }
+
+              if (!treeData.find(e => e.name == item.pilar)
+              .children.find(c => c.name == item.tipo)
+              .children.find(c => c.name == item.nivel)
+              .children.find(c => c.name == item.subnivel)) {
+
+                treeData.find(e => e.name == item.pilar)
+                .children.find(c => c.name == item.tipo)
+                .children.find(c => c.name == item.nivel)
+                .children.push({name: item.subnivel, itens: []});
+              }
+
+              treeData.find(e => e.name == item.pilar)
+              .children.find(c => c.name == item.tipo)
+              .children.find(c => c.name == item.nivel)
+              .children.find(c => c.name == item.subnivel)
+              .itens.push(item);
+            });
+
+            /*
+            console.log(treeData);
+
+
+            pilares = [];
 
 
             // Preenche pilares
@@ -591,7 +652,6 @@ function Hello($scope, $http) {
               }
             }
 
-
             for (var i = 0; i < $scope.itensAvaliados.length; i++) {
               temp = $scope.itensAvaliados[i];
               for (var j = 0; j < pilares.length; j++) {
@@ -612,8 +672,11 @@ function Hello($scope, $http) {
               }
             }
 
-            console.log(pilares);
-            $scope.dataForTheTree = pilares;
+            //console.log(JSON.stringify(pilares));
+            //console.log(pilares);
+            */
+
+            $scope.dataForTheTree = treeData;
             $scope.expandAll = function(){
               var allNodes = [];
               function addToAllNodes(children) {
