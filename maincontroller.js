@@ -515,6 +515,9 @@ function Hello($scope, $http) {
                   iLeaf: "a5",
                   label: "a6",
                   labelSelected: "a8"
+              },
+              equality: function(node1, node2) {
+                return node1 === node2;
               }
           }
           $scope.expandedNodes  = [];
