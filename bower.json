@@ -1,5 +1,5 @@
 {
-  "name": "sapo",
+  "name": "sapo-client",
   "ignore": [
     "**/.*",
     "bower_components"
