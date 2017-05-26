@@ -29,24 +29,26 @@
       tail="{{subroute}}">
     </app-route>
 
-    <iron-ajax auto id="getIndicadoresAjax" url="http://N350i-22878:8080/indicadores/" last-response="{{indicadores}}"></iron-ajax>
-    <iron-ajax id="getPilaresAjax" url="http://N350i-22878:8080/pilares/indicador/[[selectedIndicador]]" last-response="{{pilares}}"></iron-ajax>
-    <iron-ajax id="getTiposAjax" url="http://N350i-22878:8080/tipos/pilar/[[selectedPilar]]" last-response="{{tipos}}"></iron-ajax>
-    <iron-ajax id="getNiveisAjax" url="http://N350i-22878:8080/niveis/tipo/[[selectedTipo]]" last-response="{{niveis}}"></iron-ajax>
-    <iron-ajax id="getSubniveisAjax" url="http://N350i-22878:8080/subniveis/nivel/[[selectedNivel]]" last-response="{{subniveis}}"></iron-ajax>
+    <iron-ajax auto indicador="indicador" url="http://N350i-22878:8080/indicadores/" last-response="{{indicadores}}"></iron-ajax>
+    <iron-ajax indicador="pilar" url="http://N350i-22878:8080/pilares/indicador/[[indicador]]" last-response="{{pilares}}"></iron-ajax>
+    <iron-ajax indicador="tipo" url="http://N350i-22878:8080/tipos/pilar/[[pilar]]" last-response="{{tipos}}"></iron-ajax>
+    <iron-ajax indicador="nivel" url="http://N350i-22878:8080/niveis/tipo/[[tipo]]" last-response="{{niveis}}"></iron-ajax>
+    <iron-ajax indicador="subnivel" url="http://N350i-22878:8080/subniveis/nivel/[[nivel]]" last-response="{{subniveis}}"></iron-ajax>
 
     <paper-card class="layout vertical fit">
 
-      <sapo-selector-crud id="indicadorSelector" label="Indicador" data="[[indicadores]]" selected="{{selectedIndicador}}" on-add="_newIndicador" ></sapo-selector-crud>
-      <sapo-selector-crud id="pilarSelector" label="Pilar" data="[[pilares]]" selected="{{selectedPilar}}"></sapo-selector-crud>
-      <sapo-selector-crud id="tipoSelector" label="Tipo" data="[[tipos]]" selected="{{selectedTipo}}"></sapo-selector-crud>
-      <sapo-selector-crud id="nivelSelector" label="Nivel" data="[[niveis]]" selected="{{selectedNivel}}"></sapo-selector-crud>
-      <sapo-selector-crud id="subnivelSelector" label="Subnível" data="[[subniveis]]" selected="{{selectedSubnivel}}"></sapo-selector-crud>
+      <sapo-selector-crud indicador="indicador" label="Indicador" data="[[indicadores]]" selected="{{indicador}}" on-add="_newIndicador" ></sapo-selector-crud>
+      <sapo-selector-crud indicador="pilar" label="Pilar" data="[[pilares]]" selected="{{pilar}}"></sapo-selector-crud>
+      <sapo-selector-crud indicador="tipo" label="Tipo" data="[[tipos]]" selected="{{tipo}}"></sapo-selector-crud>
+      <sapo-selector-crud indicador="nivel" label="Nivel" data="[[niveis]]" selected="{{nivel}}"></sapo-selector-crud>
+      <sapo-selector-crud indicador="subnivel" label="Subnível" data="[[subniveis]]" selected="{{subnivel}}"></sapo-selector-crud>
 
     </paper-card>
 
     <sapo-overlay id="overlayArea" with-backdrop>
-      <sapo-crud-indicador on-save="_indicadorSaved" ></sapo-crud-indicador>
+      <iron-pages selected="[[crud]]" attr-for-selected="indicador">
+        <sapo-crud-indicador indicador="indicador" on-save="_indicadorSaved"></sapo-crud-indicador>
+      </iron-pages>
     </sapo-overlay>
 
   </template>
@@ -58,71 +60,75 @@
 
       static get properties() {
         return {
-          selectedIndicador: {
+          indicador: {
             type: Number,
-            observer: '_indicadorChanged'
+            observer: '_indicadorChanged',
           },
-          selectedPilar: {
+          pilar: {
             type: Number,
-            observer: '_pilarChanged'
+            observer: '_pilarChanged',
           },
-          selectedTipo: {
+          tipo: {
             type: Number,
-            observer: '_tipoChanged'
+            observer: '_tipoChanged',
           },
-          selectedNivel: {
+          nivel: {
             type: Number,
-            observer: '_nivelChanged'
+            observer: '_nivelChanged',
           },
-          selectedSubnivel: {
-            type: Number,
-            observer: '_subnivelChanged'
-          },
+          subnivel: Number,
+
           indicadores: Array,
           pilares: Array,
           tipos: Array,
           niveis: Array,
-          subniveis: Array
+          subniveis: Array,
+
+          crud: String
         }
       }
 
-      _indicadorChanged(newId, oldId) {
-        this.$.pilarSelector.disabled = (newId === 0);
-        this.$.getPilaresAjax.generateRequest();
+      _indicadorChanged(newId) {
+        this._changeNextIndicador(newId, 'pilar');
       }
 
-      _pilarChanged(newId, oldId) {
-        this.$.tipoSelector.disabled = (newId === 0);
-        this.$.getTiposAjax.generateRequest();
+      _pilarChanged(newId) {
+        this._changeNextIndicador(newId, 'tipo');
       }
 
-      _tipoChanged(newId, oldId) {
-        this.$.nivelSelector.disabled = (newId === 0);
-        this.$.getNiveisAjax.generateRequest();
+      _tipoChanged(newId) {
+        this._changeNextIndicador(newId, 'nivel');
       }
 
-      _nivelChanged(newId, oldId) {
-        this.$.subnivelSelector.disabled = (newId === 0);
-        this.$.getSubniveisAjax.generateRequest();
+      _nivelChanged(newId) {
+        this._changeNextIndicador(newId, 'subnivel');
       }
 
-      _subnivelChanged(newId, oldId) {
-
-      }
-
-      _newIndicador() {
+      _newIndicador(e) {
+        this.crud = e.target.getAttribute('indicador');
         this.$.overlayArea.open();
       }
 
       _indicadorSaved(e) {
         this.$.overlayArea.close();
 
-        let indicador = e.detail;
+        let indicador = e.target.getAttribute('indicador');
+        let entity = e.detail;
 
-        this.$.getIndicadoresAjax.generateRequest().completes
+        let ajax = Polymer.dom(this.root).querySelector('iron-ajax[indicador=' + indicador + ']')
+
+        ajax.generateRequest().completes
           .then(() => {
-            this.selectedIndicador = indicador.id;
+            this[indicador] = entity.id;
           });
+      }
+
+      _changeNextIndicador(newId, nextIndicador) {
+        let nextSelector = Polymer.dom(this.root).querySelector('sapo-selector-crud[indicador=' + nextIndicador + ']');
+        let nextAjax = Polymer.dom(this.root).querySelector('iron-ajax[indicador=' + nextIndicador + ']');
+
+        nextSelector.disabled = (newId === 0);
+        nextAjax.generateRequest();
       }
 
     }
