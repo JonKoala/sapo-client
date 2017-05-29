@@ -49,8 +49,8 @@
       </paper-listbox>
     </paper-dropdown-menu>
 
-    <paper-button id="addButton" raised disabled="[[disabled]]" on-click="_addClicked" class="green"><iron-icon icon="add"></iron-icon>Novo</paper-button>
-    <paper-button id="editButton" raised disabled class="orange"><iron-icon icon="create"></iron-icon>Editar</paper-button>
+    <paper-button id="addButton" raised disabled="[[disabled]]" class="green" on-click="_addClicked" ><iron-icon icon="add"></iron-icon>Novo</paper-button>
+    <paper-button id="editButton" raised disabled class="orange" on-click="_editClicked" ><iron-icon icon="create"></iron-icon>Editar</paper-button>
     <paper-button id="deleteButton" raised disabled class="red"><iron-icon icon="delete"></iron-icon>Remover</paper-button>
 
   </template>
@@ -88,6 +88,10 @@
 
       _addClicked() {
         this.dispatchEvent(new CustomEvent('add'));
+      }
+
+      _editClicked() {
+        this.dispatchEvent(new CustomEvent('edit', {detail: {selected: this.selected}}));
       }
 
     }

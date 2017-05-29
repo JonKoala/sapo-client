@@ -46,8 +46,18 @@
 
       static get is() { return 'sapo-overlay'; }
 
+      ready() {
+        super.ready();
+        this._createMethodObserver('_sapoOpenedChanged(opened)', true);
+      }
+
       _closeClicked() {
         this.close();
+      }
+
+      _sapoOpenedChanged(opened) {
+        let customEvent = (opened) ? 'open' : 'close';
+        this.dispatchEvent(new CustomEvent(customEvent));
       }
 
     }

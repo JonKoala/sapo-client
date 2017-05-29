@@ -37,17 +37,18 @@
 
     <paper-card class="layout vertical fit">
 
-      <sapo-selector-crud indicador="indicador" label="Indicador" data="[[indicadores]]" selected="{{indicador}}" on-add="_newIndicador" ></sapo-selector-crud>
-      <sapo-selector-crud indicador="pilar" label="Pilar" data="[[pilares]]" selected="{{pilar}}"></sapo-selector-crud>
+      <sapo-selector-crud indicador="indicador" label="Indicador" data="[[indicadores]]" selected="{{indicador}}" on-add="_newIndicador" on-edit="_editIndicador" ></sapo-selector-crud>
+      <sapo-selector-crud indicador="pilar" label="Pilar" data="[[pilares]]" selected="{{pilar}}" on-add="_newIndicador"></sapo-selector-crud>
       <sapo-selector-crud indicador="tipo" label="Tipo" data="[[tipos]]" selected="{{tipo}}"></sapo-selector-crud>
       <sapo-selector-crud indicador="nivel" label="Nivel" data="[[niveis]]" selected="{{nivel}}"></sapo-selector-crud>
       <sapo-selector-crud indicador="subnivel" label="Subnível" data="[[subniveis]]" selected="{{subnivel}}"></sapo-selector-crud>
 
     </paper-card>
 
-    <sapo-overlay id="overlayArea" with-backdrop>
-      <iron-pages selected="[[crud]]" attr-for-selected="indicador">
+    <sapo-overlay id="overlayArea" on-close="_crudClosed" with-backdrop>
+      <iron-pages id="crudSelector" selected="[[crud]]" attr-for-selected="indicador">
         <sapo-crud-indicador indicador="indicador" on-save="_indicadorSaved"></sapo-crud-indicador>
+        <sapo-crud-pilar indicador="pilar" on-save="_indicadorSaved"></sapo-crud-indicador>
       </iron-pages>
     </sapo-overlay>
 
@@ -78,6 +79,11 @@
           },
           subnivel: Number,
 
+          hierarchy: {
+            type: Array,
+            value: ['indicador', 'pilar', 'tipo', 'nivel', 'subnivel']
+          },
+
           indicadores: Array,
           pilares: Array,
           tipos: Array,
@@ -87,6 +93,10 @@
           crud: String
         }
       }
+
+
+      //
+      //OBSERVERS
 
       _indicadorChanged(newId) {
         this._changeNextIndicador(newId, 'pilar');
@@ -104,8 +114,26 @@
         this._changeNextIndicador(newId, 'subnivel');
       }
 
+
+      //
+      //EVENTS
+
       _newIndicador(e) {
         this.crud = e.target.getAttribute('indicador');
+        let previousIndicador = this._getPreviousIndicador(this.crud);
+        let crudElement = this.$.crudSelector.selectedItem;
+
+        crudElement.fk = this[previousIndicador];
+        crudElement.mode = 'new';
+        this.$.overlayArea.open();
+      }
+
+      _editIndicador(e) {
+        this.crud = e.target.getAttribute('indicador');
+        let crudElement = this.$.crudSelector.selectedItem;
+
+        crudElement.id = this[this.crud];
+        crudElement.mode = 'edit';
         this.$.overlayArea.open();
       }
 
@@ -115,20 +143,53 @@
         let indicador = e.target.getAttribute('indicador');
         let entity = e.detail;
 
-        let ajax = Polymer.dom(this.root).querySelector('iron-ajax[indicador=' + indicador + ']')
+        let ajax = this._getElementByIndicador('iron-ajax', indicador);
 
         ajax.generateRequest().completes
           .then(() => {
+            return requestAnimationFrame;
+          }).then(() => {
             this[indicador] = entity.id;
           });
       }
 
+      _crudClosed() {
+        let crudElement = this.$.crudSelector.selectedItem;
+        crudElement.mode = 'closed'
+      }
+
+
+      //
+      //UTILS
+
       _changeNextIndicador(newId, nextIndicador) {
-        let nextSelector = Polymer.dom(this.root).querySelector('sapo-selector-crud[indicador=' + nextIndicador + ']');
-        let nextAjax = Polymer.dom(this.root).querySelector('iron-ajax[indicador=' + nextIndicador + ']');
+        let nextSelector = this._getElementByIndicador('sapo-selector-crud', nextIndicador);
+        let nextAjax = this._getElementByIndicador('iron-ajax', nextIndicador);
 
         nextSelector.disabled = (newId === 0);
         nextAjax.generateRequest();
+      }
+
+      _getElementByIndicador(element, indicador) {
+        return Polymer.dom(this.root).querySelector(element + '[indicador=' + indicador + ']');
+      }
+
+      _getNextIndicador(indicador) {
+        let currentIndex = this._getHierarchyIndex(indicador);
+        return this.hierarchy[currentIndex + 1];
+      }
+
+      _getPreviousIndicador(indicador) {
+        let currentIndex = this._getHierarchyIndex(indicador);
+        return this.hierarchy[currentIndex - 1];
+      }
+
+      _getHierarchyIndex(indicador) {
+        let currentIndex = this.hierarchy.indexOf(indicador);
+
+        if (currentIndex < 0)
+          return NaN;
+        return currentIndex;
       }
 
     }

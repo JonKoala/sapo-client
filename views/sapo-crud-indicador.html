@@ -36,19 +36,29 @@
 
     </style>
 
+    <iron-ajax id="getIndicadorAjax" url="http://N350i-22878:8080/indicadores/[[id]]" on-response="_getResponse"></iron-ajax>
     <iron-ajax id="postIndicadorAjax"
-      url="http://N350i-22878:8080/indicadores/new/"
+      url="http://N350i-22878:8080/indicadores/"
       method="POST"
       content-type="application/json"
       handle-as="json"
-      on-response="_ajaxResponse">
+      body="[[data]]"
+      on-response="_postResponse">
+    </iron-ajax>
+    <iron-ajax id="putIndicadorAjax"
+      url="http://N350i-22878:8080/indicadores/"
+      method="PUT"
+      content-type="application/json"
+      handle-as="json"
+      body="[[data]]"
+      on-response="_putResponse">
     </iron-ajax>
 
-    <paper-input name="nome" label="Nome" value="{{nome}}" required></paper-input>
-    <paper-textarea id="objetivosInput" name="objetivos" label="Objetivos" value="{{objetivos}}" rows="3" ></paper-textarea>
+    <paper-input name="nome" label="Nome" value="{{data.nome}}" required></paper-input>
+    <paper-textarea id="objetivosInput" name="objetivos" label="Objetivos" value="{{data.objetivos}}" rows="3" ></paper-textarea>
 
     <div>
-      <paper-button disabled=[[saveDisabled]] class="blue" on-click="_submitClicked" raised><iron-icon icon="save"></iron-icon>Salvar</paper-button>
+      <paper-button disabled="[[saveDisabled]]" class="blue" on-click="_submitClicked" raised><iron-icon icon="save"></iron-icon>Salvar</paper-button>
       <paper-button class="gray" on-click="_clearClicked" raised><iron-icon icon="rounded-corner"></iron-icon>Limpar</paper-button>
     </div>
 
@@ -61,45 +71,118 @@
 
       static get properties() {
         return {
-          nome: String,
-          objetivos: String,
+          id: {
+            type: Number,
+            observer: '_idChanged'
+          },
+          data: {
+            type: Object,
+            value: () => { return {id: 0, nome: '', objetivos: ''}; }
+          },
+
+          disabled: Boolean,
           saveDisabled: {
             type: Boolean,
-            value: true,
-            computed: '_checkRequired(nome)'
+            computed: '_isSaveDisabled(data.nome, disabled)'
+          },
+
+          mode: {
+            type: String,
+            observer: '_modeChanged'
           }
         }
       }
 
-      _checkRequired(nome) {
-        return (!nome.trim());
+
+      //
+      //OBSERVERS & COMPUTEDS
+
+      _idChanged(newId) {
+        this.set('data.id', newId);
       }
 
+      _modeChanged(newMode) {
+
+        switch (newMode) {
+          case 'new':
+            this.id = 0;
+            this.disabled = false;
+            this._blurTextarea();
+            break;
+          case 'edit':
+            this.disabled = false;
+            this.$.getIndicadorAjax.generateRequest();
+            break;
+          case 'closed':
+            this._clear();
+            break;
+        }
+      }
+
+      _isSaveDisabled(nome, disabled) {
+        return (!nome.trim()) || disabled;
+      }
+
+
+      //
+      //EVENTS
+
       _clearClicked() {
-        this.clear();
+        this._clear();
       }
 
       _submitClicked() {
-        this.$.postIndicadorAjax.body = {
-          nome: this.nome,
-          objetivos: this.objetivos
-        };
 
-        this.$.postIndicadorAjax.generateRequest();
+        let ajax;
+
+        switch (this.mode) {
+          case 'new':
+            ajax = this.$.postIndicadorAjax;
+            break;
+          case 'edit':
+            ajax = this.$.putIndicadorAjax;
+            break;
+        }
+
+        ajax.generateRequest();
       }
 
-      _ajaxResponse(e) {
+      _postResponse(e) {
         this.dispatchEvent(new CustomEvent('save', {detail: e.detail.response}));
-        this.clear();
       }
 
-      clear() {
-        this.nome = "";
-        this.objetivos = "";
+      _putResponse(e) {
+        this.dispatchEvent(new CustomEvent('save', {detail: e.detail.response}));
+      }
+
+      _getResponse(e) {
+        let indicador = e.detail.response;
+        if (!indicador)
+          return;
+
+        this.data = indicador;
+
+        this._blurTextarea();
+      }
+
+
+      //
+      //UTILS
+
+      _clear() {
+        this.set('data.nome', '');
+        this.set('data.objetivos', '');
+
+        this._blurTextarea();
+      }
+
+      _blurTextarea() {
 
         //paper-textarea não da blur quando seu valor fica nulo (because fuck you, that's why)
-        this.$.objetivosInput.focus();
-        this.$.objetivosInput.blur();
+        setTimeout(() => {
+          this.$.objetivosInput.focus();
+          this.$.objetivosInput.blur();
+        }, 100);
       }
 
     }
