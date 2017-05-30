@@ -84,6 +84,8 @@
       _selectedChanged(newValue) {
         this.$.editButton.disabled = (newValue === 0);
         this.$.deleteButton.disabled = (newValue === 0);
+
+        this.dispatchEvent(new CustomEvent('select', {detail: {selected: this.selected}}));
       }
 
       _addClicked() {

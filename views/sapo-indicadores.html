@@ -37,11 +37,11 @@
 
     <paper-card class="layout vertical fit">
 
-      <sapo-selector-crud indicador="indicador" label="Indicador" data="[[indicadores]]" selected="{{indicador}}" on-add="_newIndicador" on-edit="_editIndicador" ></sapo-selector-crud>
-      <sapo-selector-crud indicador="pilar" label="Pilar" data="[[pilares]]" selected="{{pilar}}" on-add="_newIndicador"></sapo-selector-crud>
-      <sapo-selector-crud indicador="tipo" label="Tipo" data="[[tipos]]" selected="{{tipo}}"></sapo-selector-crud>
-      <sapo-selector-crud indicador="nivel" label="Nivel" data="[[niveis]]" selected="{{nivel}}"></sapo-selector-crud>
-      <sapo-selector-crud indicador="subnivel" label="Subnível" data="[[subniveis]]" selected="{{subnivel}}"></sapo-selector-crud>
+      <sapo-selector-crud indicador="indicador" label="Indicador" data="[[indicadores]]" selected="{{indicador}}" on-select="_indicadorChanged" on-add="_newIndicador" on-edit="_editIndicador" ></sapo-selector-crud>
+      <sapo-selector-crud indicador="pilar" label="Pilar" data="[[pilares]]" selected="{{pilar}}" on-select="_indicadorChanged" on-add="_newIndicador"></sapo-selector-crud>
+      <sapo-selector-crud indicador="tipo" label="Tipo" data="[[tipos]]" selected="{{tipo}}" on-select="_indicadorChanged"></sapo-selector-crud>
+      <sapo-selector-crud indicador="nivel" label="Nivel" data="[[niveis]]" selected="{{nivel}}" on-select="_indicadorChanged"></sapo-selector-crud>
+      <sapo-selector-crud indicador="subnivel" label="Subnível" data="[[subniveis]]" selected="{{subnivel}}" on-select="_indicadorChanged"></sapo-selector-crud>
 
     </paper-card>
 
@@ -61,28 +61,11 @@
 
       static get properties() {
         return {
-          indicador: {
-            type: Number,
-            observer: '_indicadorChanged',
-          },
-          pilar: {
-            type: Number,
-            observer: '_pilarChanged',
-          },
-          tipo: {
-            type: Number,
-            observer: '_tipoChanged',
-          },
-          nivel: {
-            type: Number,
-            observer: '_nivelChanged',
-          },
+          indicador: Number,
+          pilar: Number,
+          tipo: Number,
+          nivel: Number,
           subnivel: Number,
-
-          hierarchy: {
-            type: Array,
-            value: ['indicador', 'pilar', 'tipo', 'nivel', 'subnivel']
-          },
 
           indicadores: Array,
           pilares: Array,
@@ -90,33 +73,34 @@
           niveis: Array,
           subniveis: Array,
 
+          hierarchy: {
+            type: Array,
+            value: ['indicador', 'pilar', 'tipo', 'nivel', 'subnivel']
+          },
+
           crud: String
         }
       }
 
 
       //
-      //OBSERVERS
-
-      _indicadorChanged(newId) {
-        this._changeNextIndicador(newId, 'pilar');
-      }
-
-      _pilarChanged(newId) {
-        this._changeNextIndicador(newId, 'tipo');
-      }
-
-      _tipoChanged(newId) {
-        this._changeNextIndicador(newId, 'nivel');
-      }
-
-      _nivelChanged(newId) {
-        this._changeNextIndicador(newId, 'subnivel');
-      }
-
-
-      //
       //EVENTS
+
+      _indicadorChanged(e) {
+        var indicador = e.target.getAttribute('indicador');
+        var selectedValue = e.detail.selected;
+
+        this[indicador] = selectedValue;
+
+        var nextIndicador = this._getNextIndicador(indicador);
+        if (nextIndicador) {
+          var nextSelector = this._getElementByIndicador('sapo-selector-crud', nextIndicador);
+          var nextAjax = this._getElementByIndicador('iron-ajax', nextIndicador);
+
+          nextSelector.disabled = (selectedValue === 0);
+          nextAjax.generateRequest();
+        }
+      }
 
       _newIndicador(e) {
         this.crud = e.target.getAttribute('indicador');
@@ -161,14 +145,6 @@
 
       //
       //UTILS
-
-      _changeNextIndicador(newId, nextIndicador) {
-        let nextSelector = this._getElementByIndicador('sapo-selector-crud', nextIndicador);
-        let nextAjax = this._getElementByIndicador('iron-ajax', nextIndicador);
-
-        nextSelector.disabled = (newId === 0);
-        nextAjax.generateRequest();
-      }
 
       _getElementByIndicador(element, indicador) {
         return Polymer.dom(this.root).querySelector(element + '[indicador=' + indicador + ']');
