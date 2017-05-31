@@ -29,6 +29,10 @@
         background: #616161;
       }
 
+      .red {
+        background: #d9534f;
+      }
+
       paper-button[disabled] {
         background: #eaeaea;
         color: #a8a8a8;
@@ -53,13 +57,26 @@
       body="[[data]]"
       on-response="_putResponse">
     </iron-ajax>
+    <iron-ajax id="deleteIndicadorAjax"
+      url="http://N350i-22878:8080/indicadores/"
+      method="DELETE"
+      content-type="application/json"
+      handle-as="json"
+      body="[[data]]"
+      on-response="_deleteResponse">
+    </iron-ajax>
 
-    <paper-input name="nome" label="Nome" value="{{data.nome}}" required></paper-input>
-    <paper-textarea id="objetivosInput" name="objetivos" label="Objetivos" value="{{data.objetivos}}" rows="3" ></paper-textarea>
+    <paper-input name="nome" label="Nome" value="{{data.nome}}" disabled="[[disabled]]" on-keydown="_checkIfSubmit" required></paper-input>
+    <paper-textarea id="objetivosInput" name="objetivos" label="Objetivos" value="{{data.objetivos}}" disabled="[[disabled]]" rows="3" ></paper-textarea>
 
-    <div>
+    <div hidden="[[deleteMode]]" >
       <paper-button disabled="[[saveDisabled]]" class="blue" on-click="_submitClicked" raised><iron-icon icon="save"></iron-icon>Salvar</paper-button>
-      <paper-button class="gray" on-click="_clearClicked" raised><iron-icon icon="rounded-corner"></iron-icon>Limpar</paper-button>
+      <paper-button disabled="[[disabled]]" class="gray" on-click="_clearClicked" raised><iron-icon icon="rounded-corner"></iron-icon>Limpar</paper-button>
+    </div>
+
+    <div hidden="[[!deleteMode]]" >
+      <p style="margin-left:5px;" >Tem certeza que deseja remover o indicador?</p>
+      <paper-button class="red" on-click="_deleteClicked" raised><iron-icon icon="delete-forever"></iron-icon>Remover</paper-button>
     </div>
 
   </template>
@@ -84,6 +101,11 @@
           saveDisabled: {
             type: Boolean,
             computed: '_isSaveDisabled(data.nome, disabled)'
+          },
+
+          deleteMode: {
+            type: Boolean,
+            computed: '_isDeleteMode(mode)'
           },
 
           mode: {
@@ -113,6 +135,12 @@
             this.disabled = false;
             this.$.getIndicadorAjax.generateRequest();
             break;
+          case 'delete':
+            this.$.getIndicadorAjax.generateRequest();
+            this._blurTextarea()
+              .then(() => {
+                this.disabled = true;
+              });
           case 'closed':
             this._clear();
             break;
@@ -121,6 +149,10 @@
 
       _isSaveDisabled(nome, disabled) {
         return (!nome.trim()) || disabled;
+      }
+
+      _isDeleteMode(mode) {
+        return mode === 'delete';
       }
 
 
@@ -133,8 +165,7 @@
 
       _submitClicked() {
 
-        let ajax;
-
+        var ajax;
         switch (this.mode) {
           case 'new':
             ajax = this.$.postIndicadorAjax;
@@ -147,6 +178,15 @@
         ajax.generateRequest();
       }
 
+      _deleteClicked() {
+        this.$.deleteIndicadorAjax.generateRequest();
+      }
+
+      _checkIfSubmit(e) {
+        if (e.key === 'Enter' && ['new', 'edit'].includes(this.mode))
+          this._submitClicked();
+      }
+
       _postResponse(e) {
         this.dispatchEvent(new CustomEvent('save', {detail: e.detail.response}));
       }
@@ -155,8 +195,12 @@
         this.dispatchEvent(new CustomEvent('save', {detail: e.detail.response}));
       }
 
+      _deleteResponse(e) {
+        this.dispatchEvent(new CustomEvent('delete', {detail: e.detail.response}));
+      }
+
       _getResponse(e) {
-        let indicador = e.detail.response;
+        var indicador = e.detail.response;
         if (!indicador)
           return;
 
@@ -178,11 +222,19 @@
 
       _blurTextarea() {
 
-        //paper-textarea não da blur quando seu valor fica nulo (because fuck you, that's why)
-        setTimeout(() => {
-          this.$.objetivosInput.focus();
-          this.$.objetivosInput.blur();
-        }, 100);
+        return this.sleep(100)
+          .then(() => {
+            //paper-textarea não da blur quando seu valor fica nulo (because fuck you, that's why)
+            this.$.objetivosInput.focus();
+            this.$.objetivosInput.blur();
+          });
+      }
+
+      //TODO: tentar deixar isso global
+      sleep(time) {
+        return new Promise(resolve => {
+          setTimeout(resolve, time);
+        });
       }
 
     }

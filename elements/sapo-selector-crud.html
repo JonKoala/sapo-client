@@ -51,7 +51,7 @@
 
     <paper-button id="addButton" raised disabled="[[disabled]]" class="green" on-click="_addClicked" ><iron-icon icon="add"></iron-icon>Novo</paper-button>
     <paper-button id="editButton" raised disabled class="orange" on-click="_editClicked" ><iron-icon icon="create"></iron-icon>Editar</paper-button>
-    <paper-button id="deleteButton" raised disabled class="red"><iron-icon icon="delete"></iron-icon>Remover</paper-button>
+    <paper-button id="deleteButton" raised disabled class="red" on-click="_deleteClicked" ><iron-icon icon="delete"></iron-icon>Remover</paper-button>
 
   </template>
 
@@ -94,6 +94,10 @@
 
       _editClicked() {
         this.dispatchEvent(new CustomEvent('edit', {detail: {selected: this.selected}}));
+      }
+
+      _deleteClicked() {
+        this.dispatchEvent(new CustomEvent('delete', {detail: {selected: this.selected}}));
       }
 
     }

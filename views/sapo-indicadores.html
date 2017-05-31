@@ -3,6 +3,7 @@
 <link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 <link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
 <link rel="import" href="../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../bower_components/paper-toast/paper-toast.html">
 <link rel="import" href="../elements/sapo-selector-crud.html">
 <link rel="import" href="../elements/sapo-overlay.html">
 <link rel="import" href="./sapo-crud-indicador.html">
@@ -19,6 +20,9 @@
       sapo-overlay {
         margin: 80px;
         min-width: 500px;
+      }
+      paper-toast paper-button{
+        color: #eeff41;
       }
     </style>
 
@@ -37,7 +41,7 @@
 
     <paper-card class="layout vertical fit">
 
-      <sapo-selector-crud indicador="indicador" label="Indicador" data="[[indicadores]]" selected="{{indicador}}" on-select="_indicadorChanged" on-add="_newIndicador" on-edit="_editIndicador" ></sapo-selector-crud>
+      <sapo-selector-crud indicador="indicador" label="Indicador" data="[[indicadores]]" selected="{{indicador}}" on-select="_indicadorChanged" on-add="_newIndicador" on-edit="_editIndicador" on-delete="_deleteIndicador" ></sapo-selector-crud>
       <sapo-selector-crud indicador="pilar" label="Pilar" data="[[pilares]]" selected="{{pilar}}" on-select="_indicadorChanged" on-add="_newIndicador"></sapo-selector-crud>
       <sapo-selector-crud indicador="tipo" label="Tipo" data="[[tipos]]" selected="{{tipo}}" on-select="_indicadorChanged"></sapo-selector-crud>
       <sapo-selector-crud indicador="nivel" label="Nivel" data="[[niveis]]" selected="{{nivel}}" on-select="_indicadorChanged"></sapo-selector-crud>
@@ -47,10 +51,15 @@
 
     <sapo-overlay id="overlayArea" on-close="_crudClosed" with-backdrop>
       <iron-pages id="crudSelector" selected="[[crud]]" attr-for-selected="indicador">
-        <sapo-crud-indicador indicador="indicador" on-save="_indicadorSaved"></sapo-crud-indicador>
-        <sapo-crud-pilar indicador="pilar" on-save="_indicadorSaved"></sapo-crud-indicador>
+        <sapo-crud-indicador indicador="indicador" on-save="_saveResult" on-delete="_deleteResult" ></sapo-crud-indicador>
+        <sapo-crud-pilar indicador="pilar" on-save="_saveResult"></sapo-crud-indicador>
       </iron-pages>
     </sapo-overlay>
+
+    <paper-toast id="quickNote" ></paper-toast>
+    <paper-toast id="persistentNote" duration="0" >
+      <paper-button on-click="_closeNote">Fechar</paper-button>
+    </paper-toast>
 
   </template>
 
@@ -94,8 +103,8 @@
 
         var nextIndicador = this._getNextIndicador(indicador);
         if (nextIndicador) {
-          var nextSelector = this._getElementByIndicador('sapo-selector-crud', nextIndicador);
-          var nextAjax = this._getElementByIndicador('iron-ajax', nextIndicador);
+          let nextSelector = this._getElementByIndicador('sapo-selector-crud', nextIndicador);
+          let nextAjax = this._getElementByIndicador('iron-ajax', nextIndicador);
 
           nextSelector.disabled = (selectedValue === 0);
           nextAjax.generateRequest();
@@ -104,8 +113,8 @@
 
       _newIndicador(e) {
         this.crud = e.target.getAttribute('indicador');
-        let previousIndicador = this._getPreviousIndicador(this.crud);
-        let crudElement = this.$.crudSelector.selectedItem;
+        var previousIndicador = this._getPreviousIndicador(this.crud);
+        var crudElement = this.$.crudSelector.selectedItem;
 
         crudElement.fk = this[previousIndicador];
         crudElement.mode = 'new';
@@ -114,20 +123,29 @@
 
       _editIndicador(e) {
         this.crud = e.target.getAttribute('indicador');
-        let crudElement = this.$.crudSelector.selectedItem;
+        var crudElement = this.$.crudSelector.selectedItem;
 
         crudElement.id = this[this.crud];
         crudElement.mode = 'edit';
         this.$.overlayArea.open();
       }
 
-      _indicadorSaved(e) {
+      _deleteIndicador(e) {
+        this.crud = e.target.getAttribute('indicador');
+        var crudElement = this.$.crudSelector.selectedItem;
+
+        crudElement.id = this[this.crud];
+        crudElement.mode = 'delete';
+        this.$.overlayArea.open();
+      }
+
+      _saveResult(e) {
         this.$.overlayArea.close();
 
-        let indicador = e.target.getAttribute('indicador');
-        let entity = e.detail;
+        var indicador = e.target.getAttribute('indicador');
+        var entity = e.detail;
 
-        let ajax = this._getElementByIndicador('iron-ajax', indicador);
+        var ajax = this._getElementByIndicador('iron-ajax', indicador);
 
         ajax.generateRequest().completes
           .then(() => {
@@ -135,6 +153,26 @@
           }).then(() => {
             this[indicador] = entity.id;
           });
+
+        var label = this._getIndicadorLabel(indicador);
+        this._showNotification(label + ' salvo com sucesso!');
+      }
+
+      _deleteResult(e) {
+        this.$.overlayArea.close();
+
+        var deleted = e.detail.deleted;
+        var indicador = e.target.getAttribute('indicador');
+        var label = this._getIndicadorLabel(indicador);
+
+        if (deleted) {
+          this._showNotification(label + ' removido com sucesso!');
+
+          let ajax = this._getElementByIndicador('iron-ajax', indicador);
+          ajax.generateRequest();
+        } else {
+          this._showNotification('Não foi possível remover o ' + label + '. Verifique se o mesmo não possui dependências.', true);
+        }
       }
 
       _crudClosed() {
@@ -142,9 +180,18 @@
         crudElement.mode = 'closed'
       }
 
+      _closeNote(e) {
+        this.$.persistentNote.close();
+      }
+
 
       //
       //UTILS
+
+      _getIndicadorLabel(indicador) {
+        var selector = this._getElementByIndicador('sapo-selector-crud', indicador);
+        return selector.getAttribute('label');
+      }
 
       _getElementByIndicador(element, indicador) {
         return Polymer.dom(this.root).querySelector(element + '[indicador=' + indicador + ']');
@@ -166,6 +213,13 @@
         if (currentIndex < 0)
           return NaN;
         return currentIndex;
+      }
+
+      _showNotification(text, isPersistent) {
+        var note = (isPersistent) ? this.$.persistentNote : this.$.quickNote;
+        note.text = text;
+        note.close();
+        note.open();
       }
 
     }
