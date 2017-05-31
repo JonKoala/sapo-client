@@ -7,7 +7,7 @@
 <link rel="import" href="../bower_components/paper-button/paper-button.html">
 
 
-<dom-module id="sapo-crud-indicador">
+<dom-module id="sapo-crud-nivel">
 
   <template>
 
@@ -40,25 +40,25 @@
 
     </style>
 
-    <iron-ajax id="getIndicadorAjax" url="http://N350i-22878:8080/indicadores/[[id]]" on-response="_getResponse"></iron-ajax>
-    <iron-ajax id="postIndicadorAjax"
-      url="http://N350i-22878:8080/indicadores/"
+    <iron-ajax id="getNivelAjax" url="http://N350i-22878:8080/niveis/[[id]]" on-response="_getResponse"></iron-ajax>
+    <iron-ajax id="postNivelAjax"
+      url="http://N350i-22878:8080/niveis/"
       method="POST"
       content-type="application/json"
       handle-as="json"
       body="[[data]]"
       on-response="_postResponse">
     </iron-ajax>
-    <iron-ajax id="putIndicadorAjax"
-      url="http://N350i-22878:8080/indicadores/"
+    <iron-ajax id="putNivelAjax"
+      url="http://N350i-22878:8080/niveis/"
       method="PUT"
       content-type="application/json"
       handle-as="json"
       body="[[data]]"
       on-response="_putResponse">
     </iron-ajax>
-    <iron-ajax id="deleteIndicadorAjax"
-      url="http://N350i-22878:8080/indicadores/"
+    <iron-ajax id="deleteNivelAjax"
+      url="http://N350i-22878:8080/niveis/"
       method="DELETE"
       content-type="application/json"
       handle-as="json"
@@ -67,7 +67,7 @@
     </iron-ajax>
 
     <paper-input id="nomeInput" name="nome" label="Nome" value="{{data.nome}}" readonly="[[disabled]]" on-keydown="_checkIfSubmit" required></paper-input>
-    <paper-textarea id="objetivosInput" name="objetivos" label="Objetivos" value="{{data.objetivos}}" readonly="[[disabled]]" rows="3" ></paper-textarea>
+    <paper-textarea id="descricaoInput" name="descricao" label="Descrição" value="{{data.descricao}}" readonly="[[disabled]]" rows="3" ></paper-textarea>
 
     <div hidden="[[deleteMode]]" >
       <paper-button disabled="[[saveDisabled]]" class="blue" on-click="_submitClicked" raised><iron-icon icon="save"></iron-icon>Salvar</paper-button>
@@ -75,16 +75,16 @@
     </div>
 
     <div hidden="[[!deleteMode]]" >
-      <p style="margin-left:5px;" >Tem certeza que deseja remover o Indicador?</p>
+      <p style="margin-left:5px;" >Tem certeza que deseja remover o Nivel?</p>
       <paper-button class="red" on-click="_deleteClicked" raised><iron-icon icon="delete-forever"></iron-icon>Remover</paper-button>
     </div>
 
   </template>
 
   <script>
-    class SapoCrudIndicador extends Polymer.Element {
+    class SapoCrudNivel extends Polymer.Element {
 
-      static get is() { return 'sapo-crud-indicador'; }
+      static get is() { return 'sapo-crud-nivel'; }
 
       static get properties() {
         return {
@@ -92,9 +92,13 @@
             type: Number,
             observer: '_idChanged'
           },
+          fk: {
+            type: Number,
+            observer: '_fkChanged'
+          },
           data: {
             type: Object,
-            value: () => { return {id: 0, nome: '', objetivos: ''}; }
+            value: () => { return {id: 0, tipo_id: 0, nome: '', descricao: ''}; }
           },
 
           disabled: Boolean,
@@ -123,6 +127,10 @@
         this.set('data.id', newId);
       }
 
+      _fkChanged(newFk) {
+        this.set('data.tipo_id', newFk);
+      }
+
       _modeChanged(newMode) {
 
         switch (newMode) {
@@ -136,10 +144,10 @@
             break;
           case 'edit':
             this.disabled = false;
-            this.$.getIndicadorAjax.generateRequest();
+            this.$.getNivelAjax.generateRequest();
             break;
           case 'delete':
-            this.$.getIndicadorAjax.generateRequest();
+            this.$.getNivelAjax.generateRequest();
             this._blurTextarea()
               .then(() => {
                 this.disabled = true;
@@ -171,10 +179,10 @@
         var ajax;
         switch (this.mode) {
           case 'new':
-            ajax = this.$.postIndicadorAjax;
+            ajax = this.$.postNivelAjax;
             break;
           case 'edit':
-            ajax = this.$.putIndicadorAjax;
+            ajax = this.$.putNivelAjax;
             break;
         }
 
@@ -182,7 +190,7 @@
       }
 
       _deleteClicked() {
-        this.$.deleteIndicadorAjax.generateRequest();
+        this.$.deleteNivelAjax.generateRequest();
       }
 
       _checkIfSubmit(e) {
@@ -203,11 +211,11 @@
       }
 
       _getResponse(e) {
-        var indicador = e.detail.response;
-        if (!indicador)
+        var nivel = e.detail.response;
+        if (!nivel)
           return;
 
-        this.data = indicador;
+        this.data = nivel;
 
         this._blurTextarea();
       }
@@ -218,7 +226,7 @@
 
       _clear() {
         this.set('data.nome', '');
-        this.set('data.objetivos', '');
+        this.set('data.descricao', '');
 
         this._blurTextarea();
       }
@@ -228,8 +236,8 @@
         return this.sleep(100)
           .then(() => {
             //paper-textarea não da blur quando seu valor fica nulo (because fuck you, that's why)
-            this.$.objetivosInput.focus();
-            this.$.objetivosInput.blur();
+            this.$.descricaoInput.focus();
+            this.$.descricaoInput.blur();
           });
       }
 
@@ -242,6 +250,6 @@
 
     }
 
-    window.customElements.define(SapoCrudIndicador.is, SapoCrudIndicador);
+    window.customElements.define(SapoCrudNivel.is, SapoCrudNivel);
   </script>
 </dom-module>

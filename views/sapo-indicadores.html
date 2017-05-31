@@ -7,6 +7,10 @@
 <link rel="import" href="../elements/sapo-selector-crud.html">
 <link rel="import" href="../elements/sapo-overlay.html">
 <link rel="import" href="./sapo-crud-indicador.html">
+<link rel="import" href="./sapo-crud-pilar.html">
+<link rel="import" href="./sapo-crud-tipo.html">
+<link rel="import" href="./sapo-crud-nivel.html">
+<link rel="import" href="./sapo-crud-subnivel.html">
 
 <dom-module id="sapo-indicadores">
 
@@ -42,17 +46,20 @@
     <paper-card class="layout vertical fit">
 
       <sapo-selector-crud indicador="indicador" label="Indicador" data="[[indicadores]]" selected="{{indicador}}" on-select="_indicadorChanged" on-add="_newIndicador" on-edit="_editIndicador" on-delete="_deleteIndicador" ></sapo-selector-crud>
-      <sapo-selector-crud indicador="pilar" label="Pilar" data="[[pilares]]" selected="{{pilar}}" on-select="_indicadorChanged" on-add="_newIndicador"></sapo-selector-crud>
-      <sapo-selector-crud indicador="tipo" label="Tipo" data="[[tipos]]" selected="{{tipo}}" on-select="_indicadorChanged"></sapo-selector-crud>
-      <sapo-selector-crud indicador="nivel" label="Nivel" data="[[niveis]]" selected="{{nivel}}" on-select="_indicadorChanged"></sapo-selector-crud>
-      <sapo-selector-crud indicador="subnivel" label="Subnível" data="[[subniveis]]" selected="{{subnivel}}" on-select="_indicadorChanged"></sapo-selector-crud>
+      <sapo-selector-crud indicador="pilar" label="Pilar" data="[[pilares]]" selected="{{pilar}}" on-select="_indicadorChanged" on-add="_newIndicador" on-edit="_editIndicador" on-delete="_deleteIndicador" ></sapo-selector-crud>
+      <sapo-selector-crud indicador="tipo" label="Tipo" data="[[tipos]]" selected="{{tipo}}" on-select="_indicadorChanged" on-add="_newIndicador" on-edit="_editIndicador" on-delete="_deleteIndicador" ></sapo-selector-crud>
+      <sapo-selector-crud indicador="nivel" label="Nivel" data="[[niveis]]" selected="{{nivel}}" on-select="_indicadorChanged" on-add="_newIndicador" on-edit="_editIndicador" on-delete="_deleteIndicador" ></sapo-selector-crud>
+      <sapo-selector-crud indicador="subnivel" label="Subnível" data="[[subniveis]]" selected="{{subnivel}}" on-select="_indicadorChanged" on-add="_newIndicador" on-edit="_editIndicador" on-delete="_deleteIndicador" ></sapo-selector-crud>
 
     </paper-card>
 
     <sapo-overlay id="overlayArea" on-close="_crudClosed" with-backdrop>
       <iron-pages id="crudSelector" selected="[[crud]]" attr-for-selected="indicador">
         <sapo-crud-indicador indicador="indicador" on-save="_saveResult" on-delete="_deleteResult" ></sapo-crud-indicador>
-        <sapo-crud-pilar indicador="pilar" on-save="_saveResult"></sapo-crud-indicador>
+        <sapo-crud-pilar indicador="pilar" on-save="_saveResult" on-delete="_deleteResult" ></sapo-crud-pilar>
+        <sapo-crud-tipo indicador="tipo" on-save="_saveResult" on-delete="_deleteResult" ></sapo-crud-tipo>
+        <sapo-crud-nivel indicador="nivel" on-save="_saveResult" on-delete="_deleteResult" ></sapo-crud-nivel>
+        <sapo-crud-subnivel indicador="subnivel" on-save="_saveResult" on-delete="_deleteResult" ></sapo-crud-subnivel>
       </iron-pages>
     </sapo-overlay>
 
@@ -146,7 +153,6 @@
         var entity = e.detail;
 
         var ajax = this._getElementByIndicador('iron-ajax', indicador);
-
         ajax.generateRequest().completes
           .then(() => {
             return requestAnimationFrame;
@@ -216,9 +222,15 @@
       }
 
       _showNotification(text, isPersistent) {
+
+        //close all notes
+        Polymer.dom(this.root).querySelectorAll('paper-toast').forEach(note => {
+          note.close();
+        });
+
+        //prepare and show note
         var note = (isPersistent) ? this.$.persistentNote : this.$.quickNote;
         note.text = text;
-        note.close();
         note.open();
       }
 
