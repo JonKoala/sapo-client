@@ -1,0 +1,75 @@
+
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/iron-icons/iron-icons.html">
+
+<dom-module id="sapo-item-crud">
+
+  <template>
+
+    <style>
+    
+      .orange {
+        background: #f0ad4e;
+      }
+
+      .red {
+        background: #d9534f;
+      }
+
+      paper-card {
+        display: flex;
+        justify-content: space-between;
+
+        padding: 10px;
+        margin: 10px;
+      }
+
+      p {
+        margin: auto 10px;
+        flex-grow: 1;
+      }
+
+      div {
+        display: flex;
+        flex-wrap: nowrap;
+      }
+
+      paper-button {
+        color: white;
+        margin: auto 2px;
+      }
+
+      paper-button[disabled] {
+        background: #eaeaea;
+        color: #a8a8a8;
+      }
+    </style>
+
+    <paper-card>
+      <p>[[text]]</p>
+      <div>
+        <paper-button raised class="orange">editar</paper-button>
+        <paper-button raised class="red">remover</paper-button>
+      </div>
+    </paper-card>
+
+  </template>
+
+  <script>
+    class SapoItemCrud extends Polymer.Element {
+
+      static get is() { return 'sapo-item-crud'; }
+
+      static get properties() {
+        return {
+          text: String
+        }
+      }
+
+    }
+
+    window.customElements.define(SapoItemCrud.is, SapoItemCrud);
+  </script>
+</dom-module>

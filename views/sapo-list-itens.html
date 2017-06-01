@@ -1,0 +1,56 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../elements/sapo-item-crud.html">
+
+
+<dom-module id="sapo-list-itens">
+
+  <template>
+
+    <style>
+      paper-listbox {
+        --paper-listbox-background-color: lightgray;
+
+        height: 100%;
+        padding: 0px;
+        overflow: auto;
+      }
+
+      sapo-item-crud {
+        outline: 0;
+      }
+    </style>
+
+    <paper-listbox>
+      <template is="dom-repeat" items="[[itens]]">
+        <sapo-item-crud text="[[item.nome]]" ></sapo-item-crud>
+      </template>
+    </paper-listbox>
+
+  </template>
+
+  <script>
+    class SapoListItens extends Polymer.Element {
+
+      static get is() { return 'sapo-list-itens'; }
+
+      static get properties() {
+        return {
+          itens: {
+            type: Array,
+            value: () => {
+              return [
+                {nome: "Lorem ipsum dolor sit amet"},
+                {nome: "Lorem ipsum dolor sit amet, consectetur adipiscing elit"},
+                {nome: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam a ultricies mauris. Suspendisse nec metus congue, tempus magna blandit, fermentum sapien"}
+              ];
+            }
+          }
+        }
+      }
+
+    }
+
+    window.customElements.define(SapoListItens.is, SapoListItens);
+  </script>
+</dom-module>

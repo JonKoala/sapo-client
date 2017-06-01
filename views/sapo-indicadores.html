@@ -6,11 +6,13 @@
 <link rel="import" href="../bower_components/paper-toast/paper-toast.html">
 <link rel="import" href="../elements/sapo-selector-crud.html">
 <link rel="import" href="../elements/sapo-overlay.html">
+<link rel="import" href="../elements/element-template.html">
 <link rel="import" href="./sapo-crud-indicador.html">
 <link rel="import" href="./sapo-crud-pilar.html">
 <link rel="import" href="./sapo-crud-tipo.html">
 <link rel="import" href="./sapo-crud-nivel.html">
 <link rel="import" href="./sapo-crud-subnivel.html">
+<link rel="import" href="./sapo-list-itens.html">
 
 <dom-module id="sapo-indicadores">
 
@@ -18,8 +20,7 @@
 
     <style include="iron-flex iron-flex-factors">
       paper-card {
-        margin-left: 80px;
-        margin-right: 80px;
+        margin: auto 40px;
       }
       sapo-overlay {
         margin: 80px;
@@ -27,6 +28,10 @@
       }
       paper-toast paper-button{
         color: #eeff41;
+      }
+      sapo-list-itens {
+        width: 600px;
+        height: 200px;
       }
     </style>
 
@@ -51,6 +56,8 @@
       <sapo-selector-crud indicador="nivel" label="Nível" data="[[niveis]]" selected="{{nivel}}" on-select="_indicadorChanged" on-add="_newIndicador" on-edit="_editIndicador" on-delete="_deleteIndicador" ></sapo-selector-crud>
       <sapo-selector-crud indicador="subnivel" label="Subnível" data="[[subniveis]]" selected="{{subnivel}}" on-select="_indicadorChanged" on-add="_newIndicador" on-edit="_editIndicador" on-delete="_deleteIndicador" ></sapo-selector-crud>
 
+      <sapo-list-itens></sapo-list-itens>
+
     </paper-card>
 
     <sapo-overlay id="overlayArea" on-close="_crudClosed" with-backdrop>
@@ -67,6 +74,8 @@
     <paper-toast id="persistentNote" duration="0" >
       <paper-button on-click="_closeNote">Fechar</paper-button>
     </paper-toast>
+
+    <element-template></element-template>
 
   </template>
 
