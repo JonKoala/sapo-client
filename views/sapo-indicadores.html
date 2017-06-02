@@ -19,20 +19,39 @@
 
   <template>
 
-    <style include="iron-flex iron-flex-factors">
-      paper-card {
-        margin: auto 40px;
+    <style>
+      :host {
+        display: flex;
       }
+
+      paper-card {
+        margin: 0px;
+        padding: 20px;
+        float: left;
+
+        display: flex;
+      }
+
+      #selectorsCard {
+        margin: 0px 20px 0px 40px;
+        flex-direction: column;
+      }
+
+      #itensCard {
+        margin: 0px 40px 0px 20px;
+        flex-grow: 1;
+      }
+
+      sapo-list-itens {
+        flex-grow: 1;
+      }
+
       sapo-overlay {
         margin: 80px;
         min-width: 500px;
       }
       paper-toast paper-button{
         color: #eeff41;
-      }
-      sapo-list-itens {
-        width: 600px;
-        height: 200px;
       }
     </style>
 
@@ -50,16 +69,16 @@
     <iron-ajax indicador="subnivel" url="http://N350i-22878:8080/subniveis/nivel/[[nivel]]" last-response="{{subniveis}}"></iron-ajax>
     <iron-ajax indicador="item" url="http://N350i-22878:8080/itens/subnivel/[[subnivel]]" last-response="{{itens}}"></iron-ajax>
 
-    <paper-card class="layout vertical fit">
-
+    <paper-card id="selectorsCard" >
       <sapo-selector-crud indicador="indicador" label="Indicador" data="[[indicadores]]" selected="{{indicador}}" on-select="_selectIndicador" on-add="_newIndicador" on-edit="_editIndicador" on-delete="_deleteIndicador" ></sapo-selector-crud>
       <sapo-selector-crud indicador="pilar" label="Pilar" data="[[pilares]]" selected="{{pilar}}" on-select="_selectIndicador" on-add="_newIndicador" on-edit="_editIndicador" on-delete="_deleteIndicador" ></sapo-selector-crud>
       <sapo-selector-crud indicador="tipo" label="Tipo" data="[[tipos]]" selected="{{tipo}}" on-select="_selectIndicador" on-add="_newIndicador" on-edit="_editIndicador" on-delete="_deleteIndicador" ></sapo-selector-crud>
       <sapo-selector-crud indicador="nivel" label="Nível" data="[[niveis]]" selected="{{nivel}}" on-select="_selectIndicador" on-add="_newIndicador" on-edit="_editIndicador" on-delete="_deleteIndicador" ></sapo-selector-crud>
       <sapo-selector-crud indicador="subnivel" label="Subnível" data="[[subniveis]]" selected="{{subnivel}}" on-select="_selectIndicador" on-add="_newIndicador" on-edit="_editIndicador" on-delete="_deleteIndicador" ></sapo-selector-crud>
+    </paper-card>
 
+    <paper-card id="itensCard" >
       <sapo-list-itens indicador="item" label="Item" data="[[itens]]" on-add="_newIndicador" on-edit="_editIndicador" on-delete="_deleteIndicador"></sapo-list-itens>
-
     </paper-card>
 
     <sapo-overlay id="overlayArea" on-close="_crudClosed" with-backdrop>
