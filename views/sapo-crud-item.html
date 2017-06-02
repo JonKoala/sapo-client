@@ -1,0 +1,255 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/iron-form/iron-form.html">
+<link rel="import" href="../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../bower_components/paper-input/paper-textarea.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+
+
+<dom-module id="sapo-crud-item">
+
+  <template>
+
+    <style>
+
+      div {
+        padding-top: 50px;
+      }
+
+      paper-button {
+        color: white;
+      }
+
+      .blue {
+        background: #337ab7;
+      }
+
+      .gray {
+        background: #616161;
+      }
+
+      .red {
+        background: #d9534f;
+      }
+
+      paper-button[disabled] {
+        background: #eaeaea;
+        color: #a8a8a8;
+      }
+
+    </style>
+
+    <iron-ajax id="getItemAjax" url="http://N350i-22878:8080/itens/[[id]]" on-response="_getResponse"></iron-ajax>
+    <iron-ajax id="postItemAjax"
+      url="http://N350i-22878:8080/itens/"
+      method="POST"
+      content-type="application/json"
+      handle-as="json"
+      body="[[data]]"
+      on-response="_postResponse">
+    </iron-ajax>
+    <iron-ajax id="putItemAjax"
+      url="http://N350i-22878:8080/itens/"
+      method="PUT"
+      content-type="application/json"
+      handle-as="json"
+      body="[[data]]"
+      on-response="_putResponse">
+    </iron-ajax>
+    <iron-ajax id="deleteItemAjax"
+      url="http://N350i-22878:8080/itens/"
+      method="DELETE"
+      content-type="application/json"
+      handle-as="json"
+      body="[[data]]"
+      on-response="_deleteResponse">
+    </iron-ajax>
+
+    <paper-input id="nomeInput" name="nome" label="Nome" value="{{data.nome}}" readonly="[[disabled]]" on-keydown="_checkIfSubmit" required></paper-input>
+    <paper-textarea id="exigenciaInput" name="exigencia" label="Exigência" value="{{data.exigencia}}" readonly="[[disabled]]" rows="3" ></paper-textarea>
+
+    <div hidden="[[deleteMode]]" >
+      <paper-button disabled="[[saveDisabled]]" class="blue" on-click="_submitClicked" raised><iron-icon icon="save"></iron-icon>Salvar</paper-button>
+      <paper-button disabled="[[disabled]]" class="gray" on-click="_clearClicked" raised><iron-icon icon="rounded-corner"></iron-icon>Limpar</paper-button>
+    </div>
+
+    <div hidden="[[!deleteMode]]" >
+      <p style="margin-left:5px;" >Tem certeza que deseja remover o Nível?</p>
+      <paper-button class="red" on-click="_deleteClicked" raised><iron-icon icon="delete-forever"></iron-icon>Remover</paper-button>
+    </div>
+
+  </template>
+
+  <script>
+    class SapoCrudItem extends Polymer.Element {
+
+      static get is() { return 'sapo-crud-item'; }
+
+      static get properties() {
+        return {
+          id: {
+            type: Number,
+            observer: '_idChanged'
+          },
+          fk: {
+            type: Number,
+            observer: '_fkChanged'
+          },
+          data: {
+            type: Object,
+            value: () => { return {id: 0, subnivel_id: 0, nome: '', exigencia: ''}; }
+          },
+
+          disabled: Boolean,
+          saveDisabled: {
+            type: Boolean,
+            computed: '_isSaveDisabled(data.nome, disabled)'
+          },
+
+          deleteMode: {
+            type: Boolean,
+            computed: '_isDeleteMode(mode)'
+          },
+
+          mode: {
+            type: String,
+            observer: '_modeChanged'
+          }
+        }
+      }
+
+
+      //
+      //OBSERVERS & COMPUTEDS
+
+      _idChanged(newId) {
+        this.set('data.id', newId);
+      }
+
+      _fkChanged(newFk) {
+        this.set('data.subnivel_id', newFk);
+      }
+
+      _modeChanged(newMode) {
+
+        switch (newMode) {
+          case 'new':
+            this.id = 0;
+            this.disabled = false;
+            this._blurTextarea()
+              .then(() => {
+                this.$.nomeInput.focus();
+              });
+            break;
+          case 'edit':
+            this.disabled = false;
+            this.$.getItemAjax.generateRequest();
+            break;
+          case 'delete':
+            this.$.getItemAjax.generateRequest();
+            this._blurTextarea()
+              .then(() => {
+                this.disabled = true;
+              });
+          case 'closed':
+            this._clear();
+            break;
+        }
+      }
+
+      _isSaveDisabled(nome, disabled) {
+        return (!nome.trim()) || disabled;
+      }
+
+      _isDeleteMode(mode) {
+        return mode === 'delete';
+      }
+
+
+      //
+      //EVENTS
+
+      _clearClicked() {
+        this._clear();
+      }
+
+      _submitClicked() {
+
+        var ajax;
+        switch (this.mode) {
+          case 'new':
+            ajax = this.$.postItemAjax;
+            break;
+          case 'edit':
+            ajax = this.$.putItemAjax;
+            break;
+        }
+
+        ajax.generateRequest();
+      }
+
+      _deleteClicked() {
+        this.$.deleteItemAjax.generateRequest();
+      }
+
+      _checkIfSubmit(e) {
+        if (e.key === 'Enter' && ['new', 'edit'].includes(this.mode))
+          this._submitClicked();
+      }
+
+      _postResponse(e) {
+        this.dispatchEvent(new CustomEvent('save', {detail: e.detail.response}));
+      }
+
+      _putResponse(e) {
+        this.dispatchEvent(new CustomEvent('save', {detail: e.detail.response}));
+      }
+
+      _deleteResponse(e) {
+        this.dispatchEvent(new CustomEvent('delete', {detail: e.detail.response}));
+      }
+
+      _getResponse(e) {
+        var item = e.detail.response;
+        if (!item)
+          return;
+
+        this.data = item;
+
+        this._blurTextarea();
+      }
+
+
+      //
+      //UTILS
+
+      _clear() {
+        this.set('data.nome', '');
+        this.set('data.exigencia', '');
+
+        this._blurTextarea();
+      }
+
+      _blurTextarea() {
+
+        return this.sleep(100)
+          .then(() => {
+            //paper-textarea não da blur quando seu valor fica nulo (because fuck you, that's why)
+            this.$.exigenciaInput.focus();
+            this.$.exigenciaInput.blur();
+          });
+      }
+
+      //TODO: tentar deixar isso global
+      sleep(time) {
+        return new Promise(resolve => {
+          setTimeout(resolve, time);
+        });
+      }
+
+    }
+
+    window.customElements.define(SapoCrudItem.is, SapoCrudItem);
+  </script>
+</dom-module>

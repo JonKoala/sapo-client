@@ -9,7 +9,7 @@
   <template>
 
     <style>
-    
+
       .orange {
         background: #f0ad4e;
       }
@@ -50,8 +50,8 @@
     <paper-card>
       <p>[[text]]</p>
       <div>
-        <paper-button raised class="orange">editar</paper-button>
-        <paper-button raised class="red">remover</paper-button>
+        <paper-button raised class="orange" on-click="_editClicked">editar</paper-button>
+        <paper-button raised class="red" on-click="_deleteClicked" >remover</paper-button>
       </div>
     </paper-card>
 
@@ -64,8 +64,17 @@
 
       static get properties() {
         return {
+          identity: Number,
           text: String
         }
+      }
+
+      _editClicked() {
+        this.dispatchEvent(new CustomEvent('edit', {detail: {id: this.identity}}));
+      }
+
+      _deleteClicked() {
+        this.dispatchEvent(new CustomEvent('delete', {detail: {id: this.identity}}));
       }
 
     }

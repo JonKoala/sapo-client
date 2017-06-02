@@ -85,7 +85,7 @@
         this.$.editButton.disabled = (newValue === 0);
         this.$.deleteButton.disabled = (newValue === 0);
 
-        this.dispatchEvent(new CustomEvent('select', {detail: {selected: this.selected}}));
+        this.dispatchEvent(new CustomEvent('select', {detail: {id: this.selected}}));
       }
 
       _addClicked() {
@@ -93,11 +93,11 @@
       }
 
       _editClicked() {
-        this.dispatchEvent(new CustomEvent('edit', {detail: {selected: this.selected}}));
+        this.dispatchEvent(new CustomEvent('edit', {detail: {id: this.selected}}));
       }
 
       _deleteClicked() {
-        this.dispatchEvent(new CustomEvent('delete', {detail: {selected: this.selected}}));
+        this.dispatchEvent(new CustomEvent('delete', {detail: {id: this.selected}}));
       }
 
     }

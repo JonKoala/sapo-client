@@ -12,6 +12,7 @@
 <link rel="import" href="./sapo-crud-tipo.html">
 <link rel="import" href="./sapo-crud-nivel.html">
 <link rel="import" href="./sapo-crud-subnivel.html">
+<link rel="import" href="./sapo-crud-item.html">
 <link rel="import" href="./sapo-list-itens.html">
 
 <dom-module id="sapo-indicadores">
@@ -47,16 +48,17 @@
     <iron-ajax indicador="tipo" url="http://N350i-22878:8080/tipos/pilar/[[pilar]]" last-response="{{tipos}}"></iron-ajax>
     <iron-ajax indicador="nivel" url="http://N350i-22878:8080/niveis/tipo/[[tipo]]" last-response="{{niveis}}"></iron-ajax>
     <iron-ajax indicador="subnivel" url="http://N350i-22878:8080/subniveis/nivel/[[nivel]]" last-response="{{subniveis}}"></iron-ajax>
+    <iron-ajax indicador="item" url="http://N350i-22878:8080/itens/subnivel/[[subnivel]]" last-response="{{itens}}"></iron-ajax>
 
     <paper-card class="layout vertical fit">
 
-      <sapo-selector-crud indicador="indicador" label="Indicador" data="[[indicadores]]" selected="{{indicador}}" on-select="_indicadorChanged" on-add="_newIndicador" on-edit="_editIndicador" on-delete="_deleteIndicador" ></sapo-selector-crud>
-      <sapo-selector-crud indicador="pilar" label="Pilar" data="[[pilares]]" selected="{{pilar}}" on-select="_indicadorChanged" on-add="_newIndicador" on-edit="_editIndicador" on-delete="_deleteIndicador" ></sapo-selector-crud>
-      <sapo-selector-crud indicador="tipo" label="Tipo" data="[[tipos]]" selected="{{tipo}}" on-select="_indicadorChanged" on-add="_newIndicador" on-edit="_editIndicador" on-delete="_deleteIndicador" ></sapo-selector-crud>
-      <sapo-selector-crud indicador="nivel" label="Nível" data="[[niveis]]" selected="{{nivel}}" on-select="_indicadorChanged" on-add="_newIndicador" on-edit="_editIndicador" on-delete="_deleteIndicador" ></sapo-selector-crud>
-      <sapo-selector-crud indicador="subnivel" label="Subnível" data="[[subniveis]]" selected="{{subnivel}}" on-select="_indicadorChanged" on-add="_newIndicador" on-edit="_editIndicador" on-delete="_deleteIndicador" ></sapo-selector-crud>
+      <sapo-selector-crud indicador="indicador" label="Indicador" data="[[indicadores]]" selected="{{indicador}}" on-select="_selectIndicador" on-add="_newIndicador" on-edit="_editIndicador" on-delete="_deleteIndicador" ></sapo-selector-crud>
+      <sapo-selector-crud indicador="pilar" label="Pilar" data="[[pilares]]" selected="{{pilar}}" on-select="_selectIndicador" on-add="_newIndicador" on-edit="_editIndicador" on-delete="_deleteIndicador" ></sapo-selector-crud>
+      <sapo-selector-crud indicador="tipo" label="Tipo" data="[[tipos]]" selected="{{tipo}}" on-select="_selectIndicador" on-add="_newIndicador" on-edit="_editIndicador" on-delete="_deleteIndicador" ></sapo-selector-crud>
+      <sapo-selector-crud indicador="nivel" label="Nível" data="[[niveis]]" selected="{{nivel}}" on-select="_selectIndicador" on-add="_newIndicador" on-edit="_editIndicador" on-delete="_deleteIndicador" ></sapo-selector-crud>
+      <sapo-selector-crud indicador="subnivel" label="Subnível" data="[[subniveis]]" selected="{{subnivel}}" on-select="_selectIndicador" on-add="_newIndicador" on-edit="_editIndicador" on-delete="_deleteIndicador" ></sapo-selector-crud>
 
-      <sapo-list-itens></sapo-list-itens>
+      <sapo-list-itens indicador="item" label="Item" data="[[itens]]" on-add="_newIndicador" on-edit="_editIndicador" on-delete="_deleteIndicador"></sapo-list-itens>
 
     </paper-card>
 
@@ -67,15 +69,14 @@
         <sapo-crud-tipo indicador="tipo" on-save="_saveResult" on-delete="_deleteResult" ></sapo-crud-tipo>
         <sapo-crud-nivel indicador="nivel" on-save="_saveResult" on-delete="_deleteResult" ></sapo-crud-nivel>
         <sapo-crud-subnivel indicador="subnivel" on-save="_saveResult" on-delete="_deleteResult" ></sapo-crud-subnivel>
+        <sapo-crud-item indicador="item" on-save="_saveResult" on-delete="_deleteResult" ></sapo-crud-item>
       </iron-pages>
     </sapo-overlay>
 
-    <paper-toast id="quickNote" ></paper-toast>
+    <paper-toast id="quickNote"></paper-toast>
     <paper-toast id="persistentNote" duration="0" >
       <paper-button on-click="_closeNote">Fechar</paper-button>
     </paper-toast>
-
-    <element-template></element-template>
 
   </template>
 
@@ -97,10 +98,11 @@
           tipos: Array,
           niveis: Array,
           subniveis: Array,
+          itens: Array,
 
           hierarchy: {
             type: Array,
-            value: ['indicador', 'pilar', 'tipo', 'nivel', 'subnivel']
+            value: ['indicador', 'pilar', 'tipo', 'nivel', 'subnivel', 'item']
           },
 
           crud: String
@@ -111,18 +113,21 @@
       //
       //EVENTS
 
-      _indicadorChanged(e) {
+      _selectIndicador(e) {
         var indicador = e.target.getAttribute('indicador');
-        var selectedValue = e.detail.selected;
+        var selectedValue = e.detail.id;
 
         this[indicador] = selectedValue;
 
         var nextIndicador = this._getNextIndicador(indicador);
         if (nextIndicador) {
-          let nextSelector = this._getElementByIndicador('sapo-selector-crud', nextIndicador);
-          let nextAjax = this._getElementByIndicador('iron-ajax', nextIndicador);
 
-          nextSelector.disabled = (selectedValue === 0);
+          if (nextIndicador === 'item')
+            this._getElementByIndicador('sapo-list-itens', nextIndicador).disabled = (selectedValue === 0);
+          else
+            this._getElementByIndicador('sapo-selector-crud', nextIndicador).disabled = (selectedValue === 0);
+
+          let nextAjax = this._getElementByIndicador('iron-ajax', nextIndicador);
           nextAjax.generateRequest();
         }
       }
@@ -141,7 +146,7 @@
         this.crud = e.target.getAttribute('indicador');
         var crudElement = this.$.crudSelector.selectedItem;
 
-        crudElement.id = this[this.crud];
+        crudElement.id = e.detail.id;
         crudElement.mode = 'edit';
         this.$.overlayArea.open();
       }
@@ -150,7 +155,7 @@
         this.crud = e.target.getAttribute('indicador');
         var crudElement = this.$.crudSelector.selectedItem;
 
-        crudElement.id = this[this.crud];
+        crudElement.id = e.detail.id;
         crudElement.mode = 'delete';
         this.$.overlayArea.open();
       }
@@ -205,7 +210,12 @@
 
       _getIndicadorLabel(indicador) {
         var selector = this._getElementByIndicador('sapo-selector-crud', indicador);
-        return selector.getAttribute('label');
+        if (selector)
+          return selector.getAttribute('label');
+
+        var itens = this._getElementByIndicador('sapo-list-itens', indicador);
+        if (itens)
+          return itens.getAttribute('label');
       }
 
       _getElementByIndicador(element, indicador) {

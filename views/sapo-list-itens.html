@@ -1,4 +1,6 @@
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../bower_components/paper-listbox/paper-listbox.html">
 <link rel="import" href="../elements/sapo-item-crud.html">
 
@@ -8,6 +10,11 @@
   <template>
 
     <style>
+
+      .green {
+        background: #5cb85c;
+      }
+
       paper-listbox {
         --paper-listbox-background-color: lightgray;
 
@@ -19,11 +26,24 @@
       sapo-item-crud {
         outline: 0;
       }
+
+      paper-button {
+        color: white;
+        margin: auto 2px;
+      }
+
+      paper-button[disabled] {
+        background: #eaeaea;
+        color: #a8a8a8;
+      }
+
     </style>
 
+    <paper-button raised on-click="_addClicked" disabled="[[disabled]]" class="green"><iron-icon icon="add"></iron-icon>Novo</paper-button>
+
     <paper-listbox>
-      <template is="dom-repeat" items="[[itens]]">
-        <sapo-item-crud text="[[item.nome]]" ></sapo-item-crud>
+      <template is="dom-repeat" items="[[data]]">
+        <sapo-item-crud text="[[item.nome]]" identity="[[item.id]]" on-edit="_editClicked" on-delete="_deleteClicked" ></sapo-item-crud>
       </template>
     </paper-listbox>
 
@@ -36,17 +56,25 @@
 
       static get properties() {
         return {
-          itens: {
-            type: Array,
-            value: () => {
-              return [
-                {nome: "Lorem ipsum dolor sit amet"},
-                {nome: "Lorem ipsum dolor sit amet, consectetur adipiscing elit"},
-                {nome: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam a ultricies mauris. Suspendisse nec metus congue, tempus magna blandit, fermentum sapien"}
-              ];
-            }
+          data: Array,
+
+          disabled: {
+            type: Boolean,
+            value: true
           }
         }
+      }
+
+      _addClicked() {
+        this.dispatchEvent(new CustomEvent('add'));
+      }
+
+      _editClicked(e) {
+        this.dispatchEvent(new CustomEvent('edit', {detail: e.detail}));
+      }
+
+      _deleteClicked(e) {
+        this.dispatchEvent(new CustomEvent('delete', {detail: e.detail}));
       }
 
     }
