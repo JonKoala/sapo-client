@@ -13,12 +13,25 @@
 
     <style>
 
+      paper-input {
+        --paper-input-container-input-webkit-spinner: {
+          -webkit-appearance: none;
+          appearance: none;
+          margin: 0;
+        };
+      }
+
       div {
         padding-top: 50px;
       }
 
       paper-button {
         color: white;
+      }
+
+      paper-button[disabled] {
+        background: #eaeaea;
+        color: #a8a8a8;
       }
 
       .blue {
@@ -33,9 +46,8 @@
         background: #d9534f;
       }
 
-      paper-button[disabled] {
-        background: #eaeaea;
-        color: #a8a8a8;
+      #notaMaximaInput {
+        width: 100px;
       }
 
     </style>
@@ -68,6 +80,7 @@
 
     <paper-input id="nomeInput" name="nome" label="Nome" value="{{data.nome}}" readonly="[[disabled]]" on-keydown="_checkIfSubmit" required></paper-input>
     <paper-textarea id="exigenciaInput" name="exigencia" label="Exigência" value="{{data.exigencia}}" readonly="[[disabled]]" rows="3" ></paper-textarea>
+    <paper-input id="notaMaximaInput" name="notaMaxima" label="Nota Máxima" value="{{data.notaMaxima}}" readonly="[[disabled]]" type="number" alwaysFloatLabel="true" required></paper-input>
 
     <div hidden="[[deleteMode]]" >
       <paper-button disabled="[[saveDisabled]]" class="blue" on-click="_submitClicked" raised><iron-icon icon="save"></iron-icon>Salvar</paper-button>
@@ -98,13 +111,13 @@
           },
           data: {
             type: Object,
-            value: () => { return {id: 0, subnivel_id: 0, nome: '', exigencia: ''}; }
+            value: () => { return {id: 0, subnivel_id: 0, nome: '', exigencia: '', notaMaxima: ''}; }
           },
 
           disabled: Boolean,
           saveDisabled: {
             type: Boolean,
-            computed: '_isSaveDisabled(data.nome, disabled)'
+            computed: '_isSaveDisabled(data.nome, data.notaMaxima, disabled)'
           },
 
           deleteMode: {
@@ -158,8 +171,8 @@
         }
       }
 
-      _isSaveDisabled(nome, disabled) {
-        return (!nome.trim()) || disabled;
+      _isSaveDisabled(nome, notaMaxima, disabled) {
+        return (!nome.trim()) || isNaN(notaMaxima) || notaMaxima <= 0 || disabled;
       }
 
       _isDeleteMode(mode) {
@@ -227,6 +240,7 @@
       _clear() {
         this.set('data.nome', '');
         this.set('data.exigencia', '');
+        this.set('data.notaMaxima', '');
 
         this._blurTextarea();
       }
