@@ -29,16 +29,30 @@
       }
 
       paper-card {
-        margin: 20px;
+        margin: 5px 20px;
         padding: 10px;
         width: 40vw;
         align-items: center;
 
         display: flex;
+        flex-direction: column;
       }
 
-      #selectorsCard {
-        flex-direction: column;
+      h2 {
+        margin: 0px;
+        align-self: flex-start;
+
+        font-family: Georgia, serif;
+      }
+
+      hr {
+        border: 0;
+        margin: 0px 0px 10px;
+        clear:both;
+        display:block;
+        width: 100%;
+        background-color:lightgray;
+        height: 1px;
       }
 
       sapo-list-itens, sapo-list-pontuacoes {
@@ -69,7 +83,9 @@
     <iron-ajax indicador="item" url="http://N350i-22878:8080/itens/subnivel/[[subnivel]]" last-response="{{itens}}"></iron-ajax>
     <iron-ajax indicador="pontuacao" url="http://N350i-22878:8080/pontuacoes/item/[[item]]" last-response="{{pontuacoes}}"></iron-ajax>
 
-    <paper-card id="selectorsCard" >
+    <paper-card>
+      <h2>Indicadores</h2>
+      <hr>
       <sapo-selector-crud indicador="indicador" label="Indicador" data="[[indicadores]]" selected="{{indicador}}" on-select="_selectIndicador" on-add="_newIndicador" on-edit="_editIndicador" on-delete="_deleteIndicador" ></sapo-selector-crud>
       <sapo-selector-crud indicador="pilar" label="Pilar" data="[[pilares]]" selected="{{pilar}}" on-select="_selectIndicador" on-add="_newIndicador" on-edit="_editIndicador" on-delete="_deleteIndicador" ></sapo-selector-crud>
       <sapo-selector-crud indicador="tipo" label="Tipo" data="[[tipos]]" selected="{{tipo}}" on-select="_selectIndicador" on-add="_newIndicador" on-edit="_editIndicador" on-delete="_deleteIndicador" ></sapo-selector-crud>
@@ -78,6 +94,8 @@
     </paper-card>
 
     <paper-card>
+      <h2>Itens</h2>
+      <hr>
       <sapo-list-itens indicador="item" label="Item" data="[[itens]]" selected="{{item}}" on-select="_selectIndicador" on-add="_newIndicador" on-edit="_editIndicador" on-delete="_deleteIndicador"></sapo-list-itens>
     </paper-card>
 
@@ -85,6 +103,8 @@
     </paper-card>
 
     <paper-card>
+      <h2>Pontuações</h2>
+      <hr>
       <sapo-list-pontuacoes indicador="pontuacao" label="Pontuação" data="[[pontuacoes]]" on-add="_newIndicador" on-edit="_editIndicador" on-delete="_deleteIndicador"></sapo-list-pontuacoes>
     </paper-card>
 

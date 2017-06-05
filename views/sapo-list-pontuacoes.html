@@ -11,12 +11,21 @@
 
     <style>
 
+      :host {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+      }
+
       .green {
         background: #5cb85c;
       }
 
       paper-listbox {
         --paper-listbox-background-color: lightgray;
+
+        --sapo-item-crud-default-weight: normal;
+        --sapo-item-crud-default-background: white;
 
         height: 250px;
         padding: 0px;
@@ -28,7 +37,7 @@
       }
 
       paper-button {
-        margin: 5px auto;
+        margin: 5px auto 5px 0px;
         color: white;
       }
 
@@ -41,7 +50,7 @@
 
     <paper-button raised on-click="_addClicked" disabled="[[disabled]]" class="green"><iron-icon icon="add"></iron-icon>Novo</paper-button>
 
-    <paper-listbox attr-for-selected="identity">
+    <paper-listbox>
       <template is="dom-repeat" items="[[data]]">
         <sapo-item-crud text="[[_computeText(item.nota, item.descricao)]]" identity="[[item.id]]" on-edit="_editClicked" on-delete="_deleteClicked" ></sapo-item-crud>
       </template>

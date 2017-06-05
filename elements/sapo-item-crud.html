@@ -11,13 +11,12 @@
     <style>
 
       :host {
-        --sapo-item-crud-selected-weight: normal;
-        --sapo-teste: white;
+        --sapo-item-crud-background: white;
       }
 
       :host(.iron-selected) {
-        --sapo-item-crud-selected-weight: var(--paper-item-selected-weight, bold);
-        --sapo-teste: var(--paper-blue-grey-100);
+        --sapo-item-crud-selected-weight: var(--sapo-item-crud-default-weight, bold);
+        --sapo-item-crud-background: var(--sapo-item-crud-default-background, --paper-blue-grey-100);
       }
 
       .orange {
@@ -29,7 +28,7 @@
       }
 
       paper-card {
-        background: var(--sapo-teste);
+        background: var(--sapo-item-crud-background);
 
         display: flex;
         justify-content: space-between;

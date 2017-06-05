@@ -10,6 +10,11 @@
   <template>
 
     <style>
+      :host {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+      }
 
       .green {
         background: #5cb85c;
@@ -17,6 +22,8 @@
 
       paper-listbox {
         --paper-listbox-background-color: lightgray;
+
+        --sapo-item-crud-default-background: var(--paper-blue-grey-100); /* because css var is still bugged... */
 
         height: 250px;
         padding: 0px;
@@ -28,7 +35,7 @@
       }
 
       paper-button {
-        margin: 5px auto;
+        margin: 5px auto 5px 0px;
         color: white;
       }
 
