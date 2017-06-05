@@ -80,7 +80,7 @@
 
     <paper-input id="nomeInput" name="nome" label="Nome" value="{{data.nome}}" readonly="[[disabled]]" on-keydown="_checkIfSubmit" required></paper-input>
     <paper-textarea id="exigenciaInput" name="exigencia" label="Exigência" value="{{data.exigencia}}" readonly="[[disabled]]" rows="3" ></paper-textarea>
-    <paper-input id="notaMaximaInput" name="notaMaxima" label="Nota Máxima" value="{{data.notaMaxima}}" readonly="[[disabled]]" type="number" alwaysFloatLabel="true" required></paper-input>
+    <paper-input id="notaMaximaInput" name="notaMaxima" label="Nota Máxima" value="{{data.notaMaxima}}" readonly="[[disabled]]" type="number" on-keydown="_checkIfSubmit" required></paper-input>
 
     <div hidden="[[deleteMode]]" >
       <paper-button disabled="[[saveDisabled]]" class="blue" on-click="_submitClicked" raised><iron-icon icon="save"></iron-icon>Salvar</paper-button>
@@ -88,7 +88,7 @@
     </div>
 
     <div hidden="[[!deleteMode]]" >
-      <p style="margin-left:5px;" >Tem certeza que deseja remover o Nível?</p>
+      <p style="margin-left:5px;" >Tem certeza que deseja remover o Item?</p>
       <paper-button class="red" on-click="_deleteClicked" raised><iron-icon icon="delete-forever"></iron-icon>Remover</paper-button>
     </div>
 
