@@ -10,6 +10,16 @@
 
     <style>
 
+      :host {
+        --sapo-item-crud-selected-weight: normal;
+        --sapo-teste: white;
+      }
+
+      :host(.iron-selected) {
+        --sapo-item-crud-selected-weight: var(--paper-item-selected-weight, bold);
+        --sapo-teste: var(--paper-blue-grey-100);
+      }
+
       .orange {
         background: #f0ad4e;
       }
@@ -19,6 +29,8 @@
       }
 
       paper-card {
+        background: var(--sapo-teste);
+
         display: flex;
         justify-content: space-between;
 
@@ -27,6 +39,8 @@
       }
 
       p {
+        font-weight: var(--sapo-item-crud-selected-weight);
+
         margin: auto 10px;
         flex-grow: 1;
       }

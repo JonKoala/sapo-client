@@ -5,7 +5,7 @@
 <link rel="import" href="../elements/sapo-item-crud.html">
 
 
-<dom-module id="sapo-list-itens">
+<dom-module id="sapo-list-pontuacoes">
 
   <template>
 
@@ -41,29 +41,24 @@
 
     <paper-button raised on-click="_addClicked" disabled="[[disabled]]" class="green"><iron-icon icon="add"></iron-icon>Novo</paper-button>
 
-    <paper-listbox selected={{selected}} attr-for-selected="identity"  >
+    <paper-listbox attr-for-selected="identity">
       <template is="dom-repeat" items="[[data]]">
-        <sapo-item-crud text="[[item.nome]]" identity="[[item.id]]" on-edit="_editClicked" on-delete="_deleteClicked" ></sapo-item-crud>
+        <sapo-item-crud text="[[_computeText(item.nota, item.descricao)]]" identity="[[item.id]]" on-edit="_editClicked" on-delete="_deleteClicked" ></sapo-item-crud>
       </template>
     </paper-listbox>
 
   </template>
 
   <script>
-    class SapoListItens extends Polymer.Element {
+    class SapoListPontuacoes extends Polymer.Element {
 
-      static get is() { return 'sapo-list-itens'; }
+      static get is() { return 'sapo-list-pontuacoes'; }
 
       static get properties() {
         return {
           data: {
             type: Array,
             observer: '_dataChanged'
-          },
-          selected: {
-            type: Number,
-            notify: true,
-            observer: '_selectedChanged'
           },
 
           disabled: {
@@ -75,10 +70,6 @@
 
       _dataChanged(newData) {
         this.selected = 0;
-      }
-
-      _selectedChanged(newSelected) {
-        this.dispatchEvent(new CustomEvent('select', {detail: {id: newSelected}}));
       }
 
       _addClicked() {
@@ -93,8 +84,12 @@
         this.dispatchEvent(new CustomEvent('delete', {detail: e.detail}));
       }
 
+      _computeText(nota, descricao) {
+        return nota + " - " + descricao;
+      }
+
     }
 
-    window.customElements.define(SapoListItens.is, SapoListItens);
+    window.customElements.define(SapoListPontuacoes.is, SapoListPontuacoes);
   </script>
 </dom-module>

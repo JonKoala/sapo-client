@@ -13,7 +13,9 @@
 <link rel="import" href="./sapo-crud-nivel.html">
 <link rel="import" href="./sapo-crud-subnivel.html">
 <link rel="import" href="./sapo-crud-item.html">
+<link rel="import" href="./sapo-crud-pontuacao.html">
 <link rel="import" href="./sapo-list-itens.html">
+<link rel="import" href="./sapo-list-pontuacoes.html">
 
 <dom-module id="sapo-indicadores">
 
@@ -39,7 +41,7 @@
         flex-direction: column;
       }
 
-      sapo-list-itens {
+      sapo-list-itens, sapo-list-pontuacoes {
         flex-grow: 1;
       }
 
@@ -65,6 +67,7 @@
     <iron-ajax indicador="nivel" url="http://N350i-22878:8080/niveis/tipo/[[tipo]]" last-response="{{niveis}}"></iron-ajax>
     <iron-ajax indicador="subnivel" url="http://N350i-22878:8080/subniveis/nivel/[[nivel]]" last-response="{{subniveis}}"></iron-ajax>
     <iron-ajax indicador="item" url="http://N350i-22878:8080/itens/subnivel/[[subnivel]]" last-response="{{itens}}"></iron-ajax>
+    <iron-ajax indicador="pontuacao" url="http://N350i-22878:8080/pontuacoes/item/[[item]]" last-response="{{pontuacoes}}"></iron-ajax>
 
     <paper-card id="selectorsCard" >
       <sapo-selector-crud indicador="indicador" label="Indicador" data="[[indicadores]]" selected="{{indicador}}" on-select="_selectIndicador" on-add="_newIndicador" on-edit="_editIndicador" on-delete="_deleteIndicador" ></sapo-selector-crud>
@@ -75,7 +78,14 @@
     </paper-card>
 
     <paper-card>
-      <sapo-list-itens indicador="item" label="Item" data="[[itens]]" on-add="_newIndicador" on-edit="_editIndicador" on-delete="_deleteIndicador"></sapo-list-itens>
+      <sapo-list-itens indicador="item" label="Item" data="[[itens]]" selected="{{item}}" on-select="_selectIndicador" on-add="_newIndicador" on-edit="_editIndicador" on-delete="_deleteIndicador"></sapo-list-itens>
+    </paper-card>
+
+    <paper-card>
+    </paper-card>
+
+    <paper-card>
+      <sapo-list-pontuacoes indicador="pontuacao" label="Pontuação" data="[[pontuacoes]]" on-add="_newIndicador" on-edit="_editIndicador" on-delete="_deleteIndicador"></sapo-list-pontuacoes>
     </paper-card>
 
     <sapo-overlay id="overlayArea" on-close="_crudClosed" with-backdrop>
@@ -86,11 +96,12 @@
         <sapo-crud-nivel indicador="nivel" on-save="_saveResult" on-delete="_deleteResult" ></sapo-crud-nivel>
         <sapo-crud-subnivel indicador="subnivel" on-save="_saveResult" on-delete="_deleteResult" ></sapo-crud-subnivel>
         <sapo-crud-item indicador="item" on-save="_saveResult" on-delete="_deleteResult" ></sapo-crud-item>
+        <sapo-crud-pontuacao indicador="pontuacao" on-save="_saveResult" on-delete="_deleteResult" ></sapo-crud-pontuacao>
       </iron-pages>
     </sapo-overlay>
 
     <paper-toast id="quickNote"></paper-toast>
-    <paper-toast id="persistentNote" duration="0" >
+    <paper-toast id="persistentNote" duration="0">
       <paper-button on-click="_closeNote">Fechar</paper-button>
     </paper-toast>
 
@@ -108,6 +119,7 @@
           tipo: Number,
           nivel: Number,
           subnivel: Number,
+          item: Number,
 
           indicadores: Array,
           pilares: Array,
@@ -115,10 +127,11 @@
           niveis: Array,
           subniveis: Array,
           itens: Array,
+          pontuacoes: Array,
 
           hierarchy: {
             type: Array,
-            value: ['indicador', 'pilar', 'tipo', 'nivel', 'subnivel', 'item']
+            value: ['indicador', 'pilar', 'tipo', 'nivel', 'subnivel', 'item', 'pontuacao']
           },
 
           crud: String
@@ -130,6 +143,7 @@
       //EVENTS
 
       _selectIndicador(e) {
+
         var indicador = e.target.getAttribute('indicador');
         var selectedValue = e.detail.id;
 
@@ -138,10 +152,8 @@
         var nextIndicador = this._getNextIndicador(indicador);
         if (nextIndicador) {
 
-          if (nextIndicador === 'item')
-            this._getElementByIndicador('sapo-list-itens', nextIndicador).disabled = (selectedValue === 0);
-          else
-            this._getElementByIndicador('sapo-selector-crud', nextIndicador).disabled = (selectedValue === 0);
+          let nextIndicadorElement = Polymer.dom(this.root).querySelector('paper-card [indicador=' + nextIndicador + ']');
+          nextIndicadorElement.disabled = (selectedValue === 0);
 
           let nextAjax = this._getElementByIndicador('iron-ajax', nextIndicador);
           nextAjax.generateRequest();
@@ -191,7 +203,7 @@
           });
 
         var label = this._getIndicadorLabel(indicador);
-        this._showNotification(label + ' salvo com sucesso!');
+        this._showNotification(label + ' salvo(a) com sucesso!');
       }
 
       _deleteResult(e) {
@@ -202,12 +214,12 @@
         var label = this._getIndicadorLabel(indicador);
 
         if (deleted) {
-          this._showNotification(label + ' removido com sucesso!');
+          this._showNotification(label + ' removido(a) com sucesso!');
 
           let ajax = this._getElementByIndicador('iron-ajax', indicador);
           ajax.generateRequest();
         } else {
-          this._showNotification('Não foi possível remover o ' + label + '. Verifique se o mesmo não possui dependências.', true);
+          this._showNotification('Não foi possível remover o(a) ' + label + '. Verifique se o(a) mesmo(a) não possui dependências.', true);
         }
       }
 
@@ -225,13 +237,9 @@
       //UTILS
 
       _getIndicadorLabel(indicador) {
-        var selector = this._getElementByIndicador('sapo-selector-crud', indicador);
+        var selector = Polymer.dom(this.root).querySelector('paper-card [indicador=' + indicador + ']');
         if (selector)
           return selector.getAttribute('label');
-
-        var itens = this._getElementByIndicador('sapo-list-itens', indicador);
-        if (itens)
-          return itens.getAttribute('label');
       }
 
       _getElementByIndicador(element, indicador) {
