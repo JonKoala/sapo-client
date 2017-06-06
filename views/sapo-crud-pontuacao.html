@@ -171,7 +171,7 @@
       }
 
       _isSaveDisabled(nota, disabled) {
-        return isNaN(nota) || nota <= 0 || disabled;
+        return isNaN(nota) || nota < 0 || disabled;
       }
 
       _isDeleteMode(mode) {
