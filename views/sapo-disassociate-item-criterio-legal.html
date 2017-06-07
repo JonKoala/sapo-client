@@ -1,0 +1,117 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+
+<dom-module id="sapo-disassociate-item-criterio-legal">
+
+  <template>
+
+  <style>
+
+    div {
+      padding-top: 50px;
+    }
+
+    paper-button {
+      color: white;
+    }
+
+    .gray {
+      background: #616161;
+    }
+
+    .red {
+      background: #d9534f;
+    }
+
+    paper-button[disabled] {
+      background: #eaeaea;
+      color: #a8a8a8;
+    }
+  </style>
+
+  <iron-ajax id="getAjax" url="http://N350i-22878:8080/criterioslegais/[[criterioLegalId]]/item/[[itemId]]/full" last-response="{{data}}"></iron-ajax>
+  <iron-ajax id="deleteAjax"
+    url="http://N350i-22878:8080/itensCriteriosLegais/"
+    method="DELETE"
+    content-type="application/json"
+    handle-as="json"
+    body="[[_computeAjaxBody(itemId, criterioLegalId)]]"
+    on-response="_deleteResponse">
+  </iron-ajax>
+
+  <paper-input label="Item" value="[[data.item.nome]]" readonly></paper-input>
+  <paper-input label="Critério Legal" value="[[_computeCriterioLegal(data.descricao, data.norma.nome)]]" readonly></paper-input>
+
+  <p style="margin-left:5px;" >Tem certeza que deseja remover o Critério Legal?</p>
+
+  <paper-button class="red" on-click="_deleteClicked" raised><iron-icon icon="delete-forever"></iron-icon>Remover</paper-button>
+
+  </template>
+
+  <script>
+    class SapoDisassociateItemCriterioLegal extends Polymer.Element {
+
+      static get is() { return 'sapo-disassociate-item-criterio-legal'; }
+
+      static get properties() {
+        return {
+          itemId: Number,
+          criterioLegalId: Number,
+
+          data: Object
+        }
+      }
+
+
+      //
+      //OBSERVERS & COMPUTEDS
+
+      _computeCriterioLegal(criterioLegal, norma) {
+        return criterioLegal + " - " + norma;
+      }
+
+      _computeAjaxBody(itemId, criterioLegalId) {
+        return {item_id: itemId, criterio_legal_id: criterioLegalId};
+      }
+
+
+      //
+      //EVENTS
+
+      _deleteClicked() {
+        this.$.deleteAjax.generateRequest();
+      }
+
+      _deleteResponse(e) {
+        this.dispatchEvent(new CustomEvent('delete', {detail: e.detail.response}));
+      }
+
+
+      //
+      //UTILS
+
+      _clear() {
+        this.set('data', {});
+      }
+
+
+      //
+      //PUBLIC
+
+      start() {
+        this.$.getAjax.generateRequest();
+      }
+
+      close() {
+        this._clear();
+      }
+
+    }
+
+    window.customElements.define(SapoDisassociateItemCriterioLegal.is, SapoDisassociateItemCriterioLegal);
+  </script>
+</dom-module>

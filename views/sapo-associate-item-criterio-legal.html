@@ -23,10 +23,6 @@
         background: #616161;
       }
 
-      .red {
-        background: #d9534f;
-      }
-
       paper-listbox {
         --paper-listbox-background-color: lightgray;
 
@@ -37,12 +33,12 @@
         overflow: auto;
       }
 
-      sapo-item-crud {
-        outline: 0;
-      }
-
       div {
         padding-top: 50px;
+      }
+
+      sapo-item-crud {
+        outline: 0;
       }
 
       paper-button {
@@ -55,26 +51,26 @@
       }
     </style>
 
-    <iron-ajax id="getAjax" url="http://N350i-22878:8080/criterioslegais/item/not/[[fk]]" last-response="{{data}}"></iron-ajax>
+    <iron-ajax id="getAjax" url="http://N350i-22878:8080/criterioslegais/item/not/[[itemId]]" last-response="{{data}}"></iron-ajax>
     <iron-ajax id="postjax"
       url="http://n350i-22878:8080/itenscriterioslegais/"
       method="POST"
       content-type="application/json"
       handle-as="json"
-      body="[[_computedPostBody(selectedAux)]]"
+      body="[[_computeAjaxBody(selectedAux)]]"
       on-response="_postResponse">
     </iron-ajax>
 
     <paper-listbox selected-values="{{selected}}" selected-items="{{selectedAux}}" attr-for-selected="identity" multi>
       <template is="dom-repeat" items="[[data]]">
-        <sapo-item-crud text="[[_computeText(item.descricao, item.norma.nome)]]" identity="[[item.id]]" undeletable uneditable></sapo-item-crud>
+        <sapo-item-crud text="[[_computeText(item.norma.nome, item.descricao)]]" identity="[[item.id]]" undeletable uneditable></sapo-item-crud>
       </template>
     </paper-listbox>
 
-    <div hidden="[[removeMode]]" >
+    <div>
       <paper-button disabled="[[saveDisabled]]" class="blue" on-click="_submitClicked" raised><iron-icon icon="save"></iron-icon>Salvar</paper-button>
       <paper-button class="gray" on-click="_clearClicked" raised><iron-icon icon="rounded-corner"></iron-icon>Limpar</paper-button>
-    </div>
+    <div>
 
   </template>
 
@@ -85,15 +81,10 @@
 
       static get properties() {
         return {
-          fk: Number,
+          itemId: Number,
           data: Array,
           selected: Array,
           selectedAux: Array, /* can't use paper-listbox's selected-values on a computed property */
-
-          mode: {
-            type: String,
-            observer: '_modeChanged'
-          },
 
           saveDisabled: {
             type: Boolean,
@@ -110,20 +101,6 @@
       //
       //OBSERVERS & COMPUTEDS
 
-      _modeChanged(newMode) {
-
-        switch (newMode) {
-          case 'add':
-            this.$.getAjax.generateRequest();
-            break;
-          case 'remove':
-            break;
-          case 'closed':
-            this._clear();
-            break;
-        }
-      }
-
       _isSaveDisabled(selected) {
         return this.selected.length < 1;
       }
@@ -132,13 +109,13 @@
         return mode === 'remove';
       }
 
-      _computeText(criterioLegal, norma) {
-        return criterioLegal + " - " + norma;
+      _computeText(norma, criterioLegal) {
+        return norma + " - " + criterioLegal;
       }
 
-      _computedPostBody() {
+      _computeAjaxBody() {
         return this.selected.map(criterioLegal => {
-          return {item_id: this.fk, criterio_legal_id: criterioLegal};
+          return {item_id: this.itemId, criterio_legal_id: criterioLegal};
         });
       }
 
@@ -164,6 +141,18 @@
 
       _clear() {
         this.set('selected', []);
+      }
+
+
+      //
+      //PUBLIC
+
+      start() {
+        this.$.getAjax.generateRequest();
+      }
+
+      close() {
+        this._clear();
       }
 
     }

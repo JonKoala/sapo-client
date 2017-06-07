@@ -1,7 +1,7 @@
 
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
-<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 <link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../bower_components/iron-pages/iron-pages.html">
 <link rel="import" href="../bower_components/paper-card/paper-card.html">
 <link rel="import" href="../bower_components/paper-toast/paper-toast.html">
 <link rel="import" href="../elements/sapo-selector-crud.html">
@@ -14,7 +14,7 @@
 <link rel="import" href="./sapo-crud-subnivel.html">
 <link rel="import" href="./sapo-crud-item.html">
 <link rel="import" href="./sapo-crud-pontuacao.html">
-<link rel="import" href="./sapo-associate-item-criterio-legal.html">
+<link rel="import" href="./sapo-association-item-criterio-legal.html">
 <link rel="import" href="./sapo-list-itens.html">
 <link rel="import" href="./sapo-list-pontuacoes.html">
 <link rel="import" href="./sapo-list-criterios-legais.html">
@@ -105,7 +105,7 @@
     <paper-card>
       <h2>Critérios Legais</h2>
       <hr>
-      <sapo-list-criterios-legais indicador="criterio_legal" label="Critério Legal" data="[[criteriosLegais]]" on-add="_addCriterioLegal"></sapo-list-criterios-legais>
+      <sapo-list-criterios-legais indicador="criterio_legal" label="Critério Legal" data="[[criteriosLegais]]" on-add="_addCriterioLegal" on-delete="_removeCriterioLegal" ></sapo-list-criterios-legais>
     </paper-card>
 
     <paper-card>
@@ -123,7 +123,7 @@
         <sapo-crud-subnivel indicador="subnivel" on-save="_saveResult" on-delete="_deleteResult" ></sapo-crud-subnivel>
         <sapo-crud-item indicador="item" on-save="_saveResult" on-delete="_deleteResult" ></sapo-crud-item>
         <sapo-crud-pontuacao indicador="pontuacao" on-save="_saveResult" on-delete="_deleteResult" ></sapo-crud-pontuacao>
-        <sapo-associate-item-criterio-legal indicador="criterio_legal" on-save="_saveResult" on-delete="_deleteResult" ></sapo-associate-item-criterio-legal>
+        <sapo-association-item-criterio-legal indicador="criterio_legal" on-save="_saveResult" on-delete="_deleteResult" ></sapo-association-item-criterio-legal>
       </iron-pages>
     </sapo-overlay>
 
@@ -222,6 +222,25 @@
         this.$.overlayArea.open();
       }
 
+      _addCriterioLegal() {
+        this.crud = 'criterio_legal';
+        var crudCriterioLegal = this.$.crudSelector.selectedItem;
+
+        crudCriterioLegal.itemId = this.item;
+        crudCriterioLegal.mode = 'add';
+        this.$.overlayArea.open();
+      }
+
+      _removeCriterioLegal(e) {
+        this.crud = 'criterio_legal';
+        var crudCriterioLegal = this.$.crudSelector.selectedItem;
+
+        crudCriterioLegal.itemId = this.item;
+        crudCriterioLegal.criterioLegalId = e.detail.id;
+        crudCriterioLegal.mode = 'remove';
+        this.$.overlayArea.open();
+      }
+
       _saveResult(e) {
         this.$.overlayArea.close();
 
@@ -255,15 +274,6 @@
         } else {
           this._showNotification('Não foi possível remover o(a) ' + label + '. Verifique se o(a) mesmo(a) não possui dependências.', true);
         }
-      }
-
-      _addCriterioLegal() {
-        this.crud = 'criterio_legal';
-        var crudCriterioLegal = this.$.crudSelector.selectedItem;
-
-        crudCriterioLegal.fk = this.item;
-        crudCriterioLegal.mode = 'add';
-        this.$.overlayArea.open();
       }
 
       _crudClosed() {

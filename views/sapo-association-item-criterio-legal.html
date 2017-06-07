@@ -1,0 +1,66 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="./sapo-associate-item-criterio-legal.html">
+<link rel="import" href="./sapo-disassociate-item-criterio-legal.html">
+
+<dom-module id="sapo-association-item-criterio-legal">
+
+  <template>
+
+    <iron-pages selected="[[page]]" attr-for-selected="id">
+        <sapo-associate-item-criterio-legal id="associate" item-id="[[itemId]]" on-save="_saveResult"></sapo-associate-item-criterio-legal>
+        <sapo-disassociate-item-criterio-legal id="disassociate" item-id="[[itemId]]" criterio-legal-id="[[criterioLegalId]]" on-delete="_deleteResult"></sapo-disassociate-item-criterio-legal>
+    </iron-pages>
+
+  </template>
+
+  <script>
+    class SapoAssociationItemCriterioLegal extends Polymer.Element {
+
+      static get is() { return 'sapo-association-item-criterio-legal'; }
+
+      static get properties() {
+        return {
+          itemId: Number,
+          criterioLegalId: Number,
+
+          page: String,
+
+          mode: {
+            type: String,
+            observer: '_modeChanged'
+          }
+        }
+      }
+
+      _modeChanged(newMode) {
+
+        switch (newMode) {
+          case 'add':
+            this.page = 'associate';
+            this.$.associate.start();
+            break;
+          case 'remove':
+            this.page = 'disassociate';
+            this.$.disassociate.start();
+            break;
+          case 'closed':
+            this.$.associate.close();
+            this.$.disassociate.close();
+            break;
+        }
+      }
+
+      _saveResult(e) {
+        this.dispatchEvent(new CustomEvent('save', {detail: e.detail}));
+      }
+
+      _deleteResult(e) {
+        this.dispatchEvent(new CustomEvent('delete', {detail: e.detail}));
+      }
+
+    }
+
+    window.customElements.define(SapoAssociationItemCriterioLegal.is, SapoAssociationItemCriterioLegal);
+  </script>
+</dom-module>
