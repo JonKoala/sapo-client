@@ -1,6 +1,4 @@
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
-<link rel="import" href="../bower_components/iron-icons/iron-icons.html">
-<link rel="import" href="../bower_components/iron-icons/image-icons.html">
 <link rel="import" href="../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../bower_components/paper-listbox/paper-listbox.html">
 <link rel="import" href="../elements/sapo-item-crud.html">
@@ -52,8 +50,6 @@
 
     </style>
 
-    <paper-button raised on-click="_addClicked" disabled="[[disabled]]" class="teal"><iron-icon icon="image:add-to-photos"></iron-icon>Adicionar</paper-button>
-
     <paper-listbox>
       <template is="dom-repeat" items="[[data]]">
         <sapo-item-crud text="[[_computeText(item.norma.nome, item.descricao)]]" identity="[[item.id]]" on-delete="_deleteClicked" uneditable></sapo-item-crud>
@@ -69,20 +65,13 @@
 
       static get properties() {
         return {
-          data: {
-            type: Array,
-            observer: '_dataChanged'
-          },
+          data: Array,
 
           disabled: {
             type: Boolean,
             value: true
           }
         }
-      }
-
-      _dataChanged(newData) {
-        this.selected = 0;
       }
 
       _addClicked() {

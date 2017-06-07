@@ -2,6 +2,8 @@
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
 <link rel="import" href="../bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../bower_components/iron-icons/image-icons.html">
 <link rel="import" href="../bower_components/paper-card/paper-card.html">
 <link rel="import" href="../bower_components/paper-toast/paper-toast.html">
 <link rel="import" href="../elements/sapo-selector-crud.html">
@@ -28,6 +30,10 @@
         display: flex;
         justify-content: center;
         flex-wrap: wrap;
+      }
+
+      .teal {
+        background: var(--paper-teal-a700);
       }
 
       paper-card {
@@ -65,8 +71,19 @@
         margin: 80px;
         min-width: 500px;
       }
+
       paper-toast paper-button{
         color: #eeff41;
+      }
+
+      paper-button {
+        margin: 5px auto 5px 0px;
+        color: white;
+      }
+
+      paper-button[disabled] {
+        background: #eaeaea;
+        color: #a8a8a8;
       }
     </style>
 
@@ -105,6 +122,7 @@
     <paper-card>
       <h2>Critérios Legais</h2>
       <hr>
+      <paper-button id="addCriterioLegalButton" on-click="_addCriterioLegal" class="teal" raised><iron-icon icon="image:add-to-photos"></iron-icon>Adicionar</paper-button>
       <sapo-list-criterios-legais indicador="criterio_legal" label="Critério Legal" data="[[criteriosLegais]]" on-add="_addCriterioLegal" on-delete="_removeCriterioLegal" ></sapo-list-criterios-legais>
     </paper-card>
 
@@ -146,7 +164,10 @@
           tipo: Number,
           nivel: Number,
           subnivel: Number,
-          item: Number,
+          item: {
+            type: Number,
+            observer: '_itemChanged'
+          },
 
           indicadores: Array,
           pilares: Array,
@@ -164,6 +185,10 @@
 
           crud: String
         }
+      }
+
+      _itemChanged(newId) {
+        this.$.addCriterioLegalButton.disabled = (newId === 0);
       }
 
 
