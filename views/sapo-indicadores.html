@@ -14,8 +14,10 @@
 <link rel="import" href="./sapo-crud-subnivel.html">
 <link rel="import" href="./sapo-crud-item.html">
 <link rel="import" href="./sapo-crud-pontuacao.html">
+<link rel="import" href="./sapo-associate-item-criterio-legal.html">
 <link rel="import" href="./sapo-list-itens.html">
 <link rel="import" href="./sapo-list-pontuacoes.html">
+<link rel="import" href="./sapo-list-criterios-legais.html">
 
 <dom-module id="sapo-indicadores">
 
@@ -82,6 +84,7 @@
     <iron-ajax indicador="subnivel" url="http://N350i-22878:8080/subniveis/nivel/[[nivel]]" last-response="{{subniveis}}"></iron-ajax>
     <iron-ajax indicador="item" url="http://N350i-22878:8080/itens/subnivel/[[subnivel]]" last-response="{{itens}}"></iron-ajax>
     <iron-ajax indicador="pontuacao" url="http://N350i-22878:8080/pontuacoes/item/[[item]]" last-response="{{pontuacoes}}"></iron-ajax>
+    <iron-ajax indicador="criterio_legal" url="http://N350i-22878:8080/criterioslegais/item/[[item]]" last-response="{{criteriosLegais}}"></iron-ajax>
 
     <paper-card>
       <h2>Indicadores</h2>
@@ -100,6 +103,9 @@
     </paper-card>
 
     <paper-card>
+      <h2>Critérios Legais</h2>
+      <hr>
+      <sapo-list-criterios-legais indicador="criterio_legal" label="Critério Legal" data="[[criteriosLegais]]" on-add="_addCriterioLegal"></sapo-list-criterios-legais>
     </paper-card>
 
     <paper-card>
@@ -117,6 +123,7 @@
         <sapo-crud-subnivel indicador="subnivel" on-save="_saveResult" on-delete="_deleteResult" ></sapo-crud-subnivel>
         <sapo-crud-item indicador="item" on-save="_saveResult" on-delete="_deleteResult" ></sapo-crud-item>
         <sapo-crud-pontuacao indicador="pontuacao" on-save="_saveResult" on-delete="_deleteResult" ></sapo-crud-pontuacao>
+        <sapo-associate-item-criterio-legal indicador="criterio_legal" on-save="_saveResult" on-delete="_deleteResult" ></sapo-associate-item-criterio-legal>
       </iron-pages>
     </sapo-overlay>
 
@@ -148,6 +155,7 @@
           subniveis: Array,
           itens: Array,
           pontuacoes: Array,
+          criteriosLegais: Array,
 
           hierarchy: {
             type: Array,
@@ -177,6 +185,12 @@
 
           let nextAjax = this._getElementByIndicador('iron-ajax', nextIndicador);
           nextAjax.generateRequest();
+
+          //special case
+          if (indicador === 'item') {
+            this._getElementByIndicador('iron-ajax', 'criterio_legal').generateRequest();
+            Polymer.dom(this.root).querySelector('paper-card [indicador=criterio_legal]').disabled = (selectedValue === 0);
+          }
         }
       }
 
@@ -243,9 +257,18 @@
         }
       }
 
+      _addCriterioLegal() {
+        this.crud = 'criterio_legal';
+        var crudCriterioLegal = this.$.crudSelector.selectedItem;
+
+        crudCriterioLegal.fk = this.item;
+        crudCriterioLegal.mode = 'add';
+        this.$.overlayArea.open();
+      }
+
       _crudClosed() {
         let crudElement = this.$.crudSelector.selectedItem;
-        crudElement.mode = 'closed'
+        crudElement.mode = 'closed';
       }
 
       _closeNote(e) {

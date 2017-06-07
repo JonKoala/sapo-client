@@ -63,8 +63,8 @@
     <paper-card>
       <p>[[text]]</p>
       <div>
-        <paper-button raised class="orange" on-click="_editClicked">editar</paper-button>
-        <paper-button raised class="red" on-click="_deleteClicked" >remover</paper-button>
+        <paper-button hidden="[[uneditable]]" raised class="orange" on-click="_editClicked">editar</paper-button>
+        <paper-button hidden="[[undeletable]]" raised class="red" on-click="_deleteClicked" >remover</paper-button>
       </div>
     </paper-card>
 
@@ -78,7 +78,10 @@
       static get properties() {
         return {
           identity: Number,
-          text: String
+          text: String,
+
+          uneditable: Boolean,
+          undeletable: Boolean
         }
       }
 
