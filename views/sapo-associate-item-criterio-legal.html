@@ -1,8 +1,7 @@
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../bower_components/paper-button/paper-button.html">
-<link rel="import" href="../bower_components/paper-listbox/paper-listbox.html">
-<link rel="import" href="../elements/sapo-item-crud.html">
+<link rel="import" href="../elements/sapo-list-items.html">
 
 <dom-module id="sapo-associate-item-criterio-legal">
 
@@ -23,22 +22,8 @@
         background: #616161;
       }
 
-      paper-listbox {
-        --paper-listbox-background-color: lightgray;
-
-        --sapo-item-crud-default-background: var(--paper-blue-grey-100); /* because css var is still bugged... */
-
-        height: 250px;
-        padding: 0px;
-        overflow: auto;
-      }
-
       div {
         padding-top: 50px;
-      }
-
-      sapo-item-crud {
-        outline: 0;
       }
 
       paper-button {
@@ -57,20 +42,16 @@
       method="POST"
       content-type="application/json"
       handle-as="json"
-      body="[[_computeAjaxBody(selectedAux)]]"
+      body="[[_computeAjaxBody(selected)]]"
       on-response="_postResponse">
     </iron-ajax>
 
-    <paper-listbox selected-values="{{selected}}" selected-items="{{selectedAux}}" attr-for-selected="identity" multi>
-      <template is="dom-repeat" items="[[data]]">
-        <sapo-item-crud text="[[_computeText(item.norma.nome, item.descricao)]]" identity="[[item.id]]" undeletable uneditable></sapo-item-crud>
-      </template>
-    </paper-listbox>
+    <sapo-list-items data="[[_computeData(data)]]" selected-values="{{selected}}" undeletable uneditable multi></sapo-list-items>
 
     <div>
       <paper-button disabled="[[saveDisabled]]" class="blue" on-click="_submitClicked" raised><iron-icon icon="save"></iron-icon>Salvar</paper-button>
       <paper-button class="gray" on-click="_clearClicked" raised><iron-icon icon="rounded-corner"></iron-icon>Limpar</paper-button>
-    <div>
+    </div>
 
   </template>
 
@@ -82,18 +63,14 @@
       static get properties() {
         return {
           itemId: Number,
+
           data: Array,
           selected: Array,
-          selectedAux: Array, /* can't use paper-listbox's selected-values on a computed property */
 
           saveDisabled: {
             type: Boolean,
-            computed: '_isSaveDisabled(selectedAux)'
-          },
-          removeMode: {
-            type: Boolean,
-            computed: '_isRemoveMode(mode)'
-          },
+            computed: '_isSaveDisabled(selected)'
+          }
         }
       }
 
@@ -105,17 +82,18 @@
         return this.selected.length < 1;
       }
 
-      _isRemoveMode(mode) {
-        return mode === 'remove';
+      _computeData(data) {
+        return data.map(item => {
+          return {
+            id: item.id,
+            text: item.norma.nome + " - " + item.descricao
+          }
+        });
       }
 
-      _computeText(norma, criterioLegal) {
-        return norma + " - " + criterioLegal;
-      }
-
-      _computeAjaxBody() {
-        return this.selected.map(criterioLegal => {
-          return {item_id: this.itemId, criterio_legal_id: criterioLegal};
+      _computeAjaxBody(selected) {
+        return selected.map(criterioLegalId => {
+          return {item_id: this.itemId, criterio_legal_id: criterioLegalId};
         });
       }
 

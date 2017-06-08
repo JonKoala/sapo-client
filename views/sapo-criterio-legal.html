@@ -1,13 +1,21 @@
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../elements/sapo-list-items.html">
 
 <dom-module id="sapo-criterio-legal">
 
   <template>
 
     <style>
+      sapo-list-items {
+        width: 40vw;
+      }
     </style>
 
-    
+    <iron-ajax auto url="http://N350i-22878:8080/criterioslegais/" last-response="{{criteriosLegais}}"></iron-ajax>
+
+    <sapo-list-items id="list" data="[[_computeData(criteriosLegais)]]" on-edit="_onEdit" on-delete="_onDelete" multi uneditable undeletable ></sapo-list-items>
+    <button on-click="click" >TESTE</button>
 
   </template>
 
@@ -17,7 +25,27 @@
       static get is() { return 'sapo-criterio-legal'; }
 
       static get properties() {
-        return { }
+        return {
+          criteriosLegais: Array,
+        }
+      }
+
+      _computeData(data) {
+        return data.map(item => {
+          return {text: item.descricao, id: item.id}
+        });
+      }
+
+      click() {
+
+      }
+
+      _onEdit(e) {
+        console.log(e.detail);
+      }
+
+      _onDelete(e) {
+        console.log(e.detail);
       }
 
     }

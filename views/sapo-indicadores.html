@@ -8,7 +8,7 @@
 <link rel="import" href="../bower_components/paper-toast/paper-toast.html">
 <link rel="import" href="../elements/sapo-selector-crud.html">
 <link rel="import" href="../elements/sapo-overlay.html">
-<link rel="import" href="../elements/element-template.html">
+<link rel="import" href="../elements/sapo-list-items.html">
 <link rel="import" href="./sapo-crud-indicador.html">
 <link rel="import" href="./sapo-crud-pilar.html">
 <link rel="import" href="./sapo-crud-tipo.html">
@@ -17,9 +17,6 @@
 <link rel="import" href="./sapo-crud-item.html">
 <link rel="import" href="./sapo-crud-pontuacao.html">
 <link rel="import" href="./sapo-association-item-criterio-legal.html">
-<link rel="import" href="./sapo-list-itens.html">
-<link rel="import" href="./sapo-list-pontuacoes.html">
-<link rel="import" href="./sapo-list-criterios-legais.html">
 
 <dom-module id="sapo-indicadores">
 
@@ -30,6 +27,10 @@
         display: flex;
         justify-content: center;
         flex-wrap: wrap;
+      }
+
+      .green {
+        background: #5cb85c;
       }
 
       .teal {
@@ -72,7 +73,7 @@
         min-width: 500px;
       }
 
-      paper-toast paper-button{
+      paper-toast paper-button {
         color: #eeff41;
       }
 
@@ -116,20 +117,22 @@
     <paper-card>
       <h2>Itens</h2>
       <hr>
-      <sapo-list-itens indicador="item" label="Item" data="[[itens]]" selected="{{item}}" on-select="_selectIndicador" on-add="_newIndicador" on-edit="_editIndicador" on-delete="_deleteIndicador"></sapo-list-itens>
+      <paper-button indicador="item" label="Item" on-click="_newIndicador" class="green" disabled raised><iron-icon icon="add"></iron-icon>Novo</paper-button>
+      <sapo-list-items indicador="item" label="Item" data="[[_computeItens(itens)]]" selected="{{item}}" on-edit="_editIndicador" on-delete="_deleteIndicador"></sapo-list-items>
     </paper-card>
 
     <paper-card>
       <h2>Critérios Legais</h2>
       <hr>
-      <paper-button id="addCriterioLegalButton" on-click="_addCriterioLegal" class="teal" raised><iron-icon icon="image:add-to-photos"></iron-icon>Adicionar</paper-button>
-      <sapo-list-criterios-legais indicador="criterio_legal" label="Critério Legal" data="[[criteriosLegais]]" on-add="_addCriterioLegal" on-delete="_removeCriterioLegal" ></sapo-list-criterios-legais>
+      <paper-button id="addCriterioLegalButton" on-click="_addCriterioLegal" class="teal" disabled raised><iron-icon icon="image:add-to-photos"></iron-icon>Adicionar</paper-button>
+      <sapo-list-items indicador="criterio_legal" label="Critério Legal" data="[[_computeCriteriosLegais(criteriosLegais)]]" on-delete="_removeCriterioLegal" uneditable unselectable></sapo-list-items>
     </paper-card>
 
     <paper-card>
       <h2>Pontuações</h2>
       <hr>
-      <sapo-list-pontuacoes indicador="pontuacao" label="Pontuação" data="[[pontuacoes]]" on-add="_newIndicador" on-edit="_editIndicador" on-delete="_deleteIndicador"></sapo-list-pontuacoes>
+      <paper-button id="addPontuacaoButton" indicador="pontuacao" label="Pontuação" on-click="_newIndicador" class="green" disabled raised><iron-icon icon="add"></iron-icon>Novo</paper-button>
+      <sapo-list-items indicador="pontuacao" label="Pontuação" data="[[_computePontuacao(pontuacoes)]]" on-delete="_deleteIndicador" on-edit="_editIndicador" unselectable></sapo-list-items>
     </paper-card>
 
     <sapo-overlay id="overlayArea" on-close="_crudClosed" with-backdrop>
@@ -188,7 +191,37 @@
       }
 
       _itemChanged(newId) {
+        this.$.addPontuacaoButton.disabled = (newId === 0);
         this.$.addCriterioLegalButton.disabled = (newId === 0);
+        this._getElementByIndicador('iron-ajax', 'pontuacao').generateRequest();
+        this._getElementByIndicador('iron-ajax', 'criterio_legal').generateRequest();
+      }
+
+      _computeCriteriosLegais(criteriosLegais) {
+        return criteriosLegais.map(item => {
+          return {
+            id: item.id,
+            text: item.norma.nome + " - " + item.descricao
+          }
+        });
+      }
+
+      _computePontuacao(pontuacoes) {
+        return pontuacoes.map(item => {
+          return {
+            id: item.id,
+            text: item.nota + " - " + item.descricao
+          }
+        });
+      }
+
+      _computeItens(itens) {
+        return itens.map(item => {
+          return {
+            id: item.id,
+            text: item.nome
+          }
+        });
       }
 
 
@@ -210,12 +243,6 @@
 
           let nextAjax = this._getElementByIndicador('iron-ajax', nextIndicador);
           nextAjax.generateRequest();
-
-          //special case
-          if (indicador === 'item') {
-            this._getElementByIndicador('iron-ajax', 'criterio_legal').generateRequest();
-            Polymer.dom(this.root).querySelector('paper-card [indicador=criterio_legal]').disabled = (selectedValue === 0);
-          }
         }
       }
 

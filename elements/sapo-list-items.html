@@ -48,7 +48,10 @@
 
       static get properties() {
         return {
-          data: Array,
+          data: {
+            type: Array,
+            observer: '_dataChanged'
+          },
 
           selected: {
             type: Number,
@@ -82,6 +85,10 @@
 
       //
       //OBSERVERS & COMPUTEDS
+
+      _dataChanged(newData) {
+        this.selected = 0;
+      }
 
       _isUnselectable(unselectable) {
         return (unselectable) ? "unselectable" : "";
