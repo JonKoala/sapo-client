@@ -1,8 +1,8 @@
 
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
-<link rel="import" href="../bower_components/paper-item/paper-item.html">
-<link rel="import" href="../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
 
 <dom-module id="sapo-item-crud">
 
@@ -11,12 +11,13 @@
     <style>
 
       :host {
+        --sapo-item-crud-weigh: normal;
         --sapo-item-crud-background: white;
       }
 
       :host(.iron-selected) {
-        --sapo-item-crud-selected-weight: var(--sapo-item-crud-default-weight, bold);
-        --sapo-item-crud-background: var(--sapo-item-crud-default-background, --paper-blue-grey-100);
+        --sapo-item-crud-weight: var(--sapo-item-crud-selected-weight, bold);
+        --sapo-item-crud-background: var(--sapo-item-crud-selected-background, var(--paper-blue-grey-100));
       }
 
       .orange {
@@ -35,10 +36,11 @@
 
         padding: 10px;
         margin: 10px;
+        min-height: 60px;
       }
 
       p {
-        font-weight: var(--sapo-item-crud-selected-weight);
+        font-weight: var(sapo-item-crud-weight);
 
         margin: auto 10px;
         flex-grow: 1;
@@ -58,6 +60,7 @@
         background: #eaeaea;
         color: #a8a8a8;
       }
+      
     </style>
 
     <paper-card>
