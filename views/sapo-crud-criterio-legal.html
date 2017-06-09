@@ -1,0 +1,292 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/iron-form/iron-form.html">
+<link rel="import" href="../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../bower_components/paper-input/paper-textarea.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../bower_components/paper-item/paper-item.html">
+
+
+<dom-module id="sapo-crud-criterio-legal">
+
+  <template>
+
+    <style>
+
+      .blue {
+        background: #337ab7;
+      }
+
+      .gray {
+        background: #616161;
+      }
+
+      .red {
+        background: #d9534f;
+      }
+
+      .hidden {
+        display: none;
+      }
+
+      paper-dropdown-menu {
+        width: 200px;
+      }
+
+      paper-dropdown-menu[hidden] {
+        display: none;
+      }
+
+      div {
+        padding-top: 50px;
+      }
+
+      paper-button {
+        color: white;
+      }
+
+      paper-button[disabled] {
+        background: #eaeaea;
+        color: #a8a8a8;
+      }
+
+    </style>
+
+    <iron-ajax id="getAjax" url="http://N350i-22878:8080/criterioslegais/[[id]]" on-response="_getResponse"></iron-ajax>
+    <iron-ajax auto url="http://N350i-22878:8080/normas/" last-response="{{normas}}"></iron-ajax>
+    <iron-ajax id="postAjax"
+      url="http://N350i-22878:8080/criterioslegais/"
+      method="POST"
+      content-type="application/json"
+      handle-as="json"
+      body="[[data]]"
+      on-response="_postResponse">
+    </iron-ajax>
+    <iron-ajax id="putAjax"
+      url="http://N350i-22878:8080/criterioslegais/"
+      method="PUT"
+      content-type="application/json"
+      handle-as="json"
+      body="[[data]]"
+      on-response="_putResponse">
+    </iron-ajax>
+    <iron-ajax id="deleteAjax"
+      url="http://N350i-22878:8080/criterioslegais/"
+      method="DELETE"
+      content-type="application/json"
+      handle-as="json"
+      body="[[data]]"
+      on-response="_deleteResponse">
+    </iron-ajax>
+
+    <paper-dropdown-menu id="normaDropdown" hidden="[[deleteMode]]" label="Norma" required>
+      <paper-listbox slot="dropdown-content" selected="{{norma}}" attr-for-selected="value" class="dropdown-content">
+        <template is="dom-repeat" items="[[normas]]">
+          <paper-item value="[[item.id]]">[[item.nome]]</paper-item>
+        </template>
+      </paper-listbox>
+    </paper-dropdown-menu>
+    <paper-input value="[[_computeNormaText(norma)]]" hidden="[[!deleteMode]]" readonly></paper-input>
+    <paper-textarea id="descricaoInput" name="descricao" label="Descrição" value="{{data.descricao}}" readonly="[[disabled]]" rows="3" ></paper-textarea>
+
+
+    <div hidden="[[deleteMode]]" >
+      <paper-button disabled="[[saveDisabled]]" class="blue" on-click="_submitClicked" raised><iron-icon icon="save"></iron-icon>Salvar</paper-button>
+      <paper-button disabled="[[disabled]]" class="gray" on-click="_clearClicked" raised><iron-icon icon="rounded-corner"></iron-icon>Limpar</paper-button>
+    </div>
+
+    <div hidden="[[!deleteMode]]" >
+      <p style="margin-left:5px;" >Tem certeza que deseja remover o Critério Legal?</p>
+      <paper-button class="red" on-click="_deleteClicked" raised><iron-icon icon="delete-forever"></iron-icon>Remover</paper-button>
+    </div>
+
+  </template>
+
+  <script>
+    class SapoCrudCriterioLegal extends Polymer.Element {
+
+      static get is() { return 'sapo-crud-criterio-legal'; }
+
+      static get properties() {
+        return {
+          id: {
+            type: Number,
+            observer: '_idChanged'
+          },
+          norma: {
+            type: Number,
+            observer: '_normaChanged'
+          },
+          data: {
+            type: Object,
+            value: () => { return {id: 0, norma_id: 0, descricao: ''}; }
+          },
+          normas: Array,
+
+          disabled: Boolean,
+          saveDisabled: {
+            type: Boolean,
+            computed: '_isSaveDisabled(norma, disabled)'
+          },
+
+          deleteMode: {
+            type: Boolean,
+            computed: '_isDeleteMode(mode)'
+          },
+
+          mode: {
+            type: String,
+            observer: '_modeChanged'
+          }
+        }
+      }
+
+      static get observers() {
+        return [
+          '_dataNormaChanged(data.norma_id)',
+        ];
+      }
+
+
+      //
+      //OBSERVERS & COMPUTEDS
+
+      _computeNormaText(norma) {
+        if (this.normas && norma)
+          return this.normas.find(item => { return item.id === norma; }).nome;
+      }
+
+      _idChanged(newId) {
+        this.set('data.id', newId);
+      }
+
+      _normaChanged(newNorma) {
+        this.set('data.norma_id', newNorma);
+      }
+
+      _dataNormaChanged(newNorma) {
+        this.norma = newNorma;
+      }
+
+      _modeChanged(newMode) {
+
+        switch (newMode) {
+          case 'new':
+            this.id = 0;
+            this.disabled = false;
+            this._blurTextarea();
+            break;
+          case 'edit':
+            this.disabled = false;
+            this.$.getAjax.generateRequest();
+            break;
+          case 'delete':
+            this.$.getAjax.generateRequest();
+            this._blurTextarea()
+              .then(() => {
+                this.disabled = true;
+              });
+          case 'closed':
+            this._clear();
+            break;
+        }
+      }
+
+      _isSaveDisabled(norma, disabled) {
+        return isNaN(norma) || norma <= 0 || disabled;
+      }
+
+      _isDeleteMode(mode) {
+        return mode === 'delete';
+      }
+
+
+      //
+      //EVENTS
+
+      _clearClicked() {
+        this._clear();
+      }
+
+      _submitClicked() {
+
+        var ajax;
+        switch (this.mode) {
+          case 'new':
+            ajax = this.$.postAjax;
+            break;
+          case 'edit':
+            ajax = this.$.putAjax;
+            break;
+        }
+
+        ajax.generateRequest();
+      }
+
+      _deleteClicked() {
+        this.$.deleteAjax.generateRequest();
+      }
+
+      _checkIfSubmit(e) {
+        if (e.key === 'Enter' && ['new', 'edit'].includes(this.mode))
+          this._submitClicked();
+      }
+
+      _postResponse(e) {
+        this.dispatchEvent(new CustomEvent('save', {detail: e.detail.response}));
+      }
+
+      _putResponse(e) {
+        this.dispatchEvent(new CustomEvent('save', {detail: e.detail.response}));
+      }
+
+      _deleteResponse(e) {
+        this.dispatchEvent(new CustomEvent('delete', {detail: e.detail.response}));
+      }
+
+      _getResponse(e) {
+        var criterioLegal = e.detail.response;
+        if (!criterioLegal)
+          return;
+
+        this.data = criterioLegal;
+
+        this._blurTextarea();
+      }
+
+
+      //
+      //UTILS
+
+      _clear() {
+        this.set('data.descricao', '');
+        this.set('data.norma_id', 0);
+
+        this._blurTextarea();
+      }
+
+      _blurTextarea() {
+
+        return this.sleep(100)
+          .then(() => {
+            //paper-textarea não da blur quando seu valor fica nulo (because fuck you, that's why)
+            this.$.descricaoInput.focus();
+            this.$.descricaoInput.blur();
+          });
+      }
+
+      //TODO: tentar deixar isso global
+      sleep(time) {
+        return new Promise(resolve => {
+          setTimeout(resolve, time);
+        });
+      }
+
+    }
+
+    window.customElements.define(SapoCrudCriterioLegal.is, SapoCrudCriterioLegal);
+  </script>
+</dom-module>

@@ -1,21 +1,105 @@
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/paper-toast/paper-toast.html">
 <link rel="import" href="../elements/sapo-list-items.html">
+<link rel="import" href="../elements/sapo-overlay.html">
+<link rel="import" href="./sapo-crud-criterio-legal.html">
 
 <dom-module id="sapo-criterio-legal">
 
   <template>
 
     <style>
-      sapo-list-items {
-        width: 40vw;
+
+      :host {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
       }
+
+      .green {
+        background: #5cb85c;
+      }
+
+      paper-card {
+        margin: 5px 20px;
+        padding: 10px;
+        width: 40vw;
+        align-items: center;
+
+        display: flex;
+        flex-direction: column;
+      }
+
+      h2 {
+        margin: 0px;
+        align-self: flex-start;
+
+        font-family: Georgia, serif;
+      }
+
+      hr {
+        border: 0;
+        margin: 0px 0px 10px;
+        clear:both;
+        display:block;
+        width: 100%;
+        background-color:lightgray;
+        height: 1px;
+      }
+
+      sapo-overlay {
+        margin: 80px;
+        min-width: 500px;
+      }
+
+      paper-button {
+        margin: 5px auto 5px 0px;
+        color: white;
+      }
+
+      paper-button[disabled] {
+        background: #eaeaea;
+        color: #a8a8a8;
+      }
+
+      paper-toast paper-button {
+        color: #eeff41;
+      }
+
     </style>
 
-    <iron-ajax auto url="http://N350i-22878:8080/criterioslegais/" last-response="{{criteriosLegais}}"></iron-ajax>
+    <iron-ajax id="getCriteriosLegaisAjax" auto url="http://N350i-22878:8080/criterioslegais/full" last-response="{{criteriosLegais}}"></iron-ajax>
+    <iron-ajax auto url="http://n350i-22878:8080/normas/" last-response="{{normas}}"></iron-ajax>
 
-    <sapo-list-items id="list" data="[[_computeData(criteriosLegais)]]" on-edit="_onEdit" on-delete="_onDelete" multi uneditable undeletable ></sapo-list-items>
-    <button on-click="click" >TESTE</button>
+    <paper-card>
+      <h2>Critérios Legais</h2>
+      <hr>
+      <paper-button indicador="item" label="Item" on-click="_newCriterioLegal" class="green" raised><iron-icon icon="add"></iron-icon>Novo</paper-button>
+      <sapo-list-items data="[[_computeCriteriosLegais(criteriosLegais)]]" on-edit="_editCriterioLegal" on-delete="_deleteCriterioLegal" unselectable ></sapo-list-items>
+    </paper-card>
+
+    <paper-card>
+      <h2>Normas</h2>
+      <hr>
+      <paper-button indicador="item" label="Item" on-click="_newNorma" class="green" raised><iron-icon icon="add"></iron-icon>Novo</paper-button>
+      <sapo-list-items data="[[_computeNormas(normas)]]" on-edit="_editNorma" on-delete="_deleteNorma" unselectable></sapo-list-items>
+    </paper-card>
+
+    <sapo-overlay id="overlayArea" on-close="_crudClosed" with-backdrop>
+      <iron-pages id="crudSelector" selected="[[crud]]" attr-for-selected="entity">
+        <sapo-crud-criterio-legal entity="criterio-legal" on-save="_criterioLegalSaved" on-delete="_criterioLegalDeleted" ></sapo-crud-criterio-legal>
+      </iron-pages>
+    </sapo-overlay>
+
+    <paper-toast id="quickNote"></paper-toast>
+    <paper-toast id="persistentNote" duration="0">
+      <paper-button on-click="_closeNote">Fechar</paper-button>
+    </paper-toast>
 
   </template>
 
@@ -27,25 +111,116 @@
       static get properties() {
         return {
           criteriosLegais: Array,
+          normas: Array,
+
+          crud: String
         }
       }
 
-      _computeData(data) {
+
+      //
+      //OBSERVERS & COMPUTEDS
+
+      _computeCriteriosLegais(data) {
         return data.map(item => {
-          return {text: item.descricao, id: item.id}
+          return {
+            id: item.id,
+            text: item.norma.nome + " - " + item.descricao
+          }
         });
       }
 
-      click() {
+      _computeNormas(data) {
+        return data.map(item => {
+          return {
+            id: item.id,
+            text: item.nome
+          }
+        });
+      }
+
+
+      //
+      //EVENTS
+
+      _newCriterioLegal() {
+        this.crud = 'criterio-legal';
+
+        var crudElement = this.$.crudSelector.selectedItem;
+        crudElement.mode = 'new';
+        this.$.overlayArea.open();
+      }
+
+      _editCriterioLegal(e) {
+        this.crud = 'criterio-legal';
+
+        var crudElement = this.$.crudSelector.selectedItem;
+        crudElement.id = e.detail.id;
+        crudElement.mode = 'edit';
+        this.$.overlayArea.open();
+      }
+
+      _deleteCriterioLegal(e) {
+        this.crud = 'criterio-legal';
+
+        var crudElement = this.$.crudSelector.selectedItem;
+        crudElement.id = e.detail.id;
+        crudElement.mode = 'delete';
+        this.$.overlayArea.open();
+      }
+
+      _newNorma() {
 
       }
 
-      _onEdit(e) {
-        console.log(e.detail);
+      _editNorma() {
+
       }
 
-      _onDelete(e) {
-        console.log(e.detail);
+      _deleteNorma() {
+
+      }
+
+      _criterioLegalSaved(e) {
+        this.$.overlayArea.close();
+        this.$.getCriteriosLegaisAjax.generateRequest();
+        this._showNotification('Critério Legal salvo com sucesso!');
+      }
+
+      _criterioLegalDeleted(e) {
+        this.$.overlayArea.close();
+        this.$.getCriteriosLegaisAjax.generateRequest();
+
+        if (e.detail.deleted)
+          this._showNotification('Critério Legal removido com sucesso!');
+        else
+          this._showNotification('Não foi possível remover o Critério Legal. Verifique se o mesmo não possui dependências.', true);
+      }
+
+      _crudClosed() {
+        let crudElement = this.$.crudSelector.selectedItem;
+        crudElement.mode = 'closed';
+      }
+
+      _closeNote(e) {
+        this.$.persistentNote.close();
+      }
+
+
+      //
+      //UTILS
+
+      _showNotification(text, isPersistent) {
+
+        //close all notes
+        Polymer.dom(this.root).querySelectorAll('paper-toast').forEach(note => {
+          note.close();
+        });
+
+        //prepare and show note
+        var note = (isPersistent) ? this.$.persistentNote : this.$.quickNote;
+        note.text = text;
+        note.open();
       }
 
     }
