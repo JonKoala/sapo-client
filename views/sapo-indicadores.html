@@ -6,6 +6,7 @@
 <link rel="import" href="../bower_components/iron-icons/image-icons.html">
 <link rel="import" href="../bower_components/paper-card/paper-card.html">
 <link rel="import" href="../bower_components/paper-toast/paper-toast.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../elements/sapo-selector-crud.html">
 <link rel="import" href="../elements/sapo-overlay.html">
 <link rel="import" href="../elements/sapo-list-items.html">
@@ -62,10 +63,6 @@
         width: 100%;
         background-color:lightgray;
         height: 1px;
-      }
-
-      sapo-list-itens, sapo-list-pontuacoes {
-        flex-grow: 1;
       }
 
       sapo-overlay {
@@ -189,6 +186,10 @@
           crud: String
         }
       }
+
+
+      //
+      //OBSERVERS & COMPUTEDS
 
       _itemChanged(newId) {
         this.$.addPontuacaoButton.disabled = (newId === 0);
