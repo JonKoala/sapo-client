@@ -44,7 +44,7 @@
   </iron-ajax>
 
   <paper-input label="Item" value="[[data.item.nome]]" readonly></paper-input>
-  <paper-input label="Critério Legal" value="[[_computeCriterioLegal(data.descricao, data.norma.nome)]]" readonly></paper-input>
+  <paper-input label="Critério Legal" value="[[_computeCriterioLegal(data.norma.nome, data.descricao)]]" readonly></paper-input>
 
   <p style="margin-left:5px;" >Tem certeza que deseja remover o Critério Legal?</p>
 
@@ -70,8 +70,8 @@
       //
       //OBSERVERS & COMPUTEDS
 
-      _computeCriterioLegal(criterioLegal, norma) {
-        return criterioLegal + " - " + norma;
+      _computeCriterioLegal(norma, criterioLegal) {
+        return norma + " - " + criterioLegal;
       }
 
       _computeAjaxBody(itemId, criterioLegalId) {
