@@ -286,6 +286,8 @@ function Hello($scope, $http) {
         $http.get(SapoApiURL + url).
         success(function(data) {
           $scope.objetosdeavaliacao = data;
+          if ($scope.objetosdeavaliacao.length > 0)
+            $scope.nomeAvaliacao = ": " + $scope.objetosdeavaliacao[0].nome;
           url2 = ""+"entidades";
           $http.get(SapoApiURL + url2).
           success(function(data2) {
