@@ -8,6 +8,7 @@
 <link rel="import" href="../elements/sapo-list-items.html">
 <link rel="import" href="../elements/sapo-overlay.html">
 <link rel="import" href="./sapo-crud-criterio-legal.html">
+<link rel="import" href="./sapo-crud-norma.html">
 
 <dom-module id="sapo-criterio-legal">
 
@@ -74,25 +75,26 @@
     </style>
 
     <iron-ajax id="getCriteriosLegaisAjax" auto url="http://N350i-22878:8080/criterioslegais/full" last-response="{{criteriosLegais}}"></iron-ajax>
-    <iron-ajax auto url="http://n350i-22878:8080/normas/" last-response="{{normas}}"></iron-ajax>
+    <iron-ajax id="getNormasAjax" auto url="http://n350i-22878:8080/normas/" last-response="{{normas}}"></iron-ajax>
 
     <paper-card>
       <h2>Critérios Legais</h2>
       <hr>
-      <paper-button indicador="item" label="Item" on-click="_newCriterioLegal" class="green" raised><iron-icon icon="add"></iron-icon>Novo</paper-button>
-      <sapo-list-items data="[[_computeCriteriosLegais(criteriosLegais)]]" on-edit="_editCriterioLegal" on-delete="_deleteCriterioLegal" unselectable ></sapo-list-items>
+      <paper-button entity="criterio-legal" on-click="_newEntity" class="green" raised><iron-icon icon="add"></iron-icon>Novo</paper-button>
+      <sapo-list-items entity="criterio-legal" data="[[_computeCriteriosLegais(criteriosLegais)]]" on-edit="_editEntity" on-delete="_deleteEntity" unselectable ></sapo-list-items>
     </paper-card>
 
     <paper-card>
       <h2>Normas</h2>
       <hr>
-      <paper-button indicador="item" label="Item" on-click="_newNorma" class="green" raised><iron-icon icon="add"></iron-icon>Novo</paper-button>
-      <sapo-list-items data="[[_computeNormas(normas)]]" on-edit="_editNorma" on-delete="_deleteNorma" unselectable></sapo-list-items>
+      <paper-button entity="norma" on-click="_newEntity" class="green" raised><iron-icon icon="add"></iron-icon>Novo</paper-button>
+      <sapo-list-items entity="norma" data="[[_computeNormas(normas)]]" on-edit="_editEntity" on-delete="_deleteEntity" unselectable></sapo-list-items>
     </paper-card>
 
     <sapo-overlay id="overlayArea" on-close="_crudClosed" with-backdrop>
       <iron-pages id="crudSelector" selected="[[crud]]" attr-for-selected="entity">
         <sapo-crud-criterio-legal entity="criterio-legal" on-save="_criterioLegalSaved" on-delete="_criterioLegalDeleted" ></sapo-crud-criterio-legal>
+        <sapo-crud-norma entity="norma" on-save="_normaSaved" on-delete="_normaDeleted" ></sapo-crud-norma>
       </iron-pages>
     </sapo-overlay>
 
@@ -143,16 +145,18 @@
       //
       //EVENTS
 
-      _newCriterioLegal() {
-        this.crud = 'criterio-legal';
+      _newEntity(e) {
+        this.crud = e.target.getAttribute('entity');
+        this.$.crudSelector.selected = this.crud;
 
         var crudElement = this.$.crudSelector.selectedItem;
         crudElement.mode = 'new';
         this.$.overlayArea.open();
       }
 
-      _editCriterioLegal(e) {
-        this.crud = 'criterio-legal';
+      _editEntity(e) {
+        this.crud = e.target.getAttribute('entity');
+        this.$.crudSelector.selected = this.crud;
 
         var crudElement = this.$.crudSelector.selectedItem;
         crudElement.id = e.detail.id;
@@ -160,8 +164,9 @@
         this.$.overlayArea.open();
       }
 
-      _deleteCriterioLegal(e) {
-        this.crud = 'criterio-legal';
+      _deleteEntity(e) {
+        this.crud = e.target.getAttribute('entity');
+        this.$.crudSelector.selected = this.crud;
 
         var crudElement = this.$.crudSelector.selectedItem;
         crudElement.id = e.detail.id;
@@ -169,19 +174,7 @@
         this.$.overlayArea.open();
       }
 
-      _newNorma() {
-
-      }
-
-      _editNorma() {
-
-      }
-
-      _deleteNorma() {
-
-      }
-
-      _criterioLegalSaved(e) {
+      _criterioLegalSaved() {
         this.$.overlayArea.close();
         this.$.getCriteriosLegaisAjax.generateRequest();
         this._showNotification('Critério Legal salvo com sucesso!');
@@ -195,6 +188,23 @@
           this._showNotification('Critério Legal removido com sucesso!');
         else
           this._showNotification('Não foi possível remover o Critério Legal. Verifique se o mesmo não possui dependências.', true);
+      }
+
+      _normaSaved() {
+        this.$.overlayArea.close();
+        this.$.getNormasAjax.generateRequest();
+        this.$.getCriteriosLegaisAjax.generateRequest();
+        this._showNotification('Norma salva com sucesso!');
+      }
+
+      _normaDeleted(e) {
+        this.$.overlayArea.close();
+        this.$.getNormasAjax.generateRequest();
+
+        if (e.detail.deleted)
+          this._showNotification('Norma removida com sucesso!');
+        else
+          this._showNotification('Não foi possível remover a Norma. Verifique se a mesma não possui dependências.', true);
       }
 
       _crudClosed() {
