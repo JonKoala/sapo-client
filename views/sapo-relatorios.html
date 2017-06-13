@@ -1,0 +1,56 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/chart-elements/chart-pie.html">
+
+
+<dom-module id="sapo-relatorios">
+
+  <template>
+
+    <style>
+      chart-bar {
+        width: 500px;
+      }
+    </style>
+
+    <chart-pie data="[[data]]"></chart-pie>
+
+
+  </template>
+
+  <script>
+    class SapoRelatorios extends Polymer.Element {
+
+      static get is() { return 'sapo-relatorios'; }
+
+      static get properties() {
+        return {
+          data: {
+            type: Object,
+            value: () => {
+              return {
+                labels: [
+                  "Red",
+                  "Green",
+                  "Yellow"
+                ],
+                datasets: [
+                  {
+                    data: [300, 50, 100],
+                    backgroundColor: [
+                      "#FF6384",
+                      "#36A2EB",
+                      "#FFCE56"
+                    ]
+                  }]
+              };
+
+            }
+          }
+        }
+      }
+
+    }
+
+    window.customElements.define(SapoRelatorios.is, SapoRelatorios);
+  </script>
+</dom-module>
