@@ -16,9 +16,9 @@
         tail="{{subroute}}"></app-route>
 
     <iron-pages selected="[[page]]" attr-for-selected="name">
-      <sapo-indicadores route="[[subroute]]" name="indicadores"></sapo-indicadores>
-      <sapo-criterio-legal route="[[subroute]]" name="criterio-legal"></sapo-criterio-legal>
-      <sapo-avaliacao route="[[subroute]]" name="avaliacao"></sapo-avaliacao>
+      <sapo-indicadores route="{{subroute}}" name="indicadores"></sapo-indicadores>
+      <sapo-criterio-legal route="{{subroute}}" name="criterio-legal"></sapo-criterio-legal>
+      <sapo-avaliacoes route="{{subroute}}" name="avaliacoes"></sapo-avaliacoes>
       <sapo-nothing name="nothing" ></sapo-nothing>
     </iron-pages>
 
