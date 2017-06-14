@@ -1,25 +1,20 @@
-<link rel="import" href="../bower_components/polymer/polymer-element.html">
-<link rel="import" href="../bower_components/iron-form/iron-form.html">
-<link rel="import" href="../bower_components/iron-icons/iron-icons.html">
-<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
-<link rel="import" href="../bower_components/paper-input/paper-input.html">
-<link rel="import" href="../bower_components/paper-input/paper-textarea.html">
-<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="/bower_components/polymer/polymer-element.html">
+<link rel="import" href="/bower_components/iron-form/iron-form.html">
+<link rel="import" href="/bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="/bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="/bower_components/paper-input/paper-input.html">
+<link rel="import" href="/bower_components/paper-input/paper-textarea.html">
+<link rel="import" href="/bower_components/paper-button/paper-button.html">
+<link rel="import" href="/bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="/bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="/bower_components/paper-item/paper-item.html">
 
 
-<dom-module id="sapo-crud-subnivel">
+<dom-module id="sapo-crud-criterio-legal">
 
   <template>
 
     <style>
-
-      div {
-        padding-top: 50px;
-      }
-
-      paper-button {
-        color: white;
-      }
 
       .blue {
         background: #337ab7;
@@ -33,6 +28,26 @@
         background: #d9534f;
       }
 
+      .hidden {
+        display: none;
+      }
+
+      paper-dropdown-menu {
+        width: 200px;
+      }
+
+      paper-dropdown-menu[hidden] {
+        display: none;
+      }
+
+      div {
+        padding-top: 50px;
+      }
+
+      paper-button {
+        color: white;
+      }
+
       paper-button[disabled] {
         background: #eaeaea;
         color: #a8a8a8;
@@ -40,25 +55,26 @@
 
     </style>
 
-    <iron-ajax id="getSubnivelAjax" url="http://N350i-22878:8080/subniveis/[[id]]" on-response="_getResponse"></iron-ajax>
-    <iron-ajax id="postSubnivelAjax"
-      url="http://N350i-22878:8080/subniveis/"
+    <iron-ajax id="getAjax" url="http://N350i-22878:8080/criterioslegais/[[id]]" on-response="_getResponse"></iron-ajax>
+    <iron-ajax id="getNormasAjax" url="http://N350i-22878:8080/normas/" last-response="{{normas}}"></iron-ajax>
+    <iron-ajax id="postAjax"
+      url="http://N350i-22878:8080/criterioslegais/"
       method="POST"
       content-type="application/json"
       handle-as="json"
       body="[[data]]"
       on-response="_postResponse">
     </iron-ajax>
-    <iron-ajax id="putSubnivelAjax"
-      url="http://N350i-22878:8080/subniveis/"
+    <iron-ajax id="putAjax"
+      url="http://N350i-22878:8080/criterioslegais/"
       method="PUT"
       content-type="application/json"
       handle-as="json"
       body="[[data]]"
       on-response="_putResponse">
     </iron-ajax>
-    <iron-ajax id="deleteSubnivelAjax"
-      url="http://N350i-22878:8080/subniveis/"
+    <iron-ajax id="deleteAjax"
+      url="http://N350i-22878:8080/criterioslegais/"
       method="DELETE"
       content-type="application/json"
       handle-as="json"
@@ -66,8 +82,16 @@
       on-response="_deleteResponse">
     </iron-ajax>
 
-    <paper-input id="nomeInput" name="nome" label="Nome" value="{{data.nome}}" readonly="[[disabled]]" on-keydown="_checkIfSubmit" required></paper-input>
+    <paper-dropdown-menu id="normaDropdown" hidden="[[deleteMode]]" label="Norma" required>
+      <paper-listbox slot="dropdown-content" selected="{{norma}}" attr-for-selected="value" class="dropdown-content">
+        <template is="dom-repeat" items="[[normas]]">
+          <paper-item value="[[item.id]]">[[item.nome]]</paper-item>
+        </template>
+      </paper-listbox>
+    </paper-dropdown-menu>
+    <paper-input value="[[_computeNormaText(norma)]]" hidden="[[!deleteMode]]" readonly></paper-input>
     <paper-textarea id="descricaoInput" name="descricao" label="Descrição" value="{{data.descricao}}" readonly="[[disabled]]" rows="3" ></paper-textarea>
+
 
     <div hidden="[[deleteMode]]" >
       <paper-button disabled="[[saveDisabled]]" class="blue" on-click="_submitClicked" raised><iron-icon icon="save"></iron-icon>Salvar</paper-button>
@@ -75,16 +99,16 @@
     </div>
 
     <div hidden="[[!deleteMode]]" >
-      <p style="margin-left:5px;" >Tem certeza que deseja remover o Subnível?</p>
+      <p style="margin-left:5px;" >Tem certeza que deseja remover o Critério Legal?</p>
       <paper-button class="red" on-click="_deleteClicked" raised><iron-icon icon="delete-forever"></iron-icon>Remover</paper-button>
     </div>
 
   </template>
 
   <script>
-    class SapoCrudSubnivel extends Polymer.Element {
+    class SapoCrudCriterioLegal extends Polymer.Element {
 
-      static get is() { return 'sapo-crud-subnivel'; }
+      static get is() { return 'sapo-crud-criterio-legal'; }
 
       static get properties() {
         return {
@@ -92,19 +116,20 @@
             type: Number,
             observer: '_idChanged'
           },
-          fk: {
+          norma: {
             type: Number,
-            observer: '_fkChanged'
+            observer: '_normaChanged'
           },
           data: {
             type: Object,
-            value: () => { return {id: 0, nivel_id: 0, nome: '', descricao: ''}; }
+            value: () => { return {id: 0, norma_id: 0, descricao: ''}; }
           },
+          normas: Array,
 
           disabled: Boolean,
           saveDisabled: {
             type: Boolean,
-            computed: '_isSaveDisabled(data.nome, disabled)'
+            computed: '_isSaveDisabled(norma, disabled)'
           },
 
           deleteMode: {
@@ -119,16 +144,31 @@
         }
       }
 
+      static get observers() {
+        return [
+          '_dataNormaChanged(data.norma_id)',
+        ];
+      }
+
 
       //
       //OBSERVERS & COMPUTEDS
+
+      _computeNormaText(norma) {
+        if (this.normas && norma)
+          return this.normas.find(item => { return item.id === norma; }).nome;
+      }
 
       _idChanged(newId) {
         this.set('data.id', newId);
       }
 
-      _fkChanged(newFk) {
-        this.set('data.nivel_id', newFk);
+      _normaChanged(newNorma) {
+        this.set('data.norma_id', newNorma);
+      }
+
+      _dataNormaChanged(newNorma) {
+        this.norma = newNorma;
       }
 
       _modeChanged(newMode) {
@@ -137,17 +177,16 @@
           case 'new':
             this.id = 0;
             this.disabled = false;
-            this._blurTextarea()
-              .then(() => {
-                this.$.nomeInput.focus();
-              });
+            this.$.getNormasAjax.generateRequest();
+            this._blurTextarea();
             break;
           case 'edit':
             this.disabled = false;
-            this.$.getSubnivelAjax.generateRequest();
+            this.$.getAjax.generateRequest();
+            this.$.getNormasAjax.generateRequest();
             break;
           case 'delete':
-            this.$.getSubnivelAjax.generateRequest();
+            this.$.getAjax.generateRequest();
             this._blurTextarea()
               .then(() => {
                 this.disabled = true;
@@ -158,8 +197,8 @@
         }
       }
 
-      _isSaveDisabled(nome, disabled) {
-        return (!nome.trim()) || disabled;
+      _isSaveDisabled(norma, disabled) {
+        return isNaN(norma) || norma <= 0 || disabled;
       }
 
       _isDeleteMode(mode) {
@@ -179,10 +218,10 @@
         var ajax;
         switch (this.mode) {
           case 'new':
-            ajax = this.$.postSubnivelAjax;
+            ajax = this.$.postAjax;
             break;
           case 'edit':
-            ajax = this.$.putSubnivelAjax;
+            ajax = this.$.putAjax;
             break;
         }
 
@@ -190,7 +229,7 @@
       }
 
       _deleteClicked() {
-        this.$.deleteSubnivelAjax.generateRequest();
+        this.$.deleteAjax.generateRequest();
       }
 
       _checkIfSubmit(e) {
@@ -211,11 +250,11 @@
       }
 
       _getResponse(e) {
-        var subnivel = e.detail.response;
-        if (!subnivel)
+        var criterioLegal = e.detail.response;
+        if (!criterioLegal)
           return;
 
-        this.data = subnivel;
+        this.data = criterioLegal;
 
         this._blurTextarea();
       }
@@ -225,8 +264,8 @@
       //UTILS
 
       _clear() {
-        this.set('data.nome', '');
         this.set('data.descricao', '');
+        this.set('data.norma_id', 0);
 
         this._blurTextarea();
       }
@@ -250,6 +289,6 @@
 
     }
 
-    window.customElements.define(SapoCrudSubnivel.is, SapoCrudSubnivel);
+    window.customElements.define(SapoCrudCriterioLegal.is, SapoCrudCriterioLegal);
   </script>
 </dom-module>

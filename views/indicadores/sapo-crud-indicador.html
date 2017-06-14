@@ -1,13 +1,13 @@
-<link rel="import" href="../bower_components/polymer/polymer-element.html">
-<link rel="import" href="../bower_components/iron-form/iron-form.html">
-<link rel="import" href="../bower_components/iron-icons/iron-icons.html">
-<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
-<link rel="import" href="../bower_components/paper-input/paper-input.html">
-<link rel="import" href="../bower_components/paper-input/paper-textarea.html">
-<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="/bower_components/polymer/polymer-element.html">
+<link rel="import" href="/bower_components/iron-form/iron-form.html">
+<link rel="import" href="/bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="/bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="/bower_components/paper-input/paper-input.html">
+<link rel="import" href="/bower_components/paper-input/paper-textarea.html">
+<link rel="import" href="/bower_components/paper-button/paper-button.html">
 
 
-<dom-module id="sapo-crud-pilar">
+<dom-module id="sapo-crud-indicador">
 
   <template>
 
@@ -40,25 +40,25 @@
 
     </style>
 
-    <iron-ajax id="getPilarAjax" url="http://N350i-22878:8080/pilares/[[id]]" on-response="_getResponse"></iron-ajax>
-    <iron-ajax id="postPilarAjax"
-      url="http://N350i-22878:8080/pilares/"
+    <iron-ajax id="getIndicadorAjax" url="http://N350i-22878:8080/indicadores/[[id]]" on-response="_getResponse"></iron-ajax>
+    <iron-ajax id="postIndicadorAjax"
+      url="http://N350i-22878:8080/indicadores/"
       method="POST"
       content-type="application/json"
       handle-as="json"
       body="[[data]]"
       on-response="_postResponse">
     </iron-ajax>
-    <iron-ajax id="putPilarAjax"
-      url="http://N350i-22878:8080/pilares/"
+    <iron-ajax id="putIndicadorAjax"
+      url="http://N350i-22878:8080/indicadores/"
       method="PUT"
       content-type="application/json"
       handle-as="json"
       body="[[data]]"
       on-response="_putResponse">
     </iron-ajax>
-    <iron-ajax id="deletePilarAjax"
-      url="http://N350i-22878:8080/pilares/"
+    <iron-ajax id="deleteIndicadorAjax"
+      url="http://N350i-22878:8080/indicadores/"
       method="DELETE"
       content-type="application/json"
       handle-as="json"
@@ -67,7 +67,7 @@
     </iron-ajax>
 
     <paper-input id="nomeInput" name="nome" label="Nome" value="{{data.nome}}" readonly="[[disabled]]" on-keydown="_checkIfSubmit" required></paper-input>
-    <paper-textarea id="descricaoInput" name="descricao" label="Descrição" value="{{data.descricao}}" readonly="[[disabled]]" rows="3" ></paper-textarea>
+    <paper-textarea id="objetivosInput" name="objetivos" label="Objetivos" value="{{data.objetivos}}" readonly="[[disabled]]" rows="3" ></paper-textarea>
 
     <div hidden="[[deleteMode]]" >
       <paper-button disabled="[[saveDisabled]]" class="blue" on-click="_submitClicked" raised><iron-icon icon="save"></iron-icon>Salvar</paper-button>
@@ -75,16 +75,16 @@
     </div>
 
     <div hidden="[[!deleteMode]]" >
-      <p style="margin-left:5px;" >Tem certeza que deseja remover o Pilar?</p>
+      <p style="margin-left:5px;" >Tem certeza que deseja remover o Indicador?</p>
       <paper-button class="red" on-click="_deleteClicked" raised><iron-icon icon="delete-forever"></iron-icon>Remover</paper-button>
     </div>
 
   </template>
 
   <script>
-    class SapoCrudPilar extends Polymer.Element {
+    class SapoCrudIndicador extends Polymer.Element {
 
-      static get is() { return 'sapo-crud-pilar'; }
+      static get is() { return 'sapo-crud-indicador'; }
 
       static get properties() {
         return {
@@ -92,13 +92,9 @@
             type: Number,
             observer: '_idChanged'
           },
-          fk: {
-            type: Number,
-            observer: '_fkChanged'
-          },
           data: {
             type: Object,
-            value: () => { return {id: 0, indicador_id: 0, nome: '', descricao: ''}; }
+            value: () => { return {id: 0, nome: '', objetivos: ''}; }
           },
 
           disabled: Boolean,
@@ -127,10 +123,6 @@
         this.set('data.id', newId);
       }
 
-      _fkChanged(newFk) {
-        this.set('data.indicador_id', newFk);
-      }
-
       _modeChanged(newMode) {
 
         switch (newMode) {
@@ -144,10 +136,10 @@
             break;
           case 'edit':
             this.disabled = false;
-            this.$.getPilarAjax.generateRequest();
+            this.$.getIndicadorAjax.generateRequest();
             break;
           case 'delete':
-            this.$.getPilarAjax.generateRequest();
+            this.$.getIndicadorAjax.generateRequest();
             this._blurTextarea()
               .then(() => {
                 this.disabled = true;
@@ -179,10 +171,10 @@
         var ajax;
         switch (this.mode) {
           case 'new':
-            ajax = this.$.postPilarAjax;
+            ajax = this.$.postIndicadorAjax;
             break;
           case 'edit':
-            ajax = this.$.putPilarAjax;
+            ajax = this.$.putIndicadorAjax;
             break;
         }
 
@@ -190,7 +182,7 @@
       }
 
       _deleteClicked() {
-        this.$.deletePilarAjax.generateRequest();
+        this.$.deleteIndicadorAjax.generateRequest();
       }
 
       _checkIfSubmit(e) {
@@ -211,11 +203,11 @@
       }
 
       _getResponse(e) {
-        var pilar = e.detail.response;
-        if (!pilar)
+        var indicador = e.detail.response;
+        if (!indicador)
           return;
 
-        this.data = pilar;
+        this.data = indicador;
 
         this._blurTextarea();
       }
@@ -226,7 +218,7 @@
 
       _clear() {
         this.set('data.nome', '');
-        this.set('data.descricao', '');
+        this.set('data.objetivos', '');
 
         this._blurTextarea();
       }
@@ -236,8 +228,8 @@
         return this.sleep(100)
           .then(() => {
             //paper-textarea não da blur quando seu valor fica nulo (because fuck you, that's why)
-            this.$.descricaoInput.focus();
-            this.$.descricaoInput.blur();
+            this.$.objetivosInput.focus();
+            this.$.objetivosInput.blur();
           });
       }
 
@@ -250,6 +242,6 @@
 
     }
 
-    window.customElements.define(SapoCrudPilar.is, SapoCrudPilar);
+    window.customElements.define(SapoCrudIndicador.is, SapoCrudIndicador);
   </script>
 </dom-module>

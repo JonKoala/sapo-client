@@ -1,13 +1,12 @@
-<link rel="import" href="../bower_components/polymer/polymer-element.html">
-<link rel="import" href="../bower_components/iron-form/iron-form.html">
-<link rel="import" href="../bower_components/iron-icons/iron-icons.html">
-<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
-<link rel="import" href="../bower_components/paper-input/paper-input.html">
-<link rel="import" href="../bower_components/paper-input/paper-textarea.html">
-<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="/bower_components/polymer/polymer-element.html">
+<link rel="import" href="/bower_components/iron-form/iron-form.html">
+<link rel="import" href="/bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="/bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="/bower_components/paper-input/paper-input.html">
+<link rel="import" href="/bower_components/paper-button/paper-button.html">
 
 
-<dom-module id="sapo-crud-nivel">
+<dom-module id="sapo-crud-norma">
 
   <template>
 
@@ -40,25 +39,25 @@
 
     </style>
 
-    <iron-ajax id="getNivelAjax" url="http://N350i-22878:8080/niveis/[[id]]" on-response="_getResponse"></iron-ajax>
-    <iron-ajax id="postNivelAjax"
-      url="http://N350i-22878:8080/niveis/"
+    <iron-ajax id="getAjax" url="http://N350i-22878:8080/normas/[[id]]" on-response="_getResponse"></iron-ajax>
+    <iron-ajax id="postAjax"
+      url="http://N350i-22878:8080/normas/"
       method="POST"
       content-type="application/json"
       handle-as="json"
       body="[[data]]"
       on-response="_postResponse">
     </iron-ajax>
-    <iron-ajax id="putNivelAjax"
-      url="http://N350i-22878:8080/niveis/"
+    <iron-ajax id="putAjax"
+      url="http://N350i-22878:8080/normas/"
       method="PUT"
       content-type="application/json"
       handle-as="json"
       body="[[data]]"
       on-response="_putResponse">
     </iron-ajax>
-    <iron-ajax id="deleteNivelAjax"
-      url="http://N350i-22878:8080/niveis/"
+    <iron-ajax id="deleteAjax"
+      url="http://N350i-22878:8080/normas/"
       method="DELETE"
       content-type="application/json"
       handle-as="json"
@@ -66,8 +65,8 @@
       on-response="_deleteResponse">
     </iron-ajax>
 
+    <paper-input id="tipoInput" name="tipo" label="Tipo" value="{{data.tipo}}" readonly="[[disabled]]" on-keydown="_checkIfSubmit" required></paper-input>
     <paper-input id="nomeInput" name="nome" label="Nome" value="{{data.nome}}" readonly="[[disabled]]" on-keydown="_checkIfSubmit" required></paper-input>
-    <paper-textarea id="descricaoInput" name="descricao" label="Descrição" value="{{data.descricao}}" readonly="[[disabled]]" rows="3" ></paper-textarea>
 
     <div hidden="[[deleteMode]]" >
       <paper-button disabled="[[saveDisabled]]" class="blue" on-click="_submitClicked" raised><iron-icon icon="save"></iron-icon>Salvar</paper-button>
@@ -75,16 +74,16 @@
     </div>
 
     <div hidden="[[!deleteMode]]" >
-      <p style="margin-left:5px;" >Tem certeza que deseja remover o Nível?</p>
+      <p style="margin-left:5px;" >Tem certeza que deseja remover a Norma?</p>
       <paper-button class="red" on-click="_deleteClicked" raised><iron-icon icon="delete-forever"></iron-icon>Remover</paper-button>
     </div>
 
   </template>
 
   <script>
-    class SapoCrudNivel extends Polymer.Element {
+    class SapoCrudNorma extends Polymer.Element {
 
-      static get is() { return 'sapo-crud-nivel'; }
+      static get is() { return 'sapo-crud-norma'; }
 
       static get properties() {
         return {
@@ -92,19 +91,15 @@
             type: Number,
             observer: '_idChanged'
           },
-          fk: {
-            type: Number,
-            observer: '_fkChanged'
-          },
           data: {
             type: Object,
-            value: () => { return {id: 0, tipo_id: 0, nome: '', descricao: ''}; }
+            value: () => { return {id: 0, tipo: '', nome: ''}; }
           },
 
           disabled: Boolean,
           saveDisabled: {
             type: Boolean,
-            computed: '_isSaveDisabled(data.nome, disabled)'
+            computed: '_isSaveDisabled(data.tipo, data.nome, disabled)'
           },
 
           deleteMode: {
@@ -127,39 +122,33 @@
         this.set('data.id', newId);
       }
 
-      _fkChanged(newFk) {
-        this.set('data.tipo_id', newFk);
-      }
-
       _modeChanged(newMode) {
 
         switch (newMode) {
           case 'new':
             this.id = 0;
             this.disabled = false;
-            this._blurTextarea()
-              .then(() => {
-                this.$.nomeInput.focus();
-              });
+            this.sleep(100).then(() => {
+              this.$.tipoInput.focus();
+            });
             break;
           case 'edit':
             this.disabled = false;
-            this.$.getNivelAjax.generateRequest();
+            this.$.getAjax.generateRequest();
+            this.sleep(100).then(() => {
+              this.$.tipoInput.focus();
+            });
             break;
           case 'delete':
-            this.$.getNivelAjax.generateRequest();
-            this._blurTextarea()
-              .then(() => {
-                this.disabled = true;
-              });
+            this.$.getAjax.generateRequest();
           case 'closed':
             this._clear();
             break;
         }
       }
 
-      _isSaveDisabled(nome, disabled) {
-        return (!nome.trim()) || disabled;
+      _isSaveDisabled(tipo, nome, disabled) {
+        return (!tipo.trim()) || (!nome.trim()) || disabled;
       }
 
       _isDeleteMode(mode) {
@@ -176,13 +165,16 @@
 
       _submitClicked() {
 
+        if (this.saveDisabled)
+          return;
+
         var ajax;
         switch (this.mode) {
           case 'new':
-            ajax = this.$.postNivelAjax;
+            ajax = this.$.postAjax;
             break;
           case 'edit':
-            ajax = this.$.putNivelAjax;
+            ajax = this.$.putAjax;
             break;
         }
 
@@ -190,7 +182,7 @@
       }
 
       _deleteClicked() {
-        this.$.deleteNivelAjax.generateRequest();
+        this.$.deleteAjax.generateRequest();
       }
 
       _checkIfSubmit(e) {
@@ -211,13 +203,11 @@
       }
 
       _getResponse(e) {
-        var nivel = e.detail.response;
-        if (!nivel)
+        var norma = e.detail.response;
+        if (!norma)
           return;
 
-        this.data = nivel;
-
-        this._blurTextarea();
+        this.data = norma;
       }
 
 
@@ -225,20 +215,8 @@
       //UTILS
 
       _clear() {
+        this.set('data.tipo', '');
         this.set('data.nome', '');
-        this.set('data.descricao', '');
-
-        this._blurTextarea();
-      }
-
-      _blurTextarea() {
-
-        return this.sleep(100)
-          .then(() => {
-            //paper-textarea não da blur quando seu valor fica nulo (because fuck you, that's why)
-            this.$.descricaoInput.focus();
-            this.$.descricaoInput.blur();
-          });
       }
 
       //TODO: tentar deixar isso global
@@ -250,6 +228,6 @@
 
     }
 
-    window.customElements.define(SapoCrudNivel.is, SapoCrudNivel);
+    window.customElements.define(SapoCrudNorma.is, SapoCrudNorma);
   </script>
 </dom-module>

@@ -1,13 +1,13 @@
-<link rel="import" href="../bower_components/polymer/polymer-element.html">
-<link rel="import" href="../bower_components/iron-form/iron-form.html">
-<link rel="import" href="../bower_components/iron-icons/iron-icons.html">
-<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
-<link rel="import" href="../bower_components/paper-input/paper-input.html">
-<link rel="import" href="../bower_components/paper-input/paper-textarea.html">
-<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="/bower_components/polymer/polymer-element.html">
+<link rel="import" href="/bower_components/iron-form/iron-form.html">
+<link rel="import" href="/bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="/bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="/bower_components/paper-input/paper-input.html">
+<link rel="import" href="/bower_components/paper-input/paper-textarea.html">
+<link rel="import" href="/bower_components/paper-button/paper-button.html">
 
 
-<dom-module id="sapo-crud-tipo">
+<dom-module id="sapo-crud-nivel">
 
   <template>
 
@@ -40,25 +40,25 @@
 
     </style>
 
-    <iron-ajax id="getTipoAjax" url="http://N350i-22878:8080/tipos/[[id]]" on-response="_getResponse"></iron-ajax>
-    <iron-ajax id="postTipoAjax"
-      url="http://N350i-22878:8080/tipos/"
+    <iron-ajax id="getNivelAjax" url="http://N350i-22878:8080/niveis/[[id]]" on-response="_getResponse"></iron-ajax>
+    <iron-ajax id="postNivelAjax"
+      url="http://N350i-22878:8080/niveis/"
       method="POST"
       content-type="application/json"
       handle-as="json"
       body="[[data]]"
       on-response="_postResponse">
     </iron-ajax>
-    <iron-ajax id="putTipoAjax"
-      url="http://N350i-22878:8080/tipos/"
+    <iron-ajax id="putNivelAjax"
+      url="http://N350i-22878:8080/niveis/"
       method="PUT"
       content-type="application/json"
       handle-as="json"
       body="[[data]]"
       on-response="_putResponse">
     </iron-ajax>
-    <iron-ajax id="deleteTipoAjax"
-      url="http://N350i-22878:8080/tipos/"
+    <iron-ajax id="deleteNivelAjax"
+      url="http://N350i-22878:8080/niveis/"
       method="DELETE"
       content-type="application/json"
       handle-as="json"
@@ -75,16 +75,16 @@
     </div>
 
     <div hidden="[[!deleteMode]]" >
-      <p style="margin-left:5px;" >Tem certeza que deseja remover o Tipo?</p>
+      <p style="margin-left:5px;" >Tem certeza que deseja remover o Nível?</p>
       <paper-button class="red" on-click="_deleteClicked" raised><iron-icon icon="delete-forever"></iron-icon>Remover</paper-button>
     </div>
 
   </template>
 
   <script>
-    class SapoCrudTipo extends Polymer.Element {
+    class SapoCrudNivel extends Polymer.Element {
 
-      static get is() { return 'sapo-crud-tipo'; }
+      static get is() { return 'sapo-crud-nivel'; }
 
       static get properties() {
         return {
@@ -98,7 +98,7 @@
           },
           data: {
             type: Object,
-            value: () => { return {id: 0, pilar_id: 0, nome: '', descricao: ''}; }
+            value: () => { return {id: 0, tipo_id: 0, nome: '', descricao: ''}; }
           },
 
           disabled: Boolean,
@@ -128,7 +128,7 @@
       }
 
       _fkChanged(newFk) {
-        this.set('data.pilar_id', newFk);
+        this.set('data.tipo_id', newFk);
       }
 
       _modeChanged(newMode) {
@@ -144,10 +144,10 @@
             break;
           case 'edit':
             this.disabled = false;
-            this.$.getTipoAjax.generateRequest();
+            this.$.getNivelAjax.generateRequest();
             break;
           case 'delete':
-            this.$.getTipoAjax.generateRequest();
+            this.$.getNivelAjax.generateRequest();
             this._blurTextarea()
               .then(() => {
                 this.disabled = true;
@@ -179,10 +179,10 @@
         var ajax;
         switch (this.mode) {
           case 'new':
-            ajax = this.$.postTipoAjax;
+            ajax = this.$.postNivelAjax;
             break;
           case 'edit':
-            ajax = this.$.putTipoAjax;
+            ajax = this.$.putNivelAjax;
             break;
         }
 
@@ -190,7 +190,7 @@
       }
 
       _deleteClicked() {
-        this.$.deleteTipoAjax.generateRequest();
+        this.$.deleteNivelAjax.generateRequest();
       }
 
       _checkIfSubmit(e) {
@@ -211,11 +211,11 @@
       }
 
       _getResponse(e) {
-        var tipo = e.detail.response;
-        if (!tipo)
+        var nivel = e.detail.response;
+        if (!nivel)
           return;
 
-        this.data = tipo;
+        this.data = nivel;
 
         this._blurTextarea();
       }
@@ -250,6 +250,6 @@
 
     }
 
-    window.customElements.define(SapoCrudTipo.is, SapoCrudTipo);
+    window.customElements.define(SapoCrudNivel.is, SapoCrudNivel);
   </script>
 </dom-module>
