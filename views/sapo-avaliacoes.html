@@ -1,25 +1,99 @@
 <link rel="import" href="/bower_components/polymer/polymer-element.html">
+<link rel="import" href="/bower_components/app-route/app-route.html">
+<link rel="import" href="./avaliacoes/sapo-list-avaliacoes.html">
 
-<dom-module id="sapo-avaliacao">
+<dom-module id="sapo-avaliacoes">
 
   <template>
 
     <style>
     </style>
 
+    <app-route
+      route="{{route}}"
+      pattern="/:avaliacao"
+      data="{{avaliacaoRouteData}}"
+      tail="{{subroute}}">
+    </app-route>
+    <app-route
+      route="{{subroute}}"
+      pattern="/:entidade"
+      data="{{entidadeRouteData}}">
+    </app-route>
+
+    <button on-click="teste" >TESTE</button>
+    <button on-click="teste2" >TESTE2</button>
+
+    <p>avaliacao: [[avaliacao]]</p>
+    <p>entidade: [[entidade]]</p>
+
+    <sapo-list-avaliacoes></sapo-list-avaliacoes>
+
   </template>
 
   <script>
-    class SapoAvaliacao extends Polymer.Element {
+    class SapoAvaliacoes extends Polymer.Element {
 
-      static get is() { return 'sapo-avaliacao'; }
+      static get is() { return 'sapo-avaliacoes'; }
 
       static get properties() {
-        return { }
+        return {
+          avaliacao: {
+            type: Number,
+            observer: '_avaliacaoObserver'
+          },
+          entidade: {
+            type: Number,
+            observer: '_entidadeObserver'
+          }
+        }
       }
 
+      ready() {
+        super.ready();
+
+        if (this.avaliacaoRouteData)
+          this.avaliacao = parseInt(this.avaliacaoRouteData.avaliacao);
+        if (this.entidadeRouteData)
+          this.entidade = parseInt(this.entidadeRouteData.entidade);
+      }
+
+      _avaliacaoObserver(newAvaliacao) {
+        console.log('avaliacao', newAvaliacao, this.route);
+        this.changeURL();
+      }
+
+      _entidadeObserver(newEntidade) {
+        console.log('entidade', newEntidade, this.route);
+        this.changeURL();
+      }
+
+      changeURL() {
+        if (!isNaN(this.avaliacao)) {
+          let url = "/" + this.avaliacao;
+          if (!isNaN(this.entidade))
+            url += "/" + this.entidade;
+
+          window.history.pushState({}, null, this.route.prefix + url);
+          window.dispatchEvent(new CustomEvent('location-changed'));
+        }
+      }
+
+      teste() {
+        if (isNaN(this.avaliacao))
+          this.avaliacao = 0;
+        else
+          this.avaliacao += 1;
+      }
+
+      teste2() {
+        if (isNaN(this.entidade))
+          this.entidade = 0;
+        else
+          this.entidade += 1;
+      }
     }
 
-    window.customElements.define(SapoAvaliacao.is, SapoAvaliacao);
+    window.customElements.define(SapoAvaliacoes.is, SapoAvaliacoes);
   </script>
 </dom-module>
