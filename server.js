@@ -19,6 +19,13 @@ app.get('/avaliacoes/*', function(req, res) {
   res.sendfile('index.html')
 });
 
+app.get('/avaliacoes-old', function(req, res) {
+  res.sendfile('index.html')
+});
+app.get('/avaliacoes-old/*', function(req, res) {
+  res.sendfile('index.html')
+});
+
 app.get('/nova_avaliacao', function(req, res) {
   res.sendfile('index.html')
 });

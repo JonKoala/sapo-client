@@ -170,7 +170,7 @@ function Hello($scope, $http) {
                 console.log("Inseri um item");
               });
               setTimeout(function(){
-                $scope.setConteudo("avaliacoes");
+                $scope.setConteudo("avaliacoes-old");
               }, 2000);
             }
           });
@@ -201,7 +201,7 @@ function Hello($scope, $http) {
       $("#menu_topo").children().removeClass("active");
       $("#"+caminho).addClass("active");
       // Avaliacoes
-      if(caminho == "avaliacoes"){
+      if(caminho == "avaliacoes-old"){
         url = ""+"avaliacao";
         $http.get(SapoApiURL + url).
         success(function(data) {
@@ -908,7 +908,7 @@ function Hello($scope, $http) {
       url = ""+"avaliacao-delete"+"/"+id;
       $http.delete(SapoApiURL + url).
       success(function(data) {
-        $scope.setConteudo("avaliacoes");
+        $scope.setConteudo("avaliacoes-old");
       })
     }
 
