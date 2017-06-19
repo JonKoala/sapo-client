@@ -9,25 +9,16 @@
     <style>
     </style>
 
-    <app-route
-      route="{{route}}"
-      pattern="/:avaliacao"
-      data="{{avaliacaoRouteData}}"
-      tail="{{subroute}}">
-    </app-route>
-    <app-route
-      route="{{subroute}}"
-      pattern="/:entidade"
-      data="{{entidadeRouteData}}">
-    </app-route>
-
-    <button on-click="teste" >TESTE</button>
-    <button on-click="teste2" >TESTE2</button>
-
-    <p>avaliacao: [[avaliacao]]</p>
-    <p>entidade: [[entidade]]</p>
+    <app-route route="{{route}}" tail="{{subroute}}"></app-route>
 
     <sapo-list-avaliacoes></sapo-list-avaliacoes>
+
+    <!--
+    <button on-click="teste" >AVALIACAO</button>
+    <button on-click="teste2" >ENTIDADE</button>
+    <p>avaliacao: [[pathData.avaliacao]]</p>
+    <p>entidade: [[pathData.entidade]]</p>
+    -->
 
   </template>
 
@@ -38,59 +29,93 @@
 
       static get properties() {
         return {
-          avaliacao: {
-            type: Number,
-            observer: '_avaliacaoObserver'
+          route: {
+            type: String,
+            observer: '_routeObserver'
           },
-          entidade: {
-            type: Number,
-            observer: '_entidadeObserver'
+          pathData: {
+            type: Object,
+            value: () => { return {avaliacao: NaN, entidade: NaN}; },
+            observer: '_pathDataObserver'
           }
         }
       }
 
-      ready() {
-        super.ready();
+      _routeObserver(newRoute) {
+        if (!newRoute || !newRoute.path) return;
 
-        if (this.avaliacaoRouteData)
-          this.avaliacao = parseInt(this.avaliacaoRouteData.avaliacao);
-        if (this.entidadeRouteData)
-          this.entidade = parseInt(this.entidadeRouteData.entidade);
+        var pathDataArray = newRoute.path.split('/')
+                              .map(item => {
+                                return parseInt(item);
+                              }).filter(item => {
+                                return !isNaN(item);
+                              });
+
+        var avaliacao = (pathDataArray.length > 0) ? pathDataArray[0] : NaN;
+        var entidade = (pathDataArray.length > 1) ? pathDataArray[1] : NaN;
+
+        if (this.pathData.avaliacao != avaliacao || this.pathData.entidade != entidade)
+          this.pathData = {avaliacao: avaliacao, entidade: entidade};
       }
 
-      _avaliacaoObserver(newAvaliacao) {
-        console.log('avaliacao', newAvaliacao, this.route);
-        this.changeURL();
+      _pathDataObserver(newPathData) {
+        console.log('pathData', newPathData);
       }
 
-      _entidadeObserver(newEntidade) {
-        console.log('entidade', newEntidade, this.route);
-        this.changeURL();
+
+      //
+      //EVENTS
+
+      _avaliacaoChanged(e) {
+        console.log('avaliacao', e.detail.avaliacao);
+        //this.updatePath();
       }
 
-      changeURL() {
-        if (!isNaN(this.avaliacao)) {
-          let url = "/" + this.avaliacao;
-          if (!isNaN(this.entidade))
-            url += "/" + this.entidade;
+      _entidadeChanged(e) {
+        console.log('entidade', e.detail.entidade);
+        //this.updatePath();
+      }
+
+
+      //
+      //UTILS
+
+      updatePath() {
+        if (!isNaN(this.pathData.avaliacao)) {
+          let url = "/" + this.pathData.avaliacao;
+          if (!isNaN(this.pathData.entidade))
+            url += "/" + this.pathData.entidade;
 
           window.history.pushState({}, null, this.route.prefix + url);
           window.dispatchEvent(new CustomEvent('location-changed'));
         }
       }
 
+
+      //
+      //EXTRAS
+
       teste() {
-        if (isNaN(this.avaliacao))
-          this.avaliacao = 0;
-        else
-          this.avaliacao += 1;
+        var avaliacao = (isNaN(this.pathData.avaliacao)) ? 0 : this.pathData.avaliacao + 1;
+        var entidade = this.pathData.entidade;
+
+        this.pathData = {
+          avaliacao: avaliacao,
+          entidade: entidade
+        };
+        this.updatePath();
       }
 
       teste2() {
-        if (isNaN(this.entidade))
-          this.entidade = 0;
-        else
-          this.entidade += 1;
+        if (isNaN(this.pathData.avaliacao)) return;
+        var entidade = (isNaN(this.pathData.entidade)) ? 0 : this.pathData.entidade + 1;
+        var avaliacao = this.pathData.avaliacao;
+
+        this.pathData = {
+          avaliacao: avaliacao,
+          entidade: entidade
+        };
+        this.updatePath();
       }
     }
 
