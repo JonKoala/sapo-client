@@ -1,11 +1,92 @@
 <link rel="import" href="/bower_components/polymer/polymer-element.html">
+<link rel="import" href="/bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="/bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="/bower_components/paper-button/paper-button.html">
+<link rel="import" href="/bower_components/paper-card/paper-card.html">
+<link rel="import" href="/bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="./sapo-item-avaliacao.html">
 
 <dom-module id="sapo-list-avaliacoes">
 
   <template>
 
     <style>
+
+      .orange {
+        background: #f0ad4e;
+      }
+
+      .red {
+        background: #d9534f;
+      }
+
+      .white {
+        color: black;
+      }
+
+      paper-card {
+        margin: 5px 100px;
+        padding: 10px;
+
+        display: flex;
+      }
+
+      table {
+        width: 100%;
+      }
+
+      thead {
+        text-align: left;
+      }
+
+      th, td {
+        padding: 10px;
+      }
+
+      .indicador-area {
+        min-width: 200px;
+      }
+
+      .buttons-area {
+        display: flex;
+        flex-wrap: nowrap;
+      }
+
+      paper-button {
+        color: white;
+        margin: auto 2px;
+      }
+
     </style>
+
+    <iron-ajax id="getAvaliacoesAjax" auto url="http://N350i-22878:8080/avaliacoes/indicador" last-response="{{avaliacoes}}"></iron-ajax>
+
+    <paper-card>
+
+      <table>
+        <thead>
+          <th>Indicador</th>
+          <th>Nome</th>
+          <th>Início</th>
+          <th></th>
+        </thead>
+        <tbody>
+          <template is="dom-repeat" items="[[avaliacoes]]">
+            <tr>
+              <td class="indicador-area">[[item.indicador.nome]]</td>
+              <td>[[item.nome]]</td>
+              <td>[[_computeDate(item.inicio)]]</td>
+              <td class="buttons-area">
+                <paper-button raised class="white"  ><iron-icon icon="open-in-new"></iron-icon>Avaliar</paper-button>
+                <paper-button raised class="orange" ><iron-icon icon="create"></iron-icon>Editar</paper-button>
+                <paper-button raised class="red" ><iron-icon icon="delete"></iron-icon>Remover</paper-button>
+              </td>
+            </tr>
+          </template>
+        </tbody>
+      </table>
+
+    </paper-card>
 
   </template>
 
@@ -15,7 +96,28 @@
       static get is() { return 'sapo-list-avaliacoes'; }
 
       static get properties() {
-        return { }
+        return {
+          avaliacoes: {
+            type: Array,
+            observer: '_avaliacoesChanged'
+          }
+        }
+      }
+
+      _avaliacoesChanged(newAvaliacoes) {
+        console.log(newAvaliacoes);
+      }
+
+      _computeDate(date) {
+        var dateObject = new Date(date);
+
+        var day = dateObject.getDate();
+        day = (day > 9) ? day : '0' + day;
+        var month = dateObject.getMonth() + 1;
+        month = (month > 9) ? month : '0' + month;
+        var year = dateObject.getFullYear();
+
+        return day + '/' + month + '/' + year;
       }
 
     }
