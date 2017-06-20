@@ -1,0 +1,29 @@
+<link rel="import" href="/bower_components/polymer/polymer-element.html">
+
+<dom-module id="sapo-evaluate-objeto-avaliacao">
+
+  <template>
+
+    <style>
+    </style>
+    
+    <p>objeto avaliacao: [[objetoAvaliacao]]</p>
+
+  </template>
+
+  <script>
+    class SapoEvaluateObjetoAvaliacao extends Polymer.Element {
+
+      static get is() { return 'sapo-evaluate-objeto-avaliacao'; }
+
+      static get properties() {
+        return {
+          objetoAvaliacao: Number
+        }
+      }
+
+    }
+
+    window.customElements.define(SapoEvaluateObjetoAvaliacao.is, SapoEvaluateObjetoAvaliacao);
+  </script>
+</dom-module>

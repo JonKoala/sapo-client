@@ -3,6 +3,7 @@
 <link rel="import" href="/bower_components/iron-pages/iron-pages.html">
 <link rel="import" href="./avaliacoes/sapo-list-avaliacoes.html">
 <link rel="import" href="./avaliacoes/sapo-list-objetos-avaliacao.html">
+<link rel="import" href="./avaliacoes/sapo-evaluate-objeto-avaliacao.html">
 
 <dom-module id="sapo-avaliacoes">
 
@@ -16,6 +17,7 @@
     <iron-pages selected="[[page]]" selected-attribute="active" attr-for-selected="name">
       <sapo-list-avaliacoes name="list-avaliacoes" on-evaluate="_expandAvaliacao"></sapo-list-avaliacoes>
       <sapo-list-objetos-avaliacao name="list-objetos-avaliacao" avaliacao="[[pathData.avaliacao]]" on-evaluate="_expandObjetoAvaliacao"></sapo-list-objetos-avaliacao>
+      <sapo-evaluate-objeto-avaliacao name="evaluate-objeto-avaliacao" objeto-avaliacao="[[pathData.objetoAvaliacao]]"></sapo-evaluate-objeto-avaliacao>
     </iron-pages>
 
   </template>
