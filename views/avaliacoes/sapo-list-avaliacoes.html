@@ -4,7 +4,6 @@
 <link rel="import" href="/bower_components/paper-button/paper-button.html">
 <link rel="import" href="/bower_components/paper-card/paper-card.html">
 <link rel="import" href="/bower_components/paper-listbox/paper-listbox.html">
-<link rel="import" href="./sapo-item-avaliacao.html">
 
 <dom-module id="sapo-list-avaliacoes">
 
@@ -57,6 +56,11 @@
         margin: auto 2px;
       }
 
+      paper-button[disabled] {
+        background: #eaeaea;
+        color: #a8a8a8;
+      }
+
     </style>
 
     <iron-ajax id="getAvaliacoesAjax" auto url="http://N350i-22878:8080/avaliacoes/indicador" last-response="{{avaliacoes}}"></iron-ajax>
@@ -77,9 +81,9 @@
               <td>[[item.nome]]</td>
               <td>[[_computeDate(item.inicio)]]</td>
               <td class="buttons-area">
-                <paper-button raised class="white"  ><iron-icon icon="open-in-new"></iron-icon>Avaliar</paper-button>
-                <paper-button raised class="orange" ><iron-icon icon="create"></iron-icon>Editar</paper-button>
-                <paper-button raised class="red" ><iron-icon icon="delete"></iron-icon>Remover</paper-button>
+                <paper-button raised class="white" on-click="_evaluateClicked" ><iron-icon icon="open-in-new"></iron-icon>Avaliar</paper-button>
+                <paper-button disabled raised class="orange" ><iron-icon icon="create"></iron-icon>Editar</paper-button>
+                <paper-button disabled raised class="red" ><iron-icon icon="delete"></iron-icon>Remover</paper-button>
               </td>
             </tr>
           </template>
@@ -97,16 +101,13 @@
 
       static get properties() {
         return {
-          avaliacoes: {
-            type: Array,
-            observer: '_avaliacoesChanged'
-          }
+          avaliacoes: Array
         }
       }
 
-      _avaliacoesChanged(newAvaliacoes) {
-        console.log(newAvaliacoes);
-      }
+
+      //
+      //OBSERVERS & COMPUTEDS
 
       _computeDate(date) {
         var dateObject = new Date(date);
@@ -118,6 +119,14 @@
         var year = dateObject.getFullYear();
 
         return day + '/' + month + '/' + year;
+      }
+
+
+      //
+      //EVENTS
+
+      _evaluateClicked(e) {
+        this.dispatchEvent(new CustomEvent('evaluate', {detail: e.model.item}));
       }
 
     }

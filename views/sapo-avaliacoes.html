@@ -11,7 +11,7 @@
 
     <app-route route="{{route}}" tail="{{subroute}}"></app-route>
 
-    <sapo-list-avaliacoes></sapo-list-avaliacoes>
+    <sapo-list-avaliacoes on-evaluate="_expandAvaliacao" ></sapo-list-avaliacoes>
 
     <!--
     <button on-click="teste" >AVALIACAO</button>
@@ -54,7 +54,8 @@
         var avaliacao = (pathDataArray.length > 0) ? pathDataArray[0] : NaN;
         var entidade = (pathDataArray.length > 1) ? pathDataArray[1] : NaN;
 
-        if (this.pathData.avaliacao != avaliacao || this.pathData.entidade != entidade)
+        //using Object.is because 'NaN == NaN' would return false otherwise
+        if (!Object.is(this.pathData.avaliacao, avaliacao) || !Object.is(this.pathData.entidade, entidade))
           this.pathData = {avaliacao: avaliacao, entidade: entidade};
       }
 
@@ -66,19 +67,35 @@
       //
       //EVENTS
 
-      _avaliacaoChanged(e) {
-        console.log('avaliacao', e.detail.avaliacao);
-        //this.updatePath();
-      }
-
-      _entidadeChanged(e) {
-        console.log('entidade', e.detail.entidade);
-        //this.updatePath();
+      _expandAvaliacao(e) {
+        this.updateAvaliacao(e.detail.id);
       }
 
 
       //
       //UTILS
+
+      updateAvaliacao(newAvaliacao) {
+        var avaliacao = (isNaN(newAvaliacao)) ? NaN : newAvaliacao;
+        var entidade = NaN; //it should reset entidade
+
+        this.updatePathData(avaliacao, entidade);
+      }
+
+      updateEntidade(newEntidade) {
+        var entidade = (isNaN(newEntidade)) ? NaN : newEntidade;
+        var avaliacao = this.pathData.avaliacao;
+
+        this.updatePathData(avaliacao, entidade);
+      }
+
+      updatePathData(avaliacao, entidade) {
+        this.pathData = {
+          avaliacao: avaliacao,
+          entidade: entidade
+        };
+        this.updatePath();
+      }
 
       updatePath() {
         if (!isNaN(this.pathData.avaliacao)) {
