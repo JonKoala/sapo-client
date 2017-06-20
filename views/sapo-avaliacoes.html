@@ -1,6 +1,8 @@
 <link rel="import" href="/bower_components/polymer/polymer-element.html">
 <link rel="import" href="/bower_components/app-route/app-route.html">
+<link rel="import" href="/bower_components/iron-pages/iron-pages.html">
 <link rel="import" href="./avaliacoes/sapo-list-avaliacoes.html">
+<link rel="import" href="./avaliacoes/sapo-list-objetos-avaliacao.html">
 
 <dom-module id="sapo-avaliacoes">
 
@@ -11,14 +13,10 @@
 
     <app-route route="{{route}}" tail="{{subroute}}"></app-route>
 
-    <sapo-list-avaliacoes on-evaluate="_expandAvaliacao" ></sapo-list-avaliacoes>
-
-    <!--
-    <button on-click="teste" >AVALIACAO</button>
-    <button on-click="teste2" >ENTIDADE</button>
-    <p>avaliacao: [[pathData.avaliacao]]</p>
-    <p>entidade: [[pathData.entidade]]</p>
-    -->
+    <iron-pages selected="[[page]]" selected-attribute="active" attr-for-selected="name">
+      <sapo-list-avaliacoes name="list-avaliacoes" on-evaluate="_expandAvaliacao"></sapo-list-avaliacoes>
+      <sapo-list-objetos-avaliacao name="list-objetos-avaliacao" avaliacao="[[pathData.avaliacao]]" on-evaluate="_expandObjetoAvaliacao"></sapo-list-objetos-avaliacao>
+    </iron-pages>
 
   </template>
 
@@ -35,14 +33,35 @@
           },
           pathData: {
             type: Object,
-            value: () => { return {avaliacao: NaN, entidade: NaN}; },
-            observer: '_pathDataObserver'
+            value: () => { return {avaliacao: NaN, objetoAvaliacao: NaN}; }
+          },
+          page: {
+            type: String,
+            computed: '_computePage(pathData)'
           }
         }
       }
 
+
+      //
+      //OBSERVERS & COMPUTEDS
+
+      _computePage(pathData) {
+
+        if (isNaN(pathData.avaliacao))
+          return 'list-avaliacoes';
+        else if (isNaN(pathData.objetoAvaliacao))
+          return 'list-objetos-avaliacao';
+
+        return 'evaluate-objeto-avaliacao';
+      }
+
       _routeObserver(newRoute) {
-        if (!newRoute || !newRoute.path) return;
+
+        if (!newRoute || newRoute.prefix !== '/avaliacoes') return; //not my business
+
+        if (newRoute.path === '')
+          newRoute.path = '/';
 
         var pathDataArray = newRoute.path.split('/')
                               .map(item => {
@@ -52,15 +71,11 @@
                               });
 
         var avaliacao = (pathDataArray.length > 0) ? pathDataArray[0] : NaN;
-        var entidade = (pathDataArray.length > 1) ? pathDataArray[1] : NaN;
+        var objetoAvaliacao = (pathDataArray.length > 1) ? pathDataArray[1] : NaN;
 
-        //using Object.is because 'NaN == NaN' would return false otherwise
-        if (!Object.is(this.pathData.avaliacao, avaliacao) || !Object.is(this.pathData.entidade, entidade))
-          this.pathData = {avaliacao: avaliacao, entidade: entidade};
-      }
-
-      _pathDataObserver(newPathData) {
-        console.log('pathData', newPathData);
+        //using Object.is because i need 'NaN == NaN' to return true
+        if (!Object.is(this.pathData.avaliacao, avaliacao) || !Object.is(this.pathData.objetoAvaliacao, objetoAvaliacao))
+          this.pathData = {avaliacao: avaliacao, objetoAvaliacao: objetoAvaliacao};
       }
 
 
@@ -68,7 +83,11 @@
       //EVENTS
 
       _expandAvaliacao(e) {
-        this.updateAvaliacao(e.detail.id);
+        this.updateAvaliacao(e.detail);
+      }
+
+      _expandObjetoAvaliacao(e) {
+        this.updateObjetoAvaliacao(e.detail);
       }
 
 
@@ -77,22 +96,22 @@
 
       updateAvaliacao(newAvaliacao) {
         var avaliacao = (isNaN(newAvaliacao)) ? NaN : newAvaliacao;
-        var entidade = NaN; //it should reset entidade
+        var objetoAvaliacao = NaN; //it should reset objetoAvaliacao
 
-        this.updatePathData(avaliacao, entidade);
+        this.updatePathData(avaliacao, objetoAvaliacao);
       }
 
-      updateEntidade(newEntidade) {
-        var entidade = (isNaN(newEntidade)) ? NaN : newEntidade;
+      updateObjetoAvaliacao(newObjetoAvaliacao) {
+        var objetoAvaliacao = (isNaN(newObjetoAvaliacao)) ? NaN : newObjetoAvaliacao;
         var avaliacao = this.pathData.avaliacao;
 
-        this.updatePathData(avaliacao, entidade);
+        this.updatePathData(avaliacao, objetoAvaliacao);
       }
 
-      updatePathData(avaliacao, entidade) {
+      updatePathData(avaliacao, objetoAvaliacao) {
         this.pathData = {
           avaliacao: avaliacao,
-          entidade: entidade
+          objetoAvaliacao: objetoAvaliacao
         };
         this.updatePath();
       }
@@ -100,40 +119,14 @@
       updatePath() {
         if (!isNaN(this.pathData.avaliacao)) {
           let url = "/" + this.pathData.avaliacao;
-          if (!isNaN(this.pathData.entidade))
-            url += "/" + this.pathData.entidade;
+          if (!isNaN(this.pathData.objetoAvaliacao))
+            url += "/" + this.pathData.objetoAvaliacao;
 
           window.history.pushState({}, null, this.route.prefix + url);
           window.dispatchEvent(new CustomEvent('location-changed'));
         }
       }
 
-
-      //
-      //EXTRAS
-
-      teste() {
-        var avaliacao = (isNaN(this.pathData.avaliacao)) ? 0 : this.pathData.avaliacao + 1;
-        var entidade = this.pathData.entidade;
-
-        this.pathData = {
-          avaliacao: avaliacao,
-          entidade: entidade
-        };
-        this.updatePath();
-      }
-
-      teste2() {
-        if (isNaN(this.pathData.avaliacao)) return;
-        var entidade = (isNaN(this.pathData.entidade)) ? 0 : this.pathData.entidade + 1;
-        var avaliacao = this.pathData.avaliacao;
-
-        this.pathData = {
-          avaliacao: avaliacao,
-          entidade: entidade
-        };
-        this.updatePath();
-      }
     }
 
     window.customElements.define(SapoAvaliacoes.is, SapoAvaliacoes);
