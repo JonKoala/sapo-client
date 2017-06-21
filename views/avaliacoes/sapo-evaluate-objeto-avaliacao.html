@@ -6,9 +6,9 @@
 
     <style>
     </style>
-    
-    <p>objeto avaliacao: [[objetoAvaliacao]]</p>
 
+    <iron-ajax auto="[[active]]" url="http://N350i-22878:8080/notas/objetoavaliacao/[[objetoAvaliacao]]/full" last-response="{{ajaxResponse}}"></iron-ajax>
+    
   </template>
 
   <script>
@@ -18,8 +18,47 @@
 
       static get properties() {
         return {
-          objetoAvaliacao: Number
+          active: {
+            type: Boolean,
+            value: false
+          },
+
+          objetoAvaliacao: Number,
+          ajaxResponse: {
+            type: Array,
+            observer: '_ajaxResponseChanged'
+          },
+
+          indicadores: {
+            type: Object,
+            value: () => { return {pilares: [], tipos: [], niveis: [], subniveis: []}; }
+          },
+          notas: Array
         }
+      }
+
+      _ajaxResponseChanged(response) {
+
+        var addIfUnique = (array, item) => {
+          if (!array.some(i => { return i.id === item.id}))
+            array.push(item);
+        };
+
+        var indicadores = {pilares: [], tipos: [], niveis: [], subniveis: []};
+        response.forEach(nota => {
+          addIfUnique(indicadores.pilares, nota.item.subnivel.nivel.tipo.pilar);
+          addIfUnique(indicadores.tipos, nota.item.subnivel.nivel.tipo);
+          addIfUnique(indicadores.niveis, nota.item.subnivel.nivel);
+          addIfUnique(indicadores.subniveis, nota.item.subnivel);
+          delete nota.item.subnivel;
+        });
+
+        indicadores.tipos.map(tipo => { delete tipo.pilar; return tipo; });
+        indicadores.niveis.map(nivel => { delete nivel.tipo; return nivel; });
+        indicadores.subniveis.map(subnivel => { delete subnivel.nivel; return subnivel; });
+
+        this.indicadores = indicadores;
+        this.notas = response;
       }
 
     }
