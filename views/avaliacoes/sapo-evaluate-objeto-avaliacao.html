@@ -1,14 +1,44 @@
 <link rel="import" href="/bower_components/polymer/polymer-element.html">
+<link rel="import" href="/bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="./sapo-menu-indicadores.html">
+<link rel="import" href="./sapo-list-notas.html">
 
 <dom-module id="sapo-evaluate-objeto-avaliacao">
 
   <template>
 
     <style>
+
+      :host {
+        display: flex;
+      }
+
+      paper-card {
+        padding: 10px;
+        margin: 5px 100px;
+      }
+
+      #menu-indicadores {
+        margin-right: 20px;
+        height: 100%;
+      }
+
+      #list-notas {
+        margin-left: 20px;
+      }
+
     </style>
 
-    <iron-ajax auto="[[active]]" url="http://N350i-22878:8080/notas/objetoavaliacao/[[objetoAvaliacao]]/full" last-response="{{ajaxResponse}}"></iron-ajax>
-    
+    <iron-ajax auto="[[active]]" url="http://N350i-22878:8080/notas/objetoavaliacao/[[objetoAvaliacao]]/full" last-response="{{notas}}"></iron-ajax>
+
+    <paper-card id="menu-indicadores" >
+      <sapo-menu-indicadores data="[[indicadores]]" pilar="{{pilar}}" tipo="{{tipo}}" nivel="{{nivel}}" subnivel="{{subnivel}}"></sapo-menu-indicadores>
+    </paper-card>
+
+    <paper-card id="list-notas" >
+      <sapo-list-notas data="[[notasToShow]]" ></sapo-list-notas>
+    </paper-card>
+
   </template>
 
   <script>
@@ -24,20 +54,27 @@
           },
 
           objetoAvaliacao: Number,
-          ajaxResponse: {
+          notas: {
             type: Array,
-            observer: '_ajaxResponseChanged'
+            observer: '_notasChanged'
+          },
+          notasToShow: {
+            type: Array,
+            computed: '_computeNotasToShow(notas, pilar, tipo, nivel, subnivel)'
           },
 
           indicadores: {
             type: Object,
             value: () => { return {pilares: [], tipos: [], niveis: [], subniveis: []}; }
           },
-          notas: Array
+          pilar: Number,
+          tipo: Number,
+          nivel: Number,
+          subnivel: Number
         }
       }
 
-      _ajaxResponseChanged(response) {
+      _notasChanged(notas) {
 
         var addIfUnique = (array, item) => {
           if (!array.some(i => { return i.id === item.id}))
@@ -45,20 +82,30 @@
         };
 
         var indicadores = {pilares: [], tipos: [], niveis: [], subniveis: []};
-        response.forEach(nota => {
+        notas.forEach(nota => {
           addIfUnique(indicadores.pilares, nota.item.subnivel.nivel.tipo.pilar);
           addIfUnique(indicadores.tipos, nota.item.subnivel.nivel.tipo);
           addIfUnique(indicadores.niveis, nota.item.subnivel.nivel);
           addIfUnique(indicadores.subniveis, nota.item.subnivel);
-          delete nota.item.subnivel;
         });
 
-        indicadores.tipos.map(tipo => { delete tipo.pilar; return tipo; });
-        indicadores.niveis.map(nivel => { delete nivel.tipo; return nivel; });
-        indicadores.subniveis.map(subnivel => { delete subnivel.nivel; return subnivel; });
-
         this.indicadores = indicadores;
-        this.notas = response;
+      }
+
+      _computeNotasToShow(notas, pilar, tipo, nivel, subnivel) {
+
+        if (!notas) return [];
+
+        var newNotas =  notas.filter((nota, index) => {
+          let result = true;
+          if (pilar) result = (nota.item.subnivel.nivel.tipo.pilar.id === pilar);
+          if (tipo) result = (nota.item.subnivel.nivel.tipo.id === tipo);
+          if (nivel) result = (nota.item.subnivel.nivel.id === nivel);
+          if (subnivel) result = (nota.item.subnivel.id === subnivel);
+          return result;
+        });
+
+        return newNotas;
       }
 
     }

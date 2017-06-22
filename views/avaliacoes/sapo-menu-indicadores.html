@@ -1,0 +1,61 @@
+<link rel="import" href="/bower_components/polymer/polymer-element.html">
+<link rel="import" href="/elements/sapo-selector.html">
+
+<dom-module id="sapo-menu-indicadores">
+
+  <template>
+
+    <style>
+
+    </style>
+
+    <sapo-selector label="Pilar" data="[[_computeSelectorData(data.pilares)]]" selected="{{pilar}}"></sapo-selector>
+    <sapo-selector label="Tipo" data="[[_computeSelectorData(data.tipos, pilar, 'pilar_id')]]" selected="{{tipo}}"></sapo-selector>
+    <sapo-selector label="Nivel" data="[[_computeSelectorData(data.niveis, tipo, 'tipo_id')]]" selected="{{nivel}}"></sapo-selector>
+    <sapo-selector label="Subnivel" data="[[_computeSelectorData(data.subniveis, nivel, 'nivel_id')]]" selected="{{subnivel}}"></sapo-selector>
+
+  </template>
+
+  <script>
+    class SapoMenuIndicadores extends Polymer.Element {
+
+      static get is() { return 'sapo-menu-indicadores'; }
+
+      static get properties() {
+        return {
+          data: Object,
+
+          pilar: {
+            type: Number,
+            notify: true
+          },
+          tipo: {
+            type: Number,
+            notify: true
+          },
+          nivel: {
+            type: Number,
+            notify: true
+          },
+          subnivel: {
+            type: Number,
+            notify: true
+          }
+        }
+      }
+
+      _computeSelectorData(array, fk, fkField) {
+
+        var selectorData = array;
+
+        if (fkField)
+          selectorData = array.filter(item => { return item[fkField] === fk; });
+
+        return selectorData.map(item => { return {identity: item.id, text: item.nome}; });
+      }
+
+    }
+
+    window.customElements.define(SapoMenuIndicadores.is, SapoMenuIndicadores);
+  </script>
+</dom-module>

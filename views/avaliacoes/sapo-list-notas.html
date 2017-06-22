@@ -1,0 +1,64 @@
+<link rel="import" href="/bower_components/polymer/polymer-element.html">
+<link rel="import" href="/bower_components/paper-card/paper-card.html">
+<link rel="import" href="/elements/sapo-poor-selector.html">
+
+<dom-module id="sapo-list-notas">
+
+  <template>
+
+    <style>
+
+      table {
+        width: 100%;
+      }
+
+      thead {
+        text-align: left;
+      }
+
+      th, td {
+        padding: 10px;
+      }
+    </style>
+
+    <table>
+      <thead>
+        <th style="min-width:200px">Item</th>
+        <th style="width:100%">Exigência</th>
+        <th style="width:100px">Nota</th>
+      </thead>
+      <tbody>
+        <template is="dom-repeat" items="[[data]]">
+          <tr>
+            <td>[[item.item.nome]]</td>
+            <td>[[item.item.exigencia]]</td>
+            <td>
+              <sapo-poor-selector data="[[_computeSelectorData(item.item.pontuacoes)]]" ></sapo-selector>
+            </td>
+          </tr>
+        </template>
+      </tbody>
+    </table>
+
+  </template>
+
+  <script>
+    class SapoListNotas extends Polymer.Element {
+
+      static get is() { return 'sapo-list-notas'; }
+
+      static get properties() {
+        return {
+          data: Array
+        }
+      }
+
+      _computeSelectorData(pontuacoes) {
+        return pontuacoes.map(pontuacao => { return { identity: pontuacao.id, text: pontuacao.nota + ' - ' + pontuacao.descricao }; });
+      }
+
+    }
+
+    window.customElements.define(SapoListNotas.is, SapoListNotas);
+  </script>
+</dom-module>
