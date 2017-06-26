@@ -33,7 +33,7 @@
             <td>[[item.item.nome]]</td>
             <td>[[item.item.exigencia]]</td>
             <td>
-              <sapo-poor-selector data="[[_computeSelectorData(item.item.pontuacoes)]]" ></sapo-selector>
+              <sapo-poor-selector on-select="_notaChanged" selected="{{item.pontuacao_id}}" data="[[_computeSelectorData(item.item.pontuacoes)]]" ></sapo-selector>
             </td>
           </tr>
         </template>
@@ -55,6 +55,11 @@
 
       _computeSelectorData(pontuacoes) {
         return pontuacoes.map(pontuacao => { return { identity: pontuacao.id, text: pontuacao.nota + ' - ' + pontuacao.descricao }; });
+      }
+
+      _notaChanged(e) {
+        //console.log(e.model.item.id, e.detail.id);
+        this.dispatchEvent(new CustomEvent('nota-changed', {detail: {nota_id: e.model.item.id, pontuacao_id: e.detail.id}}));
       }
 
     }

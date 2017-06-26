@@ -31,12 +31,12 @@
 
     <iron-ajax auto="[[active]]" url="http://N350i-22878:8080/notas/objetoavaliacao/[[objetoAvaliacao]]/full" last-response="{{notas}}"></iron-ajax>
 
-    <paper-card id="menu-indicadores" >
+    <paper-card id="menu-indicadores">
       <sapo-menu-indicadores data="[[indicadores]]" pilar="{{pilar}}" tipo="{{tipo}}" nivel="{{nivel}}" subnivel="{{subnivel}}"></sapo-menu-indicadores>
     </paper-card>
 
-    <paper-card id="list-notas" >
-      <sapo-list-notas data="[[notasToShow]]" ></sapo-list-notas>
+    <paper-card id="list-notas">
+      <sapo-list-notas on-nota-changed="_updateNota" data="[[notasToShow]]" ></sapo-list-notas>
     </paper-card>
 
   </template>
@@ -58,10 +58,7 @@
             type: Array,
             observer: '_notasChanged'
           },
-          notasToShow: {
-            type: Array,
-            computed: '_computeNotasToShow(notas, pilar, tipo, nivel, subnivel)'
-          },
+          notasToShow: Array,
 
           indicadores: {
             type: Object,
@@ -72,6 +69,11 @@
           nivel: Number,
           subnivel: Number
         }
+      }
+
+      ready() {
+        super.ready();
+        this._createComputedProperty('notasToShow', '_computeNotasToShow(notas, pilar, tipo, nivel, subnivel)', true);
       }
 
       _notasChanged(notas) {
@@ -106,6 +108,10 @@
         });
 
         return newNotas;
+      }
+
+      _updateNota(e) {
+        console.log(e.detail);
       }
 
     }

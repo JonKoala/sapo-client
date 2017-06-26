@@ -19,9 +19,10 @@
       }
     </style>
 
-    <select>
+    <select value="{{selectedText::change}}" >
+      <option value="">Não avaliado</option>
       <template is="dom-repeat" items="[[data]]">
-        <option value="[[item.identity]]">[[item.text]]</option>
+        <option selected$="{{_isOptionSelected(item.identity, selected)}}" value="[[item.identity]]">[[item.text]]</option>
       </template>
     </select>
 
@@ -34,14 +35,13 @@
 
       static get properties() {
         return {
-          label: String,
-          data: {
-            type: Array,
-            observer: '_dataChanged'
+          data: Array,
+          selectedText: {
+            type: String,
+            observer: '_selectedTextChanged'
           },
           selected: {
             type: Number,
-            notify: true,
             observer: '_selectedChanged'
           },
           disabled: Boolean,
@@ -49,16 +49,17 @@
         }
       }
 
-      _isDisabled(data, disabled) {
-        return data.length === 0 || disabled;
+      _isOptionSelected(item, selected) {
+        return item == selected;
       }
 
-      _dataChanged(newData) {
-        this.selected = 0;
+      _selectedTextChanged(selected) {
+        this.selected = (selected) ? parseInt(selected) : null;
       }
 
-      _selectedChanged(newValue) {
-        this.dispatchEvent(new CustomEvent('select', {detail: {id: this.selected}}));
+      _selectedChanged(newValue, oldValue) {
+        if (oldValue !== undefined)
+          this.dispatchEvent(new CustomEvent('select', {detail: {id: this.selected}}));
       }
 
     }
