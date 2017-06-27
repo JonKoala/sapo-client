@@ -1,5 +1,7 @@
 <link rel="import" href="/bower_components/polymer/polymer-element.html">
 <link rel="import" href="/bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="/bower_components/paper-toast/paper-toast.html">
+<link rel="import" href="/bower_components/paper-spinner/paper-spinner.html">
 <link rel="import" href="./sapo-menu-indicadores.html">
 <link rel="import" href="./sapo-list-notas.html">
 
@@ -16,6 +18,14 @@
       paper-card {
         padding: 10px;
         margin: 5px 100px;
+
+        display: flex;
+        flex-direction: column;
+        align-content: center;
+      }
+
+      paper-spinner {
+        align-self: center;
       }
 
       #menu-indicadores {
@@ -25,11 +35,16 @@
 
       #list-notas {
         margin-left: 20px;
+        width: 100%;
+      }
+
+      .hidden {
+        display: none;
       }
 
     </style>
 
-    <iron-ajax auto="[[active]]" url="http://N350i-22878:8080/notas/objetoavaliacao/[[objetoAvaliacao]]/full" last-response="{{notas}}"></iron-ajax>
+    <iron-ajax auto="[[active]]" url="http://N350i-22878:8080/notas/objetoavaliacao/[[objetoAvaliacao]]/full" loading="{{loading}}" last-response="{{notas}}"></iron-ajax>
     <iron-ajax id="putAjax" url="http://N350i-22878:8080/notas/pontuacao" method="PUT" content-type="application/json" handle-as="json" on-response="_putResponse"></iron-ajax>
 
     <paper-card id="menu-indicadores">
@@ -37,8 +52,11 @@
     </paper-card>
 
     <paper-card id="list-notas">
-      <sapo-list-notas on-nota-changed="_updateNota" data="[[notas]]" ids-to-show="[[_computeNotasToShow(notas, pilar, tipo, nivel, subnivel)]]" ></sapo-list-notas>
+      <paper-spinner active="[[loading]]" class$="[[_computeSpinnerCss(loading)]]" ></paper-spinner>
+      <sapo-list-notas on-nota-changed="_updateNota" data="[[notas]]" ids-to-show="[[_computeNotasToShow(notas, pilar, tipo, nivel, subnivel)]]" class$="[[_computeListNotasCss(loading)]]" ></sapo-list-notas>
     </paper-card>
+
+    <paper-toast id="quickNote"></paper-toast>
 
   </template>
 
@@ -53,6 +71,7 @@
             type: Boolean,
             value: false
           },
+          loading: Boolean,
 
           objetoAvaliacao: Number,
           notas: {
@@ -71,8 +90,33 @@
         }
       }
 
-      ready() {
-        super.ready();
+
+      //
+      //OBSERVERS & COMPUTEDS
+
+      _computeNotasToShow(notas, pilar, tipo, nivel, subnivel) {
+
+        if (!notas) return []; //no notas to show yet
+        if (!pilar) return notas.map(nota => { return nota.id; }); //first filter is special
+
+        var notasToShow =  notas.filter(nota => {
+          let result = true;
+          if (pilar) result = (nota.item.subnivel.nivel.tipo.pilar.id === pilar);
+          if (tipo) result = (nota.item.subnivel.nivel.tipo.id === tipo);
+          if (nivel) result = (nota.item.subnivel.nivel.id === nivel);
+          if (subnivel) result = (nota.item.subnivel.id === subnivel);
+          return result;
+        });
+
+        return notasToShow.map(nota => { return nota.id; });
+      }
+
+      _computeSpinnerCss(isLoading) {
+        return (isLoading) ? '' : 'hidden';
+      }
+
+      _computeListNotasCss(isLoading) {
+        return (isLoading) ? 'hidden' : '';
       }
 
       _notasChanged(notas) {
@@ -93,22 +137,9 @@
         this.indicadores = indicadores;
       }
 
-      _computeNotasToShow(notas, pilar, tipo, nivel, subnivel) {
 
-        if (!notas) return []; //no notas to show yet
-        if (!pilar) return notas.map(nota => { return nota.id; }); //first filter is special
-
-        var notasToShow =  notas.filter(nota => {
-          let result = true;
-          if (pilar) result = (nota.item.subnivel.nivel.tipo.pilar.id === pilar);
-          if (tipo) result = (nota.item.subnivel.nivel.tipo.id === tipo);
-          if (nivel) result = (nota.item.subnivel.nivel.id === nivel);
-          if (subnivel) result = (nota.item.subnivel.id === subnivel);
-          return result;
-        });
-
-        return notasToShow.map(nota => { return nota.id; });
-      }
+      //
+      //EVENTS
 
       _updateNota(e) {
         this.$.putAjax.body = e.detail;
@@ -116,7 +147,24 @@
       }
 
       _putResponse(e) {
-        console.log(e.detail.status);
+        if (e.detail.status === 200)
+          this._showNotification('Pontuação atualizada com sucesso!');
+      }
+
+
+      //
+      //UTILS
+
+      _showNotification(text) {
+
+        var note = this.$.quickNote;
+
+        //close note
+        note.close();
+
+        //prepare and show note
+        note.text = text;
+        note.open();
       }
 
     }
