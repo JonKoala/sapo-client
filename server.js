@@ -54,5 +54,5 @@ app.get(/^(.+)$/, function(req, res){
 
 var port = process.env.PORT || 8081;
 app.listen(port, function() {
-  console.log('Listening on ' + port);
+  console.log('Client up! Listening on ' + port + '...');
 });
