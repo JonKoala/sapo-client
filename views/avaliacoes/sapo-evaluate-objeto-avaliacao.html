@@ -69,7 +69,8 @@
         return {
           active: {
             type: Boolean,
-            value: false
+            value: false,
+            observer: '_activeChanged'
           },
           loading: Boolean,
 
@@ -135,6 +136,11 @@
         });
 
         this.indicadores = indicadores;
+      }
+
+      _activeChanged(isActive) {
+        if (!isActive)
+          this.notas = [];
       }
 
 
