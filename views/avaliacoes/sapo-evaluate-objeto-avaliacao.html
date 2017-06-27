@@ -30,6 +30,7 @@
     </style>
 
     <iron-ajax auto="[[active]]" url="http://N350i-22878:8080/notas/objetoavaliacao/[[objetoAvaliacao]]/full" last-response="{{notas}}"></iron-ajax>
+    <iron-ajax id="putAjax" url="http://N350i-22878:8080/notas/pontuacao" method="PUT" content-type="application/json" handle-as="json" on-response="_putResponse"></iron-ajax>
 
     <paper-card id="menu-indicadores">
       <sapo-menu-indicadores data="[[indicadores]]" pilar="{{pilar}}" tipo="{{tipo}}" nivel="{{nivel}}" subnivel="{{subnivel}}"></sapo-menu-indicadores>
@@ -110,7 +111,12 @@
       }
 
       _updateNota(e) {
-        console.log(e.detail);
+        this.$.putAjax.body = e.detail;
+        this.$.putAjax.generateRequest();
+      }
+
+      _putResponse(e) {
+        console.log(e.detail.status);
       }
 
     }
