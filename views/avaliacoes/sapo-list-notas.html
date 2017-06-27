@@ -29,7 +29,7 @@
       </thead>
       <tbody>
         <template is="dom-repeat" items="[[data]]">
-          <tr>
+          <tr hidden="[[_isNotaHidden(item.id, idsToShow)]]" >
             <td>[[item.item.nome]]</td>
             <td>[[item.item.exigencia]]</td>
             <td>
@@ -49,7 +49,8 @@
 
       static get properties() {
         return {
-          data: Array
+          data: Array,
+          idsToShow: Array
         }
       }
 
@@ -58,8 +59,11 @@
       }
 
       _notaChanged(e) {
-        //console.log(e.model.item.id, e.detail.id);
         this.dispatchEvent(new CustomEvent('nota-changed', {detail: {nota_id: e.model.item.id, pontuacao_id: e.detail.id}}));
+      }
+
+      _isNotaHidden(itemId, idsToShow) {
+        return !idsToShow.some(id => id === itemId);
       }
 
     }

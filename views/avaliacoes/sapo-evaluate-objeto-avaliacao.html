@@ -36,7 +36,7 @@
     </paper-card>
 
     <paper-card id="list-notas">
-      <sapo-list-notas on-nota-changed="_updateNota" data="[[notasToShow]]" ></sapo-list-notas>
+      <sapo-list-notas on-nota-changed="_updateNota" data="[[notas]]" ids-to-show="[[_computeNotasToShow(notas, pilar, tipo, nivel, subnivel)]]" ></sapo-list-notas>
     </paper-card>
 
   </template>
@@ -58,7 +58,6 @@
             type: Array,
             observer: '_notasChanged'
           },
-          notasToShow: Array,
 
           indicadores: {
             type: Object,
@@ -73,7 +72,6 @@
 
       ready() {
         super.ready();
-        this._createComputedProperty('notasToShow', '_computeNotasToShow(notas, pilar, tipo, nivel, subnivel)', true);
       }
 
       _notasChanged(notas) {
@@ -96,9 +94,10 @@
 
       _computeNotasToShow(notas, pilar, tipo, nivel, subnivel) {
 
-        if (!notas) return [];
+        if (!notas) return []; //no notas to show yet
+        if (!pilar) return notas.map(nota => { return nota.id; }); //first filter is special
 
-        var newNotas =  notas.filter((nota, index) => {
+        var notasToShow =  notas.filter(nota => {
           let result = true;
           if (pilar) result = (nota.item.subnivel.nivel.tipo.pilar.id === pilar);
           if (tipo) result = (nota.item.subnivel.nivel.tipo.id === tipo);
@@ -107,7 +106,7 @@
           return result;
         });
 
-        return newNotas;
+        return notasToShow.map(nota => { return nota.id; });
       }
 
       _updateNota(e) {
