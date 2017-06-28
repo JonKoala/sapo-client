@@ -4,74 +4,18 @@
 <link rel="import" href="/bower_components/paper-button/paper-button.html">
 <link rel="import" href="/bower_components/paper-card/paper-card.html">
 <link rel="import" href="/bower_components/paper-spinner/paper-spinner.html">
+<link rel="import" href="./sapo-avaliacoes-styles.html">
 
 <dom-module id="sapo-list-avaliacoes">
 
   <template>
 
-    <style>
-
-      .orange {
-        background: #f0ad4e;
-      }
-
-      .red {
-        background: #d9534f;
-      }
-
-      .white {
-        color: black;
-      }
-
-      .hidden {
-        display: none;
-      }
-
-      paper-card {
-        margin: 5px 100px;
-        padding: 10px;
-
-        display: flex;
-        flex-direction: column;
-        align-content: center;
-      }
-
-      paper-spinner {
-        align-self: center;
-      }
-
-      table {
-        width: 100%;
-      }
-
-      thead {
-        text-align: left;
-      }
-
-      th, td {
-        padding: 10px;
-      }
-
-      .buttons-area {
-        display: flex;
-        flex-wrap: nowrap;
-      }
-
-      paper-button {
-        color: white;
-        margin: auto 2px;
-      }
-
-      paper-button[disabled] {
-        background: #eaeaea;
-        color: #a8a8a8;
-      }
-
+    <style include="sapo-avaliacoes-styles">
     </style>
 
     <iron-ajax auto="[[active]]" url="http://N350i-22878:8080/avaliacoes/indicador" loading="{{loading}}" last-response="{{avaliacoes}}"></iron-ajax>
 
-    <paper-card>
+    <paper-card class="card-block">
 
       <paper-spinner active="[[loading]]" class$="[[_computeSpinnerCss(loading)]]" ></paper-spinner>
 

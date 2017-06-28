@@ -7,6 +7,7 @@
 <link rel="import" href="/bower_components/paper-toast/paper-toast.html">
 <link rel="import" href="/elements/sapo-list-items.html">
 <link rel="import" href="/elements/sapo-overlay.html">
+<link rel="import" href="/elements/sapo-styles.html">
 <link rel="import" href="./criterio-legal/sapo-crud-criterio-legal.html">
 <link rel="import" href="./criterio-legal/sapo-crud-norma.html">
 
@@ -14,43 +15,12 @@
 
   <template>
 
-    <style>
+    <style include="sapo-styles">
 
       :host {
         display: flex;
         justify-content: center;
         flex-wrap: wrap;
-      }
-
-      .green {
-        background: #5cb85c;
-      }
-
-      paper-card {
-        margin: 5px 20px;
-        padding: 10px;
-        width: 40vw;
-        align-items: center;
-
-        display: flex;
-        flex-direction: column;
-      }
-
-      h2 {
-        margin: 0px;
-        align-self: flex-start;
-
-        font-family: Georgia, serif;
-      }
-
-      hr {
-        border: 0;
-        margin: 0px 0px 10px;
-        clear:both;
-        display:block;
-        width: 100%;
-        background-color:lightgray;
-        height: 1px;
       }
 
       sapo-overlay {
@@ -60,16 +30,6 @@
 
       paper-button {
         margin: 5px auto 5px 0px;
-        color: white;
-      }
-
-      paper-button[disabled] {
-        background: #eaeaea;
-        color: #a8a8a8;
-      }
-
-      paper-toast paper-button {
-        color: #eeff41;
       }
 
     </style>
@@ -77,14 +37,14 @@
     <iron-ajax id="getCriteriosLegaisAjax" auto url="http://N350i-22878:8080/criterioslegais/full" last-response="{{criteriosLegais}}"></iron-ajax>
     <iron-ajax id="getNormasAjax" auto url="http://n350i-22878:8080/normas/" last-response="{{normas}}"></iron-ajax>
 
-    <paper-card>
+    <paper-card class="card-block">
       <h2>Critérios Legais</h2>
       <hr>
       <paper-button entity="criterio-legal" on-click="_newEntity" class="green" raised><iron-icon icon="add"></iron-icon>Novo</paper-button>
       <sapo-list-items entity="criterio-legal" data="[[_computeCriteriosLegais(criteriosLegais)]]" on-edit="_editEntity" on-delete="_deleteEntity" unselectable ></sapo-list-items>
     </paper-card>
 
-    <paper-card>
+    <paper-card class="card-block">
       <h2>Normas</h2>
       <hr>
       <paper-button entity="norma" on-click="_newEntity" class="green" raised><iron-icon icon="add"></iron-icon>Novo</paper-button>
@@ -100,7 +60,7 @@
 
     <paper-toast id="quickNote"></paper-toast>
     <paper-toast id="persistentNote" duration="0">
-      <paper-button on-click="_closeNote">Fechar</paper-button>
+      <paper-button class="close" on-click="_closeNote">Fechar</paper-button>
     </paper-toast>
 
   </template>

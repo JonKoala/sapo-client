@@ -1,0 +1,57 @@
+<link rel="import" href="/bower_components/polymer/polymer-element.html">
+<link rel="import" href="/elements/sapo-styles.html">
+
+<dom-module id="sapo-avaliacoes-styles">
+
+  <template>
+
+    <style include="sapo-styles">
+
+      paper-card.card-block {
+        margin: 5px 100px;
+        width: auto;
+      }
+
+      paper-spinner {
+        align-self: center;
+      }
+
+      table {
+        width: 100%;
+      }
+
+      thead {
+        text-align: left;
+      }
+
+      th, td {
+        padding: 10px;
+      }
+
+      paper-button {
+        margin: auto 2px;
+      }
+
+      .buttons-area {
+        display: flex;
+        flex-wrap: nowrap;
+      }
+
+    </style>
+
+  </template>
+
+  <script>
+    class SapoAvaliacoesStyles extends Polymer.Element {
+
+      static get is() { return 'sapo-avaliacoes-styles'; }
+
+      static get properties() {
+        return { }
+      }
+
+    }
+
+    window.customElements.define(SapoAvaliacoesStyles.is, SapoAvaliacoesStyles);
+  </script>
+</dom-module>

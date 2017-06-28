@@ -4,19 +4,20 @@
 <link rel="import" href="/bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
 <link rel="import" href="/bower_components/paper-listbox/paper-listbox.html">
 <link rel="import" href="/bower_components/paper-item/paper-item.html">
+<link rel="import" href="/elements/sapo-styles.html">
 
 <dom-module id="sapo-selector-crud">
 
   <template>
 
-    <style>
+    <style include="sapo-styles">
+
       :host {
         display: flex;
         flex-wrap: nowrap;
       }
 
       paper-dropdown-menu {
-        width: 200px;
         margin-right: 10px;
       }
 
@@ -27,24 +28,6 @@
       paper-button {
         align-self: center;
         height: 100%;
-        color: white;
-      }
-
-      paper-button.green {
-        background: #5cb85c;
-      }
-
-      paper-button.orange {
-        background: #f0ad4e;
-      }
-
-      paper-button.red {
-        background: #d9534f;
-      }
-
-      paper-button[disabled] {
-        background: #eaeaea;
-        color: #a8a8a8;
       }
 
     </style>
@@ -57,9 +40,9 @@
       </paper-listbox>
     </paper-dropdown-menu>
 
-      <paper-button id="addButton" raised disabled="[[disabled]]" class="green" on-click="_addClicked" ><iron-icon icon="add"></iron-icon>Novo</paper-button>
-      <paper-button id="editButton" raised disabled class="orange" on-click="_editClicked" ><iron-icon icon="create"></iron-icon>Editar</paper-button>
-      <paper-button id="deleteButton" raised disabled class="red" on-click="_deleteClicked" ><iron-icon icon="delete"></iron-icon>Remover</paper-button>
+    <paper-button id="addButton" raised disabled="[[disabled]]" class="green" on-click="_addClicked" ><iron-icon icon="add"></iron-icon>Novo</paper-button>
+    <paper-button id="editButton" raised disabled class="orange" on-click="_editClicked" ><iron-icon icon="create"></iron-icon>Editar</paper-button>
+    <paper-button id="deleteButton" raised disabled class="red" on-click="_deleteClicked" ><iron-icon icon="delete"></iron-icon>Remover</paper-button>
 
 
   </template>

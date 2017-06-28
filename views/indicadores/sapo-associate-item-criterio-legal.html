@@ -2,38 +2,24 @@
 <link rel="import" href="/bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="/bower_components/paper-button/paper-button.html">
 <link rel="import" href="/elements/sapo-list-items.html">
+<link rel="import" href="/elements/sapo-styles.html">
 
 <dom-module id="sapo-associate-item-criterio-legal">
 
   <template>
 
-    <style>
+    <style include="sapo-styles">
+
       :host {
         display: flex;
         flex-direction: column;
         width: 100%;
       }
 
-      .blue {
-        background: #337ab7;
-      }
-
-      .gray {
-        background: #616161;
-      }
-
       div {
         padding-top: 50px;
       }
 
-      paper-button {
-        color: white;
-      }
-
-      paper-button[disabled] {
-        background: #eaeaea;
-        color: #a8a8a8;
-      }
     </style>
 
     <iron-ajax id="getAjax" url="http://N350i-22878:8080/criterioslegais/item/not/[[itemId]]" last-response="{{data}}"></iron-ajax>

@@ -5,13 +5,13 @@
 <link rel="import" href="/bower_components/paper-input/paper-input.html">
 <link rel="import" href="/bower_components/paper-input/paper-textarea.html">
 <link rel="import" href="/bower_components/paper-button/paper-button.html">
-
+<link rel="import" href="/elements/sapo-styles.html">
 
 <dom-module id="sapo-crud-item">
 
   <template>
 
-    <style>
+    <style include="sapo-styles">
 
       paper-input {
         --paper-input-container-input-webkit-spinner: {
@@ -23,27 +23,6 @@
 
       div {
         padding-top: 50px;
-      }
-
-      paper-button {
-        color: white;
-      }
-
-      paper-button[disabled] {
-        background: #eaeaea;
-        color: #a8a8a8;
-      }
-
-      .blue {
-        background: #337ab7;
-      }
-
-      .gray {
-        background: #616161;
-      }
-
-      .red {
-        background: #d9534f;
       }
 
       #notaMaximaInput {

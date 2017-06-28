@@ -2,12 +2,13 @@
 <link rel="import" href="/bower_components/polymer/polymer-element.html">
 <link rel="import" href="/bower_components/paper-card/paper-card.html">
 <link rel="import" href="/bower_components/paper-button/paper-button.html">
+<link rel="import" href="/elements/sapo-styles.html">
 
 <dom-module id="sapo-item-crud">
 
   <template>
 
-    <style>
+    <style include="sapo-styles">
 
       :host {
         --sapo-item-crud-weigh: normal;
@@ -19,22 +20,12 @@
         --sapo-item-crud-background: var(--sapo-item-crud-selected-background, var(--paper-blue-grey-100));
       }
 
-      .orange {
-        background: #f0ad4e;
-      }
-
-      .red {
-        background: #d9534f;
-      }
-
       paper-card {
         background: var(--sapo-item-crud-background);
 
         display: flex;
         justify-content: space-between;
-
-        padding: 10px;
-        margin: 10px;
+        
         min-height: 60px;
       }
 
@@ -51,13 +42,7 @@
       }
 
       paper-button {
-        color: white;
         margin: auto 2px;
-      }
-
-      paper-button[disabled] {
-        background: #eaeaea;
-        color: #a8a8a8;
       }
 
     </style>

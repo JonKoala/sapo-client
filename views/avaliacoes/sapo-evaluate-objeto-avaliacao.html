@@ -2,6 +2,7 @@
 <link rel="import" href="/bower_components/iron-ajax/iron-ajax.html">
 <link rel="import" href="/bower_components/paper-toast/paper-toast.html">
 <link rel="import" href="/bower_components/paper-spinner/paper-spinner.html">
+<link rel="import" href="./sapo-avaliacoes-styles.html">
 <link rel="import" href="./sapo-menu-indicadores.html">
 <link rel="import" href="./sapo-list-notas.html">
 
@@ -9,23 +10,10 @@
 
   <template>
 
-    <style>
+    <style include="sapo-avaliacoes-styles">
 
       :host {
         display: flex;
-      }
-
-      paper-card {
-        padding: 10px;
-        margin: 5px 100px;
-
-        display: flex;
-        flex-direction: column;
-        align-content: center;
-      }
-
-      paper-spinner {
-        align-self: center;
       }
 
       #menu-indicadores {
@@ -38,20 +26,16 @@
         width: 100%;
       }
 
-      .hidden {
-        display: none;
-      }
-
     </style>
 
     <iron-ajax auto="[[active]]" url="http://N350i-22878:8080/notas/objetoavaliacao/[[objetoAvaliacao]]/full" loading="{{loading}}" last-response="{{notas}}"></iron-ajax>
     <iron-ajax id="putAjax" url="http://N350i-22878:8080/notas/pontuacao" method="PUT" content-type="application/json" handle-as="json" on-response="_putResponse"></iron-ajax>
 
-    <paper-card id="menu-indicadores">
+    <paper-card class="card-block" id="menu-indicadores">
       <sapo-menu-indicadores data="[[indicadores]]" pilar="{{pilar}}" tipo="{{tipo}}" nivel="{{nivel}}" subnivel="{{subnivel}}"></sapo-menu-indicadores>
     </paper-card>
 
-    <paper-card id="list-notas">
+    <paper-card class="card-block" id="list-notas">
       <paper-spinner active="[[loading]]" class$="[[_computeSpinnerCss(loading)]]" ></paper-spinner>
       <sapo-list-notas on-nota-changed="_updateNota" data="[[notas]]" ids-to-show="[[_computeNotasToShow(notas, pilar, tipo, nivel, subnivel)]]" class$="[[_computeListNotasCss(loading)]]" ></sapo-list-notas>
     </paper-card>

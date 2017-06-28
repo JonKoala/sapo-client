@@ -1,0 +1,133 @@
+<link rel="import" href="/bower_components/polymer/polymer-element.html">
+<link rel="import" href="/bower_components/paper-styles/paper-styles.html">
+
+<dom-module id="sapo-styles">
+
+  <template>
+
+    <style>
+
+      :host {
+
+        /* SAPO COLORS */
+        --sapo-red: #d9534f;
+        --sapo-orange: #f0ad4e;
+        --sapo-yellow: #eeff41;
+        --sapo-green: #5cb85c;
+        --sapo-teal: var(--paper-teal-a700);
+        --sapo-blue: #337ab7;
+
+        --sapo-light-gray: #eaeaea;
+        --sapo-gray: #a8a8a8;
+        --sapo-dark-gray: #616161;
+      }
+
+      /* PAPER-BUTTON */
+      paper-button {
+        color: white;
+      }
+
+      paper-button.green {
+        background: var(--sapo-green);
+      }
+
+      paper-button.orange {
+        background: var(--sapo-orange);
+      }
+
+      paper-button.red {
+        background: var(--sapo-red);
+      }
+
+      paper-button.teal {
+        background: var(--sapo-teal);
+      }
+
+      paper-button.blue {
+        background: var(--sapo-blue);
+      }
+
+      paper-button.white {
+        background: white;
+        color: black;
+      }
+
+      paper-button.gray {
+        background: var(--sapo-dark-gray);
+      }
+
+      paper-button[disabled] {
+        background: var(--sapo-light-gray);
+        color: var(--sapo-gray);
+      }
+
+      /* PAPER-CARD */
+      paper-card {
+        padding: 10px;
+        margin: 10px;
+      }
+
+      paper-card.card-block {
+        margin: 5px 10px;
+        width: 640px;
+
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+      }
+
+      paper-card.card-block h2 {
+        margin: 0px;
+        align-self: flex-start;
+
+        font-family: Georgia, serif;
+      }
+
+      /* PAPER-DROPDOWN-MENU */
+      paper-dropdown-menu {
+        width: 200px;
+      }
+
+      paper-dropdown-menu[hidden] {
+        display: none;
+      }
+
+      /* PAPER-TOAST */
+      paper-toast paper-button.close {
+        color: var(--sapo-yellow);
+      }
+
+      /* DEFAULT HTML ELEMENTS */
+      hr {
+        border: 0;
+        margin: 0px 0px 10px;
+        clear:both;
+        display:block;
+        width: 100%;
+        background-color:lightgray;
+        height: 1px;
+      }
+
+      /* GENERAL CLASSES */
+      .hidden {
+        display: none;
+      }
+
+    </style>
+
+  </template>
+
+  <script>
+    class SapoStyles extends Polymer.Element {
+
+      static get is() { return 'sapo-styles'; }
+
+      static get properties() {
+        return { }
+      }
+
+    }
+
+    window.customElements.define(SapoStyles.is, SapoStyles);
+  </script>
+</dom-module>
