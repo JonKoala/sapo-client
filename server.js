@@ -2,54 +2,54 @@ var express = require('express');
 var app = express();
 
 app.get('/', function(req, res) {
-   res.sendfile('index.html')
+   res.sendFile('index.html', { root : __dirname})
 });
 
 app.get('/inicio', function(req, res) {
-  res.sendfile('index.html')
+  res.sendFile('index.html', { root : __dirname})
 });
 app.get('/inicio/*', function(req, res) {
-  res.sendfile('index.html')
+  res.sendFile('index.html', { root : __dirname})
 });
 
 app.get('/avaliacoes', function(req, res) {
-  res.sendfile('index.html')
+  res.sendFile('index.html', { root : __dirname})
 });
 app.get('/avaliacoes/*', function(req, res) {
-  res.sendfile('index.html')
+  res.sendFile('index.html', { root : __dirname})
 });
 
 app.get('/avaliacoes-old', function(req, res) {
-  res.sendfile('index.html')
+  res.sendFile('index.html', { root : __dirname})
 });
 app.get('/avaliacoes-old/*', function(req, res) {
-  res.sendfile('index.html')
+  res.sendFile('index.html', { root : __dirname})
 });
 
 app.get('/nova_avaliacao', function(req, res) {
-  res.sendfile('index.html')
+  res.sendFile('index.html', { root : __dirname})
 });
 app.get('/nova_avaliacao/*', function(req, res) {
-  res.sendfile('index.html')
+  res.sendFile('index.html', { root : __dirname})
 });
 
 app.get('/indicadores', function(req, res) {
-  res.sendfile('index.html')
+  res.sendFile('index.html', { root : __dirname})
 });
 app.get('/indicadores/*', function(req, res) {
-  res.sendfile('index.html')
+  res.sendFile('index.html', { root : __dirname})
 });
 
 app.get('/criterio-legal', function(req, res) {
-  res.sendfile('index.html')
+  res.sendFile('index.html', { root : __dirname})
 });
 app.get('/criterio-legal/*', function(req, res) {
-  res.sendfile('index.html')
+  res.sendFile('index.html', { root : __dirname})
 });
 
 app.get(/^(.+)$/, function(req, res){
     console.log('static file request : ' + req.params[0]);
-    res.sendfile(__dirname + req.params[0]);
+    res.sendFile(__dirname + req.params[0]);
 });
 
 var port = process.env.PORT || 8081;
