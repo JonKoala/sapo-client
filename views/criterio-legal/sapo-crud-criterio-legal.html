@@ -22,10 +22,10 @@
 
     </style>
 
-    <iron-ajax id="getAjax" url="http://N350i-22878:8080/criterioslegais/[[id]]" on-response="_getResponse"></iron-ajax>
-    <iron-ajax id="getNormasAjax" url="http://N350i-22878:8080/normas/" last-response="{{normas}}"></iron-ajax>
+    <iron-ajax id="getAjax" url="[[appconfig.url.api]]/criterioslegais/[[id]]" on-response="_getResponse"></iron-ajax>
+    <iron-ajax id="getNormasAjax" url="[[appconfig.url.api]]/normas/" last-response="{{normas}}"></iron-ajax>
     <iron-ajax id="postAjax"
-      url="http://N350i-22878:8080/criterioslegais/"
+      url="[[appconfig.url.api]]/criterioslegais/"
       method="POST"
       content-type="application/json"
       handle-as="json"
@@ -33,7 +33,7 @@
       on-response="_postResponse">
     </iron-ajax>
     <iron-ajax id="putAjax"
-      url="http://N350i-22878:8080/criterioslegais/"
+      url="[[appconfig.url.api]]/criterioslegais/"
       method="PUT"
       content-type="application/json"
       handle-as="json"
@@ -41,7 +41,7 @@
       on-response="_putResponse">
     </iron-ajax>
     <iron-ajax id="deleteAjax"
-      url="http://N350i-22878:8080/criterioslegais/"
+      url="[[appconfig.url.api]]/criterioslegais/"
       method="DELETE"
       content-type="application/json"
       handle-as="json"

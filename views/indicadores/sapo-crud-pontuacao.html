@@ -31,9 +31,9 @@
 
     </style>
 
-    <iron-ajax id="getPontuacaoAjax" url="http://N350i-22878:8080/pontuacoes/[[id]]" on-response="_getResponse"></iron-ajax>
+    <iron-ajax id="getPontuacaoAjax" url="[[appconfig.url.api]]/pontuacoes/[[id]]" on-response="_getResponse"></iron-ajax>
     <iron-ajax id="postPontuacaoAjax"
-      url="http://N350i-22878:8080/pontuacoes/"
+      url="[[appconfig.url.api]]/pontuacoes/"
       method="POST"
       content-type="application/json"
       handle-as="json"
@@ -41,7 +41,7 @@
       on-response="_postResponse">
     </iron-ajax>
     <iron-ajax id="putPontuacaoAjax"
-      url="http://N350i-22878:8080/pontuacoes/"
+      url="[[appconfig.url.api]]/pontuacoes/"
       method="PUT"
       content-type="application/json"
       handle-as="json"
@@ -49,7 +49,7 @@
       on-response="_putResponse">
     </iron-ajax>
     <iron-ajax id="deletePontuacaoAjax"
-      url="http://N350i-22878:8080/pontuacoes/"
+      url="[[appconfig.url.api]]/pontuacoes/"
       method="DELETE"
       content-type="application/json"
       handle-as="json"

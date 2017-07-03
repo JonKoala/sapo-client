@@ -8,8 +8,8 @@
   <template>
 
     <iron-pages selected="[[page]]" attr-for-selected="id">
-        <sapo-associate-item-criterio-legal id="associate" item-id="[[itemId]]" on-save="_saveResult"></sapo-associate-item-criterio-legal>
-        <sapo-disassociate-item-criterio-legal id="disassociate" item-id="[[itemId]]" criterio-legal-id="[[criterioLegalId]]" on-delete="_deleteResult"></sapo-disassociate-item-criterio-legal>
+        <sapo-associate-item-criterio-legal appconfig="[[appconfig]]" id="associate" item-id="[[itemId]]" on-save="_saveResult"></sapo-associate-item-criterio-legal>
+        <sapo-disassociate-item-criterio-legal appconfig="[[appconfig]]" id="disassociate" item-id="[[itemId]]" criterio-legal-id="[[criterioLegalId]]" on-delete="_deleteResult"></sapo-disassociate-item-criterio-legal>
     </iron-pages>
 
   </template>

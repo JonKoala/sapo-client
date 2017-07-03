@@ -28,8 +28,8 @@
 
     </style>
 
-    <iron-ajax auto="[[active]]" url="http://N350i-22878:8080/notas/objetoavaliacao/[[objetoAvaliacao]]/full" loading="{{loading}}" last-response="{{notas}}"></iron-ajax>
-    <iron-ajax id="putAjax" url="http://N350i-22878:8080/notas/pontuacao" method="PUT" content-type="application/json" handle-as="json" on-response="_putResponse"></iron-ajax>
+    <iron-ajax auto="[[active]]" url="[[appconfig.url.api]]/notas/objetoavaliacao/[[objetoAvaliacao]]/full" loading="{{loading}}" last-response="{{notas}}"></iron-ajax>
+    <iron-ajax id="putAjax" url="[[appconfig.url.api]]/notas/pontuacao" method="PUT" content-type="application/json" handle-as="json" on-response="_putResponse"></iron-ajax>
 
     <paper-card class="card-block" id="menu-indicadores">
       <sapo-menu-indicadores data="[[indicadores]]" pilar="{{pilar}}" tipo="{{tipo}}" nivel="{{nivel}}" subnivel="{{subnivel}}"></sapo-menu-indicadores>
@@ -149,10 +149,8 @@
 
         var note = this.$.quickNote;
 
-        //close note
-        note.close();
-
         //prepare and show note
+        note.close();
         note.text = text;
         note.open();
       }

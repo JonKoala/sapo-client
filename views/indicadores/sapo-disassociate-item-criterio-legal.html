@@ -18,9 +18,9 @@
 
     </style>
 
-    <iron-ajax id="getAjax" url="http://N350i-22878:8080/criterioslegais/[[criterioLegalId]]/item/[[itemId]]/full" last-response="{{data}}"></iron-ajax>
+    <iron-ajax id="getAjax" url="[[appconfig.url.api]]/criterioslegais/[[criterioLegalId]]/item/[[itemId]]/full" last-response="{{data}}"></iron-ajax>
     <iron-ajax id="deleteAjax"
-      url="http://N350i-22878:8080/itensCriteriosLegais/"
+      url="[[appconfig.url.api]]/itensCriteriosLegais/"
       method="DELETE"
       content-type="application/json"
       handle-as="json"

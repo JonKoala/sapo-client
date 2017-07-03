@@ -50,14 +50,14 @@
       tail="{{subroute}}">
     </app-route>
 
-    <iron-ajax auto indicador="indicador" url="http://N350i-22878:8080/indicadores/" last-response="{{indicadores}}"></iron-ajax>
-    <iron-ajax indicador="pilar" url="http://N350i-22878:8080/pilares/indicador/[[indicador]]" last-response="{{pilares}}"></iron-ajax>
-    <iron-ajax indicador="tipo" url="http://N350i-22878:8080/tipos/pilar/[[pilar]]" last-response="{{tipos}}"></iron-ajax>
-    <iron-ajax indicador="nivel" url="http://N350i-22878:8080/niveis/tipo/[[tipo]]" last-response="{{niveis}}"></iron-ajax>
-    <iron-ajax indicador="subnivel" url="http://N350i-22878:8080/subniveis/nivel/[[nivel]]" last-response="{{subniveis}}"></iron-ajax>
-    <iron-ajax indicador="item" url="http://N350i-22878:8080/itens/subnivel/[[subnivel]]" last-response="{{itens}}"></iron-ajax>
-    <iron-ajax indicador="pontuacao" url="http://N350i-22878:8080/pontuacoes/item/[[item]]" last-response="{{pontuacoes}}"></iron-ajax>
-    <iron-ajax indicador="criterio_legal" url="http://N350i-22878:8080/criterioslegais/item/[[item]]" last-response="{{criteriosLegais}}"></iron-ajax>
+    <iron-ajax auto indicador="indicador" url="[[appconfig.url.api]]/indicadores/" last-response="{{indicadores}}"></iron-ajax>
+    <iron-ajax indicador="pilar" url="[[appconfig.url.api]]/pilares/indicador/[[indicador]]" last-response="{{pilares}}"></iron-ajax>
+    <iron-ajax indicador="tipo" url="[[appconfig.url.api]]/tipos/pilar/[[pilar]]" last-response="{{tipos}}"></iron-ajax>
+    <iron-ajax indicador="nivel" url="[[appconfig.url.api]]/niveis/tipo/[[tipo]]" last-response="{{niveis}}"></iron-ajax>
+    <iron-ajax indicador="subnivel" url="[[appconfig.url.api]]/subniveis/nivel/[[nivel]]" last-response="{{subniveis}}"></iron-ajax>
+    <iron-ajax indicador="item" url="[[appconfig.url.api]]/itens/subnivel/[[subnivel]]" last-response="{{itens}}"></iron-ajax>
+    <iron-ajax indicador="pontuacao" url="[[appconfig.url.api]]/pontuacoes/item/[[item]]" last-response="{{pontuacoes}}"></iron-ajax>
+    <iron-ajax indicador="criterio_legal" url="[[appconfig.url.api]]/criterioslegais/item/[[item]]" last-response="{{criteriosLegais}}"></iron-ajax>
 
     <paper-card class="card-block">
       <h2>Indicadores</h2>
@@ -92,14 +92,14 @@
 
     <sapo-overlay id="overlayArea" on-close="_crudClosed" with-backdrop>
       <iron-pages id="crudSelector" selected="[[crud]]" attr-for-selected="indicador">
-        <sapo-crud-indicador indicador="indicador" on-save="_saveResult" on-delete="_deleteResult" ></sapo-crud-indicador>
-        <sapo-crud-pilar indicador="pilar" on-save="_saveResult" on-delete="_deleteResult" ></sapo-crud-pilar>
-        <sapo-crud-tipo indicador="tipo" on-save="_saveResult" on-delete="_deleteResult" ></sapo-crud-tipo>
-        <sapo-crud-nivel indicador="nivel" on-save="_saveResult" on-delete="_deleteResult" ></sapo-crud-nivel>
-        <sapo-crud-subnivel indicador="subnivel" on-save="_saveResult" on-delete="_deleteResult" ></sapo-crud-subnivel>
-        <sapo-crud-item indicador="item" on-save="_saveResult" on-delete="_deleteResult" ></sapo-crud-item>
-        <sapo-crud-pontuacao indicador="pontuacao" on-save="_saveResult" on-delete="_deleteResult" ></sapo-crud-pontuacao>
-        <sapo-association-item-criterio-legal indicador="criterio_legal" on-save="_saveResult" on-delete="_deleteResult" ></sapo-association-item-criterio-legal>
+        <sapo-crud-indicador appconfig="[[appconfig]]" indicador="indicador" on-save="_saveResult" on-delete="_deleteResult" ></sapo-crud-indicador>
+        <sapo-crud-pilar appconfig="[[appconfig]]" indicador="pilar" on-save="_saveResult" on-delete="_deleteResult" ></sapo-crud-pilar>
+        <sapo-crud-tipo appconfig="[[appconfig]]" indicador="tipo" on-save="_saveResult" on-delete="_deleteResult" ></sapo-crud-tipo>
+        <sapo-crud-nivel appconfig="[[appconfig]]" indicador="nivel" on-save="_saveResult" on-delete="_deleteResult" ></sapo-crud-nivel>
+        <sapo-crud-subnivel appconfig="[[appconfig]]" indicador="subnivel" on-save="_saveResult" on-delete="_deleteResult" ></sapo-crud-subnivel>
+        <sapo-crud-item appconfig="[[appconfig]]" indicador="item" on-save="_saveResult" on-delete="_deleteResult" ></sapo-crud-item>
+        <sapo-crud-pontuacao appconfig="[[appconfig]]" indicador="pontuacao" on-save="_saveResult" on-delete="_deleteResult" ></sapo-crud-pontuacao>
+        <sapo-association-item-criterio-legal appconfig="[[appconfig]]" indicador="criterio_legal" on-save="_saveResult" on-delete="_deleteResult" ></sapo-association-item-criterio-legal>
       </iron-pages>
     </sapo-overlay>
 

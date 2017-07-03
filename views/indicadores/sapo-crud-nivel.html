@@ -19,9 +19,9 @@
 
     </style>
 
-    <iron-ajax id="getNivelAjax" url="http://N350i-22878:8080/niveis/[[id]]" on-response="_getResponse"></iron-ajax>
+    <iron-ajax id="getNivelAjax" url="[[appconfig.url.api]]/niveis/[[id]]" on-response="_getResponse"></iron-ajax>
     <iron-ajax id="postNivelAjax"
-      url="http://N350i-22878:8080/niveis/"
+      url="[[appconfig.url.api]]/niveis/"
       method="POST"
       content-type="application/json"
       handle-as="json"
@@ -29,7 +29,7 @@
       on-response="_postResponse">
     </iron-ajax>
     <iron-ajax id="putNivelAjax"
-      url="http://N350i-22878:8080/niveis/"
+      url="[[appconfig.url.api]]/niveis/"
       method="PUT"
       content-type="application/json"
       handle-as="json"
@@ -37,7 +37,7 @@
       on-response="_putResponse">
     </iron-ajax>
     <iron-ajax id="deleteNivelAjax"
-      url="http://N350i-22878:8080/niveis/"
+      url="[[appconfig.url.api]]/niveis/"
       method="DELETE"
       content-type="application/json"
       handle-as="json"

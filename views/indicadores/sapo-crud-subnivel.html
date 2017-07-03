@@ -19,9 +19,9 @@
 
     </style>
 
-    <iron-ajax id="getSubnivelAjax" url="http://N350i-22878:8080/subniveis/[[id]]" on-response="_getResponse"></iron-ajax>
+    <iron-ajax id="getSubnivelAjax" url="[[appconfig.url.api]]/subniveis/[[id]]" on-response="_getResponse"></iron-ajax>
     <iron-ajax id="postSubnivelAjax"
-      url="http://N350i-22878:8080/subniveis/"
+      url="[[appconfig.url.api]]/subniveis/"
       method="POST"
       content-type="application/json"
       handle-as="json"
@@ -29,7 +29,7 @@
       on-response="_postResponse">
     </iron-ajax>
     <iron-ajax id="putSubnivelAjax"
-      url="http://N350i-22878:8080/subniveis/"
+      url="[[appconfig.url.api]]/subniveis/"
       method="PUT"
       content-type="application/json"
       handle-as="json"
@@ -37,7 +37,7 @@
       on-response="_putResponse">
     </iron-ajax>
     <iron-ajax id="deleteSubnivelAjax"
-      url="http://N350i-22878:8080/subniveis/"
+      url="[[appconfig.url.api]]/subniveis/"
       method="DELETE"
       content-type="application/json"
       handle-as="json"

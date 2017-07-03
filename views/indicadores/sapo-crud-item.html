@@ -31,9 +31,9 @@
 
     </style>
 
-    <iron-ajax id="getItemAjax" url="http://N350i-22878:8080/itens/[[id]]" on-response="_getResponse"></iron-ajax>
+    <iron-ajax id="getItemAjax" url="[[appconfig.url.api]]/itens/[[id]]" on-response="_getResponse"></iron-ajax>
     <iron-ajax id="postItemAjax"
-      url="http://N350i-22878:8080/itens/"
+      url="[[appconfig.url.api]]/itens/"
       method="POST"
       content-type="application/json"
       handle-as="json"
@@ -41,7 +41,7 @@
       on-response="_postResponse">
     </iron-ajax>
     <iron-ajax id="putItemAjax"
-      url="http://N350i-22878:8080/itens/"
+      url="[[appconfig.url.api]]/itens/"
       method="PUT"
       content-type="application/json"
       handle-as="json"
@@ -49,7 +49,7 @@
       on-response="_putResponse">
     </iron-ajax>
     <iron-ajax id="deleteItemAjax"
-      url="http://N350i-22878:8080/itens/"
+      url="[[appconfig.url.api]]/itens/"
       method="DELETE"
       content-type="application/json"
       handle-as="json"

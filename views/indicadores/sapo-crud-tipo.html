@@ -19,9 +19,9 @@
 
     </style>
 
-    <iron-ajax id="getTipoAjax" url="http://N350i-22878:8080/tipos/[[id]]" on-response="_getResponse"></iron-ajax>
+    <iron-ajax id="getTipoAjax" url="[[appconfig.url.api]]/tipos/[[id]]" on-response="_getResponse"></iron-ajax>
     <iron-ajax id="postTipoAjax"
-      url="http://N350i-22878:8080/tipos/"
+      url="[[appconfig.url.api]]/tipos/"
       method="POST"
       content-type="application/json"
       handle-as="json"
@@ -29,7 +29,7 @@
       on-response="_postResponse">
     </iron-ajax>
     <iron-ajax id="putTipoAjax"
-      url="http://N350i-22878:8080/tipos/"
+      url="[[appconfig.url.api]]/tipos/"
       method="PUT"
       content-type="application/json"
       handle-as="json"
@@ -37,7 +37,7 @@
       on-response="_putResponse">
     </iron-ajax>
     <iron-ajax id="deleteTipoAjax"
-      url="http://N350i-22878:8080/tipos/"
+      url="[[appconfig.url.api]]/tipos/"
       method="DELETE"
       content-type="application/json"
       handle-as="json"

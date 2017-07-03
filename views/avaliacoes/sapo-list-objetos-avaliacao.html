@@ -13,7 +13,7 @@
     <style include="sapo-avaliacoes-styles">
     </style>
 
-    <iron-ajax auto="[[active]]" url="http://N350i-22878:8080/objetosavaliacao/avaliacao/[[avaliacao]]/full" loading="{{loading}}" last-response="{{objetosAvaliacao}}"></iron-ajax>
+    <iron-ajax auto="[[active]]" url="[[appconfig.url.api]]/objetosavaliacao/avaliacao/[[avaliacao]]/full" loading="{{loading}}" last-response="{{objetosAvaliacao}}"></iron-ajax>
 
     <paper-card class="card-block">
 

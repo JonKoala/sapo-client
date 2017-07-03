@@ -22,9 +22,9 @@
 
     </style>
 
-    <iron-ajax id="getAjax" url="http://N350i-22878:8080/criterioslegais/item/not/[[itemId]]" last-response="{{data}}"></iron-ajax>
+    <iron-ajax id="getAjax" url="[[appconfig.url.api]]/criterioslegais/item/not/[[itemId]]" last-response="{{data}}"></iron-ajax>
     <iron-ajax id="postjax"
-      url="http://n350i-22878:8080/itenscriterioslegais/"
+      url="[[appconfig.url.api]]/itenscriterioslegais/"
       method="POST"
       content-type="application/json"
       handle-as="json"

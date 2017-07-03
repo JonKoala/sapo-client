@@ -19,9 +19,9 @@
 
     </style>
 
-    <iron-ajax id="getPilarAjax" url="http://N350i-22878:8080/pilares/[[id]]" on-response="_getResponse"></iron-ajax>
+    <iron-ajax id="getPilarAjax" url="[[appconfig.url.api]]/pilares/[[id]]" on-response="_getResponse"></iron-ajax>
     <iron-ajax id="postPilarAjax"
-      url="http://N350i-22878:8080/pilares/"
+      url="[[appconfig.url.api]]/pilares/"
       method="POST"
       content-type="application/json"
       handle-as="json"
@@ -29,7 +29,7 @@
       on-response="_postResponse">
     </iron-ajax>
     <iron-ajax id="putPilarAjax"
-      url="http://N350i-22878:8080/pilares/"
+      url="[[appconfig.url.api]]/pilares/"
       method="PUT"
       content-type="application/json"
       handle-as="json"
@@ -37,7 +37,7 @@
       on-response="_putResponse">
     </iron-ajax>
     <iron-ajax id="deletePilarAjax"
-      url="http://N350i-22878:8080/pilares/"
+      url="[[appconfig.url.api]]/pilares/"
       method="DELETE"
       content-type="application/json"
       handle-as="json"

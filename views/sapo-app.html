@@ -1,12 +1,14 @@
-
 <link rel="import" href="/bower_components/polymer/polymer-element.html">
 <link rel="import" href="/bower_components/app-route/app-location.html">
 <link rel="import" href="/bower_components/app-route/app-route.html">
+<link rel="import" href="/bower_components/iron-ajax/iron-ajax.html">
 <link rel="import" href="/bower_components/iron-pages/iron-pages.html">
 
 <dom-module id="sapo-app">
 
   <template>
+
+    <iron-ajax auto url="/appconfig.json" handle-as="json" last-response="{{appconfig}}"></iron-ajax>
 
     <app-location route="{{route}}"></app-location>
     <app-route
@@ -16,9 +18,9 @@
         tail="{{subroute}}"></app-route>
 
     <iron-pages selected="[[page]]" attr-for-selected="name">
-      <sapo-indicadores route="{{subroute}}" name="indicadores"></sapo-indicadores>
-      <sapo-criterio-legal route="{{subroute}}" name="criterio-legal"></sapo-criterio-legal>
-      <sapo-avaliacoes route="{{subroute}}" name="avaliacoes"></sapo-avaliacoes>
+      <sapo-indicadores appconfig="[[appconfig]]" route="{{subroute}}" name="indicadores"></sapo-indicadores>
+      <sapo-criterio-legal appconfig="[[appconfig]]" route="{{subroute}}" name="criterio-legal"></sapo-criterio-legal>
+      <sapo-avaliacoes appconfig="[[appconfig]]" route="{{subroute}}" name="avaliacoes"></sapo-avaliacoes>
       <sapo-nothing name="nothing" ></sapo-nothing>
     </iron-pages>
 

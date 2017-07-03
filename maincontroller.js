@@ -46,7 +46,6 @@ function toggleSucessMsg(show) {
   }
 }
 
-const SapoApiURL = 'http://N350i-22878:8080/legacy/';
 function Hello($scope, $http) {
 
     $scope.username = "";
@@ -62,7 +61,7 @@ function Hello($scope, $http) {
       var username = $("#username").val();
       var password = $("#password").val();
       $scope.url = "usuario";
-      $http.get(SapoApiURL + $scope.url).
+      $http.get(window.SapoApiURL + $scope.url).
       success(function(data) {
           $scope.usuarios = data;
           $.each($scope.usuarios, function(key,objeto){

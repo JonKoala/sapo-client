@@ -18,9 +18,9 @@
 
     </style>
 
-    <iron-ajax id="getAjax" url="http://N350i-22878:8080/normas/[[id]]" on-response="_getResponse"></iron-ajax>
+    <iron-ajax id="getAjax" url="[[appconfig.url.api]]/normas/[[id]]" on-response="_getResponse"></iron-ajax>
     <iron-ajax id="postAjax"
-      url="http://N350i-22878:8080/normas/"
+      url="[[appconfig.url.api]]/normas/"
       method="POST"
       content-type="application/json"
       handle-as="json"
@@ -28,7 +28,7 @@
       on-response="_postResponse">
     </iron-ajax>
     <iron-ajax id="putAjax"
-      url="http://N350i-22878:8080/normas/"
+      url="[[appconfig.url.api]]/normas/"
       method="PUT"
       content-type="application/json"
       handle-as="json"
@@ -36,7 +36,7 @@
       on-response="_putResponse">
     </iron-ajax>
     <iron-ajax id="deleteAjax"
-      url="http://N350i-22878:8080/normas/"
+      url="[[appconfig.url.api]]/normas/"
       method="DELETE"
       content-type="application/json"
       handle-as="json"
