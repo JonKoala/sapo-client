@@ -167,9 +167,10 @@
           this._showNotification('Não foi possível remover a Norma. Verifique se a mesma não possui dependências.', true);
       }
 
-      _crudClosed() {
-        let crudElement = this.$.crudSelector.selectedItem;
-        crudElement.mode = 'closed';
+      _crudClosed(e) {
+        let crudElement = e.target.selectedItem;
+        if (crudElement)
+          crudElement.mode = 'closed';
       }
 
       _closeNote(e) {

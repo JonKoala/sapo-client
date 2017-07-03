@@ -287,9 +287,10 @@
         }
       }
 
-      _crudClosed() {
-        let crudElement = this.$.crudSelector.selectedItem;
-        crudElement.mode = 'closed';
+      _crudClosed(e) {
+        let crudElement = e.target.selectedItem;
+        if (crudElement)
+          crudElement.mode = 'closed';
       }
 
       _closeNote(e) {
