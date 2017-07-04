@@ -1,4 +1,5 @@
 <link rel="import" href="/bower_components/polymer/polymer-element.html">
+<link rel="import" href="/bower_components/paper-button/paper-button.html">
 <link rel="import" href="/bower_components/paper-card/paper-card.html">
 <link rel="import" href="/elements/sapo-poor-selector.html">
 <link rel="import" href="./sapo-avaliacoes-styles.html">
@@ -8,6 +9,16 @@
   <template>
 
     <style include="sapo-avaliacoes-styles">
+
+      paper-button {
+        font-size: small;
+      }
+
+      iron-icon.tiny {
+        --iron-icon-height: 20px;
+        --iron-icon-width: 20px;
+      }
+
     </style>
 
     <table>
@@ -15,6 +26,7 @@
         <th style="min-width:200px">Item</th>
         <th style="width:100%">Exigência</th>
         <th style="width:100px">Nota</th>
+        <th style="width:1%;white-space:nowrap;"></th>
       </thead>
       <tbody>
         <template is="dom-repeat" items="[[data]]">
@@ -23,6 +35,9 @@
             <td>[[item.item.exigencia]]</td>
             <td>
               <sapo-poor-selector on-select="_notaChanged" selected="{{item.pontuacao_id}}" data="[[_computeSelectorData(item.item.pontuacoes)]]" ></sapo-selector>
+            </td>
+            <td>
+              <paper-button on-click="_editClicked" tabIndex="-1" raised class="orange"><iron-icon class="tiny" icon="create"></iron-icon>Editar</paper-button>
             </td>
           </tr>
         </template>
@@ -43,16 +58,28 @@
         }
       }
 
+
+      //
+      //OBSERVERS & COMPUTEDS
+
       _computeSelectorData(pontuacoes) {
         return pontuacoes.map(pontuacao => { return { identity: pontuacao.id, text: pontuacao.nota + ' - ' + pontuacao.descricao }; });
       }
+
+      _isNotaHidden(itemId, idsToShow) {
+        return !idsToShow.some(id => id === itemId);
+      }
+
+
+      //
+      //EVENTS
 
       _notaChanged(e) {
         this.dispatchEvent(new CustomEvent('nota-changed', {detail: {nota_id: e.model.item.id, pontuacao_id: e.detail.id}}));
       }
 
-      _isNotaHidden(itemId, idsToShow) {
-        return !idsToShow.some(id => id === itemId);
+      _editClicked(e) {
+        this.dispatchEvent(new CustomEvent('edit-clicked', {detail: {id: e.model.item.id}}));
       }
 
     }

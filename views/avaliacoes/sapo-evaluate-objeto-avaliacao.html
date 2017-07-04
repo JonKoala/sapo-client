@@ -2,9 +2,11 @@
 <link rel="import" href="/bower_components/iron-ajax/iron-ajax.html">
 <link rel="import" href="/bower_components/paper-toast/paper-toast.html">
 <link rel="import" href="/bower_components/paper-spinner/paper-spinner.html">
+<link rel="import" href="/elements/sapo-overlay.html">
 <link rel="import" href="./sapo-avaliacoes-styles.html">
 <link rel="import" href="./sapo-menu-indicadores.html">
 <link rel="import" href="./sapo-list-notas.html">
+<link rel="import" href="./sapo-crud-nota.html">
 
 <dom-module id="sapo-evaluate-objeto-avaliacao">
 
@@ -14,6 +16,11 @@
 
       :host {
         display: flex;
+      }
+
+      sapo-overlay {
+        margin: 80px;
+        min-width: 500px;
       }
 
       #menu-indicadores {
@@ -29,7 +36,7 @@
     </style>
 
     <iron-ajax auto="[[active]]" url="[[appconfig.url.api]]/notas/objetoavaliacao/[[objetoAvaliacao]]/full" loading="{{loading}}" last-response="{{notas}}"></iron-ajax>
-    <iron-ajax id="putAjax" url="[[appconfig.url.api]]/notas/pontuacao" method="PUT" content-type="application/json" handle-as="json" on-response="_putResponse"></iron-ajax>
+    <iron-ajax id="putAjax" url="[[appconfig.url.api]]/notas/pontuacao" method="PUT" content-type="application/json" handle-as="json" on-response="_quickNotaSaved"></iron-ajax>
 
     <paper-card class="card-block" id="menu-indicadores">
       <sapo-menu-indicadores data="[[indicadores]]" pilar="{{pilar}}" tipo="{{tipo}}" nivel="{{nivel}}" subnivel="{{subnivel}}"></sapo-menu-indicadores>
@@ -37,8 +44,12 @@
 
     <paper-card class="card-block" id="list-notas">
       <paper-spinner active="[[loading]]" class$="[[_computeSpinnerCss(loading)]]" ></paper-spinner>
-      <sapo-list-notas on-nota-changed="_updateNota" data="[[notas]]" ids-to-show="[[_computeNotasToShow(notas, pilar, tipo, nivel, subnivel)]]" class$="[[_computeListNotasCss(loading)]]" ></sapo-list-notas>
+      <sapo-list-notas on-nota-changed="_updateNota" on-edit-clicked="_editNota" data="[[notas]]" ids-to-show="[[_computeNotasToShow(notas, pilar, tipo, nivel, subnivel)]]" class$="[[_computeListNotasCss(loading)]]" ></sapo-list-notas>
     </paper-card>
+
+    <sapo-overlay id="overlayArea" on-close="_crudClosed" with-backdrop>
+      <sapo-crud-nota id="crudNota" appconfig="[[appconfig]]" on-save="_notaSaved" ></sapo-crud-nota>
+    </sapo-overlay>
 
     <paper-toast id="quickNote"></paper-toast>
 
@@ -136,14 +147,33 @@
         this.$.putAjax.generateRequest();
       }
 
-      _putResponse(e) {
-        if (e.detail.status === 200)
-          this._showNotification('Pontuação atualizada com sucesso!');
+      _editNota(e) {
+        this.$.crudNota.id = e.detail.id;
+        this.$.crudNota.active = true;
+
+        this.$.overlayArea.open();
+      }
+
+      _notaSaved(e) {
+        this.$.overlayArea.close();
+        this._notifyPontuacao(e.detail.success);
+      }
+
+      _quickNotaSaved(e) {
+        this._notifyPontuacao(e.detail.status === 200);
+      }
+
+      _crudClosed() {
+        this.$.crudNota.active = false;
       }
 
 
       //
       //UTILS
+
+      _notifyPontuacao(success) {
+        if (success) this._showNotification('Pontuação atualizada com sucesso!');
+      }
 
       _showNotification(text) {
 

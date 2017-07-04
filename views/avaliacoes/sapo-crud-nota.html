@@ -1,0 +1,103 @@
+<link rel="import" href="/bower_components/polymer/polymer-element.html">
+<link rel="import" href="/bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="/bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="/bower_components/paper-input/paper-textarea.html">
+<link rel="import" href="/bower_components/paper-button/paper-button.html">
+<link rel="import" href="/elements/sapo-styles.html">
+
+<dom-module id="sapo-crud-nota">
+
+  <template>
+
+    <style include="sapo-styles">
+
+      div {
+        padding-top: 50px;
+      }
+
+    </style>
+
+    <iron-ajax auto="[[active]]" url="[[appconfig.url.api]]/notas/[[id]]" last-response="{{data}}"></iron-ajax>
+    <iron-ajax id="putAjax" url="[[appconfig.url.api]]/notas/" method="PUT" content-type="application/json" handle-as="json" body="[[data]]" on-response="_putResponse"></iron-ajax>
+
+    <paper-textarea id="observacoesInput" name="observacoes" label="Observações" value="{{data.observacoes}}" rows="3" ></paper-textarea>
+
+    <div>
+      <paper-button class="blue" on-click="_submitClicked" raised><iron-icon icon="save"></iron-icon>Salvar</paper-button>
+    </div>
+
+  </template>
+
+  <script>
+    class SapoCrudNota extends Polymer.Element {
+
+      static get is() { return 'sapo-crud-nota'; }
+
+      static get properties() {
+        return {
+          id: {
+            type: Number,
+            observer: '_idChanged'
+          },
+          data: {
+            type: Object,
+            value: () => { return {observacoes: ''}; },
+            observer: '_dataChanged'
+          },
+
+          active: Boolean
+        }
+      }
+
+
+      //
+      //OBSERVERS & COMPUTEDS
+
+      _idChanged(newId) {
+        this.set('data.id', newId);
+      }
+
+      _dataChanged() {
+        this._blurTextarea();
+      }
+
+
+      //
+      //EVENTS
+
+      _submitClicked() {
+        this.$.putAjax.generateRequest();
+      }
+
+      _putResponse(e) {
+        this.dispatchEvent(new CustomEvent('save', {detail: {success: (e.detail.status === 200)}}));
+      }
+
+
+
+
+      //
+      //UTILS
+
+      _blurTextarea() {
+
+        return this.sleep(100)
+          .then(() => {
+            //paper-textarea não da blur quando seu valor fica nulo (because fuck you, that's why)
+            this.$.observacoesInput.focus();
+            this.$.observacoesInput.blur();
+          });
+      }
+
+      //TODO: tentar deixar isso global
+      sleep(time) {
+        return new Promise(resolve => {
+          setTimeout(resolve, time);
+        });
+      }
+
+    }
+
+    window.customElements.define(SapoCrudNota.is, SapoCrudNota);
+  </script>
+</dom-module>
