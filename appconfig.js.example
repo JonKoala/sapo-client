@@ -1,0 +1,5 @@
+//TODO: remover esse arquivo quando não precisar mais do angular pra nada (remover do .gitignore tambem)
+
+//eu sei, é redundante com o appconfig.json...
+//mas tava dando dor de cabeça fazer via json usando angular + polymer, então fica assim até eu poder remover completamente a parte em angular
+window.SapoApiURL = "API-URL";

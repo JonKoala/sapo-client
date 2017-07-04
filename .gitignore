@@ -3,3 +3,4 @@ node_modules/
 npm-debug.log
 error_log
 appconfig.json
+appconfig.js
