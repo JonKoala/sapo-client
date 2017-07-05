@@ -36,6 +36,7 @@
     </style>
 
     <iron-ajax auto="[[active]]" url="[[appconfig.url.api]]/notas/objetoavaliacao/[[objetoAvaliacao]]/full" loading="{{loading}}" last-response="{{notas}}"></iron-ajax>
+    <iron-ajax auto="[[active]]" url="[[appconfig.url.api]]/navegadores/" last-response="{{navegadores}}"></iron-ajax>
     <iron-ajax id="putAjax" url="[[appconfig.url.api]]/notas/pontuacao" method="PUT" content-type="application/json" handle-as="json" on-response="_quickNotaSaved"></iron-ajax>
 
     <paper-card class="card-block" id="menu-indicadores">
@@ -48,7 +49,7 @@
     </paper-card>
 
     <sapo-overlay id="overlayArea" on-close="_crudClosed" with-backdrop>
-      <sapo-crud-nota id="crudNota" appconfig="[[appconfig]]" on-save="_notaSaved" ></sapo-crud-nota>
+      <sapo-crud-nota id="crudNota" navegadores="[[navegadores]]" appconfig="[[appconfig]]" on-save="_notaSaved" ></sapo-crud-nota>
     </sapo-overlay>
 
     <paper-toast id="quickNote"></paper-toast>
@@ -82,7 +83,9 @@
           pilar: Number,
           tipo: Number,
           nivel: Number,
-          subnivel: Number
+          subnivel: Number,
+
+          navegadores: Array
         }
       }
 

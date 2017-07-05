@@ -11,8 +11,20 @@
 
     <style include="sapo-styles">
 
+      paper-input {
+        --paper-input-container-input-webkit-spinner: {
+          -webkit-appearance: none;
+          appearance: none;
+          margin: 0;
+        };
+      }
+
       div {
         padding-top: 50px;
+      }
+
+      #clicksInput {
+        width: 100px;
       }
 
     </style>
@@ -21,6 +33,8 @@
     <iron-ajax id="putAjax" url="[[appconfig.url.api]]/notas/" method="PUT" content-type="application/json" handle-as="json" body="[[data]]" on-response="_putResponse"></iron-ajax>
 
     <paper-textarea id="observacoesInput" name="observacoes" label="Observações" value="{{data.observacoes}}" rows="3" ></paper-textarea>
+    <sapo-selector label="Navegador" data="[[_computeSelectorNavegadores(navegadores)]]" selected="{{data.navegador_id}}" ></sapo-selector>
+    <paper-input id="clicksInput" name="clicks" label="Clicks" value="{{clicks}}" type="number"></paper-input>
 
     <div>
       <paper-button class="blue" on-click="_submitClicked" raised><iron-icon icon="save"></iron-icon>Salvar</paper-button>
@@ -39,11 +53,16 @@
             type: Number,
             observer: '_idChanged'
           },
+          clicks: {
+            type: Number,
+            observer: '_clicksChanged'
+          },
           data: {
             type: Object,
-            value: () => { return {observacoes: ''}; },
             observer: '_dataChanged'
           },
+
+          navegadores: Array,
 
           active: Boolean
         }
@@ -57,8 +76,17 @@
         this.set('data.id', newId);
       }
 
-      _dataChanged() {
+      _dataChanged(newData) {
         this._blurTextarea();
+        this.clicks = newData.clicks;
+      }
+
+      _clicksChanged(clicks) {
+        this.data.clicks = (clicks == '') ? null : clicks;
+      }
+
+      _computeSelectorNavegadores(navegadores) {
+        return navegadores.map(navegador => { return {identity: navegador.id, text: navegador.nome + ' - ' + navegador.versao}; });
       }
 
 
@@ -72,8 +100,6 @@
       _putResponse(e) {
         this.dispatchEvent(new CustomEvent('save', {detail: {success: (e.detail.status === 200)}}));
       }
-
-
 
 
       //
