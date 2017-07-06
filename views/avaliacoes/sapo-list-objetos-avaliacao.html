@@ -5,6 +5,7 @@
 <link rel="import" href="/bower_components/paper-card/paper-card.html">
 <link rel="import" href="/bower_components/paper-spinner/paper-spinner.html">
 <link rel="import" href="./sapo-avaliacoes-styles.html">
+<link rel="import" href="./sapo-avaliacao-math.html">
 
 <dom-module id="sapo-list-objetos-avaliacao">
 
@@ -12,6 +13,8 @@
 
     <style include="sapo-avaliacoes-styles">
     </style>
+
+    <sapo-avaliacao-math id="sapoMath" ></sapo-avaliacao-math>
 
     <iron-ajax auto="[[active]]" url="[[appconfig.url.api]]/objetosavaliacao/avaliacao/[[avaliacao]]/full" loading="{{loading}}" last-response="{{objetosAvaliacao}}"></iron-ajax>
 
@@ -76,38 +79,18 @@
       //OBSERVERS & COMPUTEDS
 
       _computeConclusion(notas) {
-        var evaluated = notas.filter(nota => { return nota.pontuacao_id !== null });
-        var percentage = evaluated.length / notas.length;
-        percentage = parseInt(percentage * 100);
-
+        var percentage = this.$.sapoMath.calcPercentageOfConclusion(notas);
         return percentage + '%';
       }
 
       _computeAbsoluteScore(notas) {
-        var maxScoreArray = notas.map(nota => { return nota.item.notaMaxima; });
-        var maxScore = maxScoreArray.reduce((a, b) => a + b);
-
-        var evaluated = notas.filter(nota => { return nota.pontuacao_id !== null });
-        var absoluteScoreArray = evaluated.map(nota => { return nota.pontuacao.nota * nota.item.notaMaxima; });
-        var absoluteScore = (absoluteScoreArray.length > 0) ? absoluteScoreArray.reduce((a, b) => a + b) : 0;
-
-        var score = this._makePrintableScore(absoluteScore, maxScore, 2);
-
-        return absoluteScore + ' de ' + maxScore + '\n(' + score + '%)';
+        var scoreObject = this.$.sapoMath.calcAbsoluteScore(notas);
+        return scoreObject.absoluteScore + ' de ' + scoreObject.maxScore + '\n(' + scoreObject.percentage + '%)';
       }
 
       _computeRelativeScore(notas) {
-        var evaluated = notas.filter(nota => { return nota.pontuacao_id !== null });
-
-        var maxScoreArray = evaluated.map(nota => { return nota.item.notaMaxima; });
-        var maxScore = (evaluated.length > 0) ? maxScoreArray.reduce((a, b) => a + b) : 0;
-
-        var relativeScoreArray = evaluated.map(nota => { return nota.pontuacao.nota * nota.item.notaMaxima; });
-        var relativeScore = (relativeScoreArray.length > 0) ? relativeScoreArray.reduce((a, b) => a + b) : 0;
-
-        var score = this._makePrintableScore(relativeScore, maxScore, 2);
-
-        return relativeScore + ' de ' + maxScore + '\n(' + score + '%)';
+        var scoreObject = this.$.sapoMath.calcRelativeScore(notas);
+        return scoreObject.relativeScore + ' de ' + scoreObject.maxScore + '\n(' + scoreObject.percentage + '%)';
       }
 
       _computeSpinnerCss(isLoading) {
@@ -128,20 +111,8 @@
       //EVENTS
 
       _evaluateClicked(e) {
+        this.$.sapoMath.teste();
         this.dispatchEvent(new CustomEvent('evaluate', {detail: e.model.item.id}));
-      }
-
-
-      //
-      //UTILS
-
-      _makePrintableScore(score, maxScore, precision) {
-
-        var persentage = (score / maxScore) * 100;
-
-        var intLength = parseInt(Math.log10(persentage)) + 1;
-        var printScore = (isNaN(intLength)) ? '0' : persentage.toPrecision(intLength + precision);
-        return printScore;
       }
 
     }

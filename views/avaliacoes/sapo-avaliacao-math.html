@@ -1,0 +1,62 @@
+<link rel="import" href="/bower_components/polymer/polymer-element.html">
+
+<dom-module id="sapo-avaliacao-math">
+
+  <script>
+    class SapoAvaliacaoMath extends Polymer.Element {
+
+      static get is() { return 'sapo-avaliacao-math'; }
+
+      calcPercentageOfConclusion(notas) {
+        var evaluated = notas.filter(nota => { return nota.pontuacao !== null });
+        var percentage = evaluated.length / notas.length;
+        return parseInt(percentage * 100);
+      }
+
+      calcAbsoluteScore(notas) {
+        var maxScoreArray = notas.map(nota => { return nota.item.notaMaxima; });
+        var maxScore = maxScoreArray.reduce((a, b) => a + b);
+
+        var evaluated = notas.filter(nota => { return nota.pontuacao !== null });
+        var absoluteScoreArray = evaluated.map(nota => { return nota.pontuacao.nota * nota.item.notaMaxima; });
+        var absoluteScore = (absoluteScoreArray.length > 0) ? absoluteScoreArray.reduce((a, b) => a + b) : 0;
+
+        var percentage = this.makePrintableScore(absoluteScore, maxScore, 2);
+
+        return {absoluteScore: absoluteScore, maxScore: maxScore, percentage: percentage};
+      }
+
+      calcRelativeScore(notas) {
+        var evaluated = notas.filter(nota => { return nota.pontuacao !== null });
+
+        var maxScoreArray = evaluated.map(nota => { return nota.item.notaMaxima; });
+        var maxScore = (evaluated.length > 0) ? maxScoreArray.reduce((a, b) => a + b) : 0;
+
+        var relativeScoreArray = evaluated.map(nota => { return nota.pontuacao.nota * nota.item.notaMaxima; });
+        var relativeScore = (relativeScoreArray.length > 0) ? relativeScoreArray.reduce((a, b) => a + b) : 0;
+
+        var percentage = this.makePrintableScore(relativeScore, maxScore, 2);
+
+        return {relativeScore: relativeScore, maxScore: maxScore, percentage: percentage};
+      }
+
+      makePrintableScore(score, maxScore, precision) {
+        var percentage = (score / maxScore) * 100;
+
+        var intpercentage = parseInt(percentage);
+        var isNatural = percentage % parseInt(percentage) === 0;
+
+        var printScore = percentage;
+        if (!isNatural) {
+          let intLength = parseInt(Math.log10(percentage)) + 1;
+          printScore = (isNaN(intLength)) ? '0' : percentage.toPrecision(intLength + precision);
+        }
+
+        return printScore;
+      }
+
+    }
+
+    window.customElements.define(SapoAvaliacaoMath.is, SapoAvaliacaoMath);
+  </script>
+</dom-module>
