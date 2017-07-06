@@ -14,7 +14,7 @@
     <iron-pages selected="[[page]]" selected-attribute="active" attr-for-selected="name">
       <sapo-list-avaliacoes appconfig="[[appconfig]]" name="list-avaliacoes" on-evaluate="_expandAvaliacao"></sapo-list-avaliacoes>
       <sapo-list-objetos-avaliacao appconfig="[[appconfig]]" name="list-objetos-avaliacao" avaliacao="[[pathData.avaliacao]]" on-evaluate="_expandObjetoAvaliacao"></sapo-list-objetos-avaliacao>
-      <sapo-evaluate-objeto-avaliacao appconfig="[[appconfig]]" name="evaluate-objeto-avaliacao" objeto-avaliacao="[[pathData.objetoAvaliacao]]"></sapo-evaluate-objeto-avaliacao>
+      <sapo-evaluate-objeto-avaliacao appconfig="[[appconfig]]" name="evaluate-objeto-avaliacao" objeto-avaliacao-id="[[pathData.objetoAvaliacao]]"></sapo-evaluate-objeto-avaliacao>
     </iron-pages>
 
   </template>

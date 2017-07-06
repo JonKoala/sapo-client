@@ -8,7 +8,7 @@
       static get is() { return 'sapo-avaliacao-math'; }
 
       calcPercentageOfConclusion(notas) {
-        var evaluated = notas.filter(nota => { return nota.pontuacao !== null });
+        var evaluated = notas.filter(nota => { return nota.pontuacao != null });
         var percentage = evaluated.length / notas.length;
         return parseInt(percentage * 100);
       }
@@ -17,7 +17,7 @@
         var maxScoreArray = notas.map(nota => { return nota.item.notaMaxima; });
         var maxScore = maxScoreArray.reduce((a, b) => a + b);
 
-        var evaluated = notas.filter(nota => { return nota.pontuacao !== null });
+        var evaluated = notas.filter(nota => { return nota.pontuacao != null });
         var absoluteScoreArray = evaluated.map(nota => { return nota.pontuacao.nota * nota.item.notaMaxima; });
         var absoluteScore = (absoluteScoreArray.length > 0) ? absoluteScoreArray.reduce((a, b) => a + b) : 0;
 
@@ -27,7 +27,7 @@
       }
 
       calcRelativeScore(notas) {
-        var evaluated = notas.filter(nota => { return nota.pontuacao !== null });
+        var evaluated = notas.filter(nota => { return nota.pontuacao != null });
 
         var maxScoreArray = evaluated.map(nota => { return nota.item.notaMaxima; });
         var maxScore = (evaluated.length > 0) ? maxScoreArray.reduce((a, b) => a + b) : 0;

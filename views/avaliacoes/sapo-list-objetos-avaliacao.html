@@ -14,7 +14,7 @@
     <style include="sapo-avaliacoes-styles">
     </style>
 
-    <sapo-avaliacao-math id="sapoMath" ></sapo-avaliacao-math>
+    <sapo-avaliacao-math id="avaliacaoMath" ></sapo-avaliacao-math>
 
     <iron-ajax auto="[[active]]" url="[[appconfig.url.api]]/objetosavaliacao/avaliacao/[[avaliacao]]/full" loading="{{loading}}" last-response="{{objetosAvaliacao}}"></iron-ajax>
 
@@ -79,17 +79,17 @@
       //OBSERVERS & COMPUTEDS
 
       _computeConclusion(notas) {
-        var percentage = this.$.sapoMath.calcPercentageOfConclusion(notas);
+        var percentage = this.$.avaliacaoMath.calcPercentageOfConclusion(notas);
         return percentage + '%';
       }
 
       _computeAbsoluteScore(notas) {
-        var scoreObject = this.$.sapoMath.calcAbsoluteScore(notas);
+        var scoreObject = this.$.avaliacaoMath.calcAbsoluteScore(notas);
         return scoreObject.absoluteScore + ' de ' + scoreObject.maxScore + '\n(' + scoreObject.percentage + '%)';
       }
 
       _computeRelativeScore(notas) {
-        var scoreObject = this.$.sapoMath.calcRelativeScore(notas);
+        var scoreObject = this.$.avaliacaoMath.calcRelativeScore(notas);
         return scoreObject.relativeScore + ' de ' + scoreObject.maxScore + '\n(' + scoreObject.percentage + '%)';
       }
 

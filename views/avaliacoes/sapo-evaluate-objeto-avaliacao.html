@@ -4,6 +4,7 @@
 <link rel="import" href="/bower_components/paper-spinner/paper-spinner.html">
 <link rel="import" href="/elements/sapo-overlay.html">
 <link rel="import" href="./sapo-avaliacoes-styles.html">
+<link rel="import" href="./sapo-avaliacao-math.html">
 <link rel="import" href="./sapo-menu-indicadores.html">
 <link rel="import" href="./sapo-list-notas.html">
 <link rel="import" href="./sapo-crud-nota.html">
@@ -16,6 +17,7 @@
 
       :host {
         display: flex;
+        flex-wrap: wrap;
       }
 
       sapo-overlay {
@@ -23,9 +25,19 @@
         min-width: 500px;
       }
 
+      #information-area {
+        width: 100%;
+        align-content: flex-start;
+      }
+
+      #evaluation-area {
+        display: flex;
+        width: 100%;
+      }
+
       #menu-indicadores {
         margin-right: 20px;
-        height: 100%;
+        height: 290px;
       }
 
       #list-notas {
@@ -35,18 +47,28 @@
 
     </style>
 
-    <iron-ajax auto="[[active]]" url="[[appconfig.url.api]]/notas/objetoavaliacao/[[objetoAvaliacao]]/full" loading="{{loading}}" last-response="{{notas}}"></iron-ajax>
+    <sapo-avaliacao-math id="avaliacaoMath" ></sapo-avaliacao-math>
+
+    <iron-ajax auto="[[active]]" url="[[appconfig.url.api]]/objetosavaliacao/[[objetoAvaliacaoId]]/full" last-response="{{objetoAvaliacao}}"></iron-ajax>
+    <iron-ajax auto="[[active]]" url="[[appconfig.url.api]]/notas/objetoavaliacao/[[objetoAvaliacaoId]]/full" loading="{{loading}}" last-response="{{notas}}"></iron-ajax>
     <iron-ajax auto="[[active]]" url="[[appconfig.url.api]]/navegadores/" last-response="{{navegadores}}"></iron-ajax>
     <iron-ajax id="putAjax" url="[[appconfig.url.api]]/notas/pontuacao" method="PUT" content-type="application/json" handle-as="json" on-response="_quickNotaSaved"></iron-ajax>
 
-    <paper-card class="card-block" id="menu-indicadores">
-      <sapo-menu-indicadores data="[[indicadores]]" pilar="{{pilar}}" tipo="{{tipo}}" nivel="{{nivel}}" subnivel="{{subnivel}}"></sapo-menu-indicadores>
+    <paper-card id="information-area" class="card-block">
+      <h3 class$="[[_computeListNotasCss(loading)]]">Avaliando [[objetoAvaliacao.entidade.nome]] (Avaliação: [[objetoAvaliacao.avaliacao.nome]])</h3>
+      <p>Concluído: [[evaluationConclusionPercentage]] - Nota: [[evaluationAbsoluteScore]] - Pontuação Parcial: [[evaluationRelativeScore]]</p>
     </paper-card>
 
-    <paper-card class="card-block" id="list-notas">
-      <paper-spinner active="[[loading]]" class$="[[_computeSpinnerCss(loading)]]" ></paper-spinner>
-      <sapo-list-notas on-nota-changed="_updateNota" on-edit-clicked="_editNota" data="[[notas]]" ids-to-show="[[_computeNotasToShow(notas, pilar, tipo, nivel, subnivel)]]" class$="[[_computeListNotasCss(loading)]]" ></sapo-list-notas>
-    </paper-card>
+    <div id="evaluation-area" >
+      <paper-card id="menu-indicadores" class="card-block">
+        <sapo-menu-indicadores data="[[indicadores]]" pilar="{{pilar}}" tipo="{{tipo}}" nivel="{{nivel}}" subnivel="{{subnivel}}"></sapo-menu-indicadores>
+      </paper-card>
+
+      <paper-card id="list-notas" class="card-block">
+        <paper-spinner active="[[loading]]" class$="[[_computeSpinnerCss(loading)]]" ></paper-spinner>
+        <sapo-list-notas on-nota-changed="_updateNota" on-edit-clicked="_editNota" data="[[notas]]" ids-to-show="[[_computeNotasToShow(notas, pilar, tipo, nivel, subnivel)]]" class$="[[_computeListNotasCss(loading)]]" ></sapo-list-notas>
+      </paper-card>
+    </div>
 
     <sapo-overlay id="overlayArea" on-close="_crudClosed" with-backdrop>
       <sapo-crud-nota id="crudNota" navegadores="[[navegadores]]" appconfig="[[appconfig]]" on-save="_notaSaved" ></sapo-crud-nota>
@@ -70,11 +92,17 @@
           },
           loading: Boolean,
 
-          objetoAvaliacao: Number,
+          objetoAvaliacaoId: Number,
+          objetoAvaliacao: Object,
           notas: {
             type: Array,
             observer: '_notasChanged'
           },
+          navegadores: Array,
+
+          evaluationConclusionPercentage: String,
+          evaluationAbsoluteScore: String,
+          evaluationRelativeScore: String,
 
           indicadores: {
             type: Object,
@@ -83,9 +111,7 @@
           pilar: Number,
           tipo: Number,
           nivel: Number,
-          subnivel: Number,
-
-          navegadores: Array
+          subnivel: Number
         }
       }
 
@@ -131,9 +157,12 @@
           addIfUnique(indicadores.tipos, nota.item.subnivel.nivel.tipo);
           addIfUnique(indicadores.niveis, nota.item.subnivel.nivel);
           addIfUnique(indicadores.subniveis, nota.item.subnivel);
+
+          nota.pontuacao = nota.item.pontuacoes.find(pontuacao => pontuacao.id === nota.pontuacao_id);
         });
 
         this.indicadores = indicadores;
+        this._updateEvaluationResults();
       }
 
       _activeChanged(isActive) {
@@ -164,6 +193,10 @@
 
       _quickNotaSaved(e) {
         this._notifyPontuacao(e.detail.status === 200);
+
+        var response = e.detail.response;
+        this._updateNotas(response.nota, response.pontuacao);
+        this._updateEvaluationResults();
       }
 
       _crudClosed() {
@@ -173,6 +206,26 @@
 
       //
       //UTILS
+
+      _updateNotas(nota, pontuacao) {
+        var notaObj = this.notas.find(n => n.id === nota);
+        notaObj.pontuacao_id = pontuacao;
+        notaObj.pontuacao = notaObj.item.pontuacoes.find(p => p.id === pontuacao);
+      }
+
+      _updateEvaluationResults() {
+
+        if (this.notas.length === 0) return;
+
+        var conclusionPercentage = this.$.avaliacaoMath.calcPercentageOfConclusion(this.notas);
+        this.evaluationConclusionPercentage = conclusionPercentage + '%';
+
+        var absoluteScore = this.$.avaliacaoMath.calcAbsoluteScore(this.notas);
+        this.evaluationAbsoluteScore = absoluteScore.absoluteScore + ' de ' + absoluteScore.maxScore + '\n(' + absoluteScore.percentage + '%)';
+
+        var relativeScore = this.$.avaliacaoMath.calcRelativeScore(this.notas);
+        this.evaluationRelativeScore = relativeScore.relativeScore + ' de ' + relativeScore.maxScore + '\n(' + relativeScore.percentage + '%)';
+      }
 
       _notifyPontuacao(success) {
         if (success) this._showNotification('Pontuação atualizada com sucesso!');
