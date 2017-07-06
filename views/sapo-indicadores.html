@@ -288,7 +288,7 @@
       }
 
       _crudClosed(e) {
-        let crudElement = e.target.selectedItem;
+        let crudElement = this.$.crudSelector.selectedItem;
         if (crudElement)
           crudElement.mode = 'closed';
       }
