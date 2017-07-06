@@ -21,7 +21,9 @@
 
       <table class$="[[_computeTableCss(loading)]]">
         <thead>
-          <th style="min-width:200px">Entidade</th>
+          <th style="min-width:100px">Entidade</th>
+          <th style="min-width:100px">Nota*</th>
+          <th style="min-width:150px">Pontuação Parcial**</th>
           <th style="width:100px">Concluído</th>
           <th style="width:100%">Observações</th>
           <th style="width:1%;white-space:nowrap;"></th>
@@ -29,7 +31,9 @@
         <tbody>
           <template is="dom-repeat" items="[[objetosAvaliacao]]">
             <tr>
-              <td>[[item.entidade.nome]]</td>
+              <td style="white-space:pre">[[item.entidade.nome]]</td>
+              <td style="white-space:pre">[[_computeAbsoluteScore(item.notas)]]</td>
+              <td style="white-space:pre">[[_computeRelativeScore(item.notas)]]</td>
               <td>[[_computeConclusion(item.notas)]]</td>
               <td>[[item.observacoes]]</td>
               <td class="buttons-area">
@@ -43,6 +47,8 @@
       </table>
 
     </paper-card>
+    <p class$="[[_computeTableCss(loading)]] note" >* Considera todos os itens existentes.</p>
+    <p class$="[[_computeTableCss(loading)]] note" >** Considera apenas os itens avaliados até o momento.</p>
 
   </template>
 
@@ -77,6 +83,33 @@
         return percentage + '%';
       }
 
+      _computeAbsoluteScore(notas) {
+        var maxScoreArray = notas.map(nota => { return nota.item.notaMaxima; });
+        var maxScore = maxScoreArray.reduce((a, b) => a + b);
+
+        var evaluated = notas.filter(nota => { return nota.pontuacao_id !== null });
+        var absoluteScoreArray = evaluated.map(nota => { return nota.pontuacao.nota * nota.item.notaMaxima; });
+        var absoluteScore = (absoluteScoreArray.length > 0) ? absoluteScoreArray.reduce((a, b) => a + b) : 0;
+
+        var score = this._makePrintableScore(absoluteScore, maxScore, 2);
+
+        return absoluteScore + ' de ' + maxScore + '\n(' + score + '%)';
+      }
+
+      _computeRelativeScore(notas) {
+        var evaluated = notas.filter(nota => { return nota.pontuacao_id !== null });
+
+        var maxScoreArray = evaluated.map(nota => { return nota.item.notaMaxima; });
+        var maxScore = (evaluated.length > 0) ? maxScoreArray.reduce((a, b) => a + b) : 0;
+
+        var relativeScoreArray = evaluated.map(nota => { return nota.pontuacao.nota * nota.item.notaMaxima; });
+        var relativeScore = (relativeScoreArray.length > 0) ? relativeScoreArray.reduce((a, b) => a + b) : 0;
+
+        var score = this._makePrintableScore(relativeScore, maxScore, 2);
+
+        return relativeScore + ' de ' + maxScore + '\n(' + score + '%)';
+      }
+
       _computeSpinnerCss(isLoading) {
         return (isLoading) ? '' : 'hidden';
       }
@@ -96,6 +129,19 @@
 
       _evaluateClicked(e) {
         this.dispatchEvent(new CustomEvent('evaluate', {detail: e.model.item.id}));
+      }
+
+
+      //
+      //UTILS
+
+      _makePrintableScore(score, maxScore, precision) {
+
+        var persentage = (score / maxScore) * 100;
+
+        var intLength = parseInt(Math.log10(persentage)) + 1;
+        var printScore = (isNaN(intLength)) ? '0' : persentage.toPrecision(intLength + precision);
+        return printScore;
       }
 
     }
