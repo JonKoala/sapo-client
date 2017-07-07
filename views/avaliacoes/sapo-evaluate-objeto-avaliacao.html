@@ -27,7 +27,16 @@
 
       #information-area {
         width: 100%;
-        align-content: flex-start;
+        display: flex;
+        flex-direction: row;
+      }
+
+      #information-area div {
+        margin: 10px 40px 10px 10px;
+      }
+
+      #information-area div b {
+        white-space: pre;
       }
 
       #evaluation-area {
@@ -55,8 +64,9 @@
     <iron-ajax id="putAjax" url="[[appconfig.url.api]]/notas/pontuacao" method="PUT" content-type="application/json" handle-as="json" on-response="_quickNotaSaved"></iron-ajax>
 
     <paper-card id="information-area" class="card-block">
-      <h3 class$="[[_computeListNotasCss(loading)]]">Avaliando [[objetoAvaliacao.entidade.nome]] (Avaliação: [[objetoAvaliacao.avaliacao.nome]])</h3>
-      <p>Concluído: [[evaluationConclusionPercentage]] - Nota: [[evaluationAbsoluteScore]] - Pontuação Parcial: [[evaluationRelativeScore]]</p>
+      <div class$="[[_computeListNotasCss(loading)]]"><b>ENTIDADE:</b> [[objetoAvaliacao.entidade.nome]] <b>   AVALIAÇÃO:</b> [[objetoAvaliacao.avaliacao.nome]]</div>
+      <div class$="[[_computeListNotasCss(loading)]]"><b>Nota:</b> [[evaluationAbsoluteScore]] <b>   Pontuação Parcial:</b> [[evaluationRelativeScore]]</div>
+      <div class$="[[_computeListNotasCss(loading)]]"><b>Concluído:</b> [[evaluationConclusionPercentage]]</div>
     </paper-card>
 
     <div id="evaluation-area" >
