@@ -5,7 +5,7 @@
 <link rel="import" href="/bower_components/paper-card/paper-card.html">
 <link rel="import" href="/bower_components/paper-spinner/paper-spinner.html">
 <link rel="import" href="./sapo-avaliacoes-styles.html">
-<link rel="import" href="./sapo-avaliacao-math.html">
+<link rel="import" href="./sapo-avaliacoes-math.html">
 
 <dom-module id="sapo-list-objetos-avaliacao">
 
@@ -14,7 +14,7 @@
     <style include="sapo-avaliacoes-styles">
     </style>
 
-    <sapo-avaliacao-math id="avaliacaoMath" ></sapo-avaliacao-math>
+    <sapo-avaliacoes-math id="avaliacaoMath" ></sapo-avaliacoes-math>
 
     <iron-ajax auto="[[active]]" url="[[appconfig.url.api]]/objetosavaliacao/avaliacao/[[avaliacao]]/full" loading="{{loading}}" last-response="{{objetosAvaliacao}}"></iron-ajax>
 

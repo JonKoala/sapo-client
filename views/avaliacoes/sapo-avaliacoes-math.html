@@ -1,11 +1,11 @@
 <link rel="import" href="/bower_components/polymer/polymer-element.html">
 
-<dom-module id="sapo-avaliacao-math">
+<dom-module id="sapo-avaliacoes-math">
 
   <script>
-    class SapoAvaliacaoMath extends Polymer.Element {
+    class SapoAvaliacoesMath extends Polymer.Element {
 
-      static get is() { return 'sapo-avaliacao-math'; }
+      static get is() { return 'sapo-avaliacoes-math'; }
 
       calcPercentageOfConclusion(notas) {
         var evaluated = notas.filter(nota => { return nota.pontuacao != null });
@@ -57,6 +57,6 @@
 
     }
 
-    window.customElements.define(SapoAvaliacaoMath.is, SapoAvaliacaoMath);
+    window.customElements.define(SapoAvaliacoesMath.is, SapoAvaliacoesMath);
   </script>
 </dom-module>

@@ -4,7 +4,7 @@
 <link rel="import" href="/bower_components/paper-spinner/paper-spinner.html">
 <link rel="import" href="/elements/sapo-overlay.html">
 <link rel="import" href="./sapo-avaliacoes-styles.html">
-<link rel="import" href="./sapo-avaliacao-math.html">
+<link rel="import" href="./sapo-avaliacoes-math.html">
 <link rel="import" href="./sapo-menu-indicadores.html">
 <link rel="import" href="./sapo-list-notas.html">
 <link rel="import" href="./sapo-crud-nota.html">
@@ -47,7 +47,7 @@
 
     </style>
 
-    <sapo-avaliacao-math id="avaliacaoMath" ></sapo-avaliacao-math>
+    <sapo-avaliacoes-math id="avaliacaoMath" ></sapo-avaliacoes-math>
 
     <iron-ajax auto="[[active]]" url="[[appconfig.url.api]]/objetosavaliacao/[[objetoAvaliacaoId]]/full" last-response="{{objetoAvaliacao}}"></iron-ajax>
     <iron-ajax auto="[[active]]" url="[[appconfig.url.api]]/notas/objetoavaliacao/[[objetoAvaliacaoId]]/full" loading="{{loading}}" last-response="{{notas}}"></iron-ajax>
