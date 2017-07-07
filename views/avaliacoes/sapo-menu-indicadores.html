@@ -1,4 +1,5 @@
 <link rel="import" href="/bower_components/polymer/polymer-element.html">
+<link rel="import" href="/bower_components/paper-toggle-button/paper-toggle-button.html">
 <link rel="import" href="/elements/sapo-selector.html">
 
 <dom-module id="sapo-menu-indicadores">
@@ -11,13 +12,34 @@
         display: flex;
         flex-direction: column;
       }
-      
+
+      div {
+        display: flex;
+        flex-direction: row;
+      }
+
+      paper-toggle-button {
+        margin: 30px auto 0px 20px;
+      }
+
     </style>
 
-    <sapo-selector label="Pilar" data="[[_computeSelectorData(data.pilares)]]" selected="{{pilar}}"></sapo-selector>
-    <sapo-selector label="Tipo" data="[[_computeSelectorData(data.tipos, pilar, 'pilar_id')]]" selected="{{tipo}}"></sapo-selector>
-    <sapo-selector label="Nivel" data="[[_computeSelectorData(data.niveis, tipo, 'tipo_id')]]" selected="{{nivel}}"></sapo-selector>
-    <sapo-selector label="Subnivel" data="[[_computeSelectorData(data.subniveis, nivel, 'nivel_id')]]" selected="{{subnivel}}"></sapo-selector>
+    <div>
+      <sapo-selector label="Pilar" data="[[_computeSelectorData(data.pilares)]]" selected="{{pilar}}"></sapo-selector>
+      <paper-toggle-button disabled="[[!pilarChecked]]" checked="{{pilarChecked}}"></paper-toggle-button>
+    </div>
+    <div>
+      <sapo-selector label="Tipo" data="[[_computeSelectorData(data.tipos, pilar, 'pilar_id')]]" selected="{{tipo}}"></sapo-selector>
+      <paper-toggle-button disabled="[[!tipoChecked]]" checked="{{tipoChecked}}"></paper-toggle-button>
+    </div>
+    <div>
+      <sapo-selector label="Nivel" data="[[_computeSelectorData(data.niveis, tipo, 'tipo_id')]]" selected="{{nivel}}"></sapo-selector>
+      <paper-toggle-button disabled="[[!nivelChecked]]" checked="{{nivelChecked}}"></paper-toggle-button>
+    </div>
+    <div>
+      <sapo-selector label="Subnivel" data="[[_computeSelectorData(data.subniveis, nivel, 'nivel_id')]]" selected="{{subnivel}}"></sapo-selector>
+      <paper-toggle-button disabled="[[!subnivelChecked]]" checked="{{subnivelChecked}}"></paper-toggle-button>
+    </div>
 
   </template>
 
@@ -32,21 +54,68 @@
 
           pilar: {
             type: Number,
-            notify: true
+            notify: true,
+            observer: '_pilarChanged'
           },
           tipo: {
             type: Number,
-            notify: true
+            notify: true,
+            observer: '_tipoChanged'
           },
           nivel: {
             type: Number,
-            notify: true
+            notify: true,
+            observer: '_nivelChanged'
           },
           subnivel: {
             type: Number,
-            notify: true
-          }
+            notify: true,
+            observer: '_subnivelChanged'
+          },
+
+          pilarChecked: {
+            type: Boolean,
+            observer: '_pilarCheckedChanged'
+          },
+          tipoChecked: {
+            type: Boolean,
+            observer: '_tipoCheckedChanged'
+          },
+          nivelChecked: {
+            type: Boolean,
+            observer: '_nivelCheckedChanged'
+          },
+          subnivelChecked: {
+            type: Boolean,
+            observer: '_subnivelCheckedChanged'
+          },
         }
+      }
+
+      _pilarChanged(newValue) {
+        this._indicadorChanged('pilar', newValue);
+      }
+      _tipoChanged(newValue) {
+        this._indicadorChanged('tipo', newValue);
+      }
+      _nivelChanged(newValue) {
+        this._indicadorChanged('nivel', newValue);
+      }
+      _subnivelChanged(newValue) {
+        this._indicadorChanged('subnivel', newValue);
+      }
+
+      _pilarCheckedChanged(isChecked) {
+        this._checkedChanged('pilar', isChecked);
+      }
+      _tipoCheckedChanged(isChecked) {
+        this._checkedChanged('tipo', isChecked);
+      }
+      _nivelCheckedChanged(isChecked) {
+        this._checkedChanged('nivel', isChecked);
+      }
+      _subnivelCheckedChanged(isChecked) {
+        this._checkedChanged('subnivel', isChecked);
       }
 
       _computeSelectorData(array, fk, fkField) {
@@ -57,6 +126,18 @@
           selectorData = array.filter(item => { return item[fkField] === fk; });
 
         return selectorData.map(item => { return {identity: item.id, text: item.nome}; });
+      }
+
+
+      //
+      //UTILS
+
+      _indicadorChanged(indicador, newValue) {
+        this[indicador + 'Checked'] = (newValue !== 0);
+      }
+
+      _checkedChanged(indicador, isChecked) {
+        if (!isChecked) this[indicador] = 0;
       }
 
     }
