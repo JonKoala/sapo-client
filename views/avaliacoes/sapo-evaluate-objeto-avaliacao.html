@@ -44,12 +44,12 @@
         width: 100%;
       }
 
-      #menu-indicadores {
+      #menu-indicadores-area {
         margin-right: 20px;
         height: 290px;
       }
 
-      #list-notas {
+      #list-notas-area {
         margin-left: 20px;
         width: 100%;
       }
@@ -70,11 +70,11 @@
     </paper-card>
 
     <div id="evaluation-area" >
-      <paper-card id="menu-indicadores" class="card-block">
-        <sapo-menu-indicadores data="[[indicadores]]" pilar="{{pilar}}" tipo="{{tipo}}" nivel="{{nivel}}" subnivel="{{subnivel}}"></sapo-menu-indicadores>
+      <paper-card id="menu-indicadores-area" class="card-block">
+        <sapo-menu-indicadores id="menuIndicadores" data="[[indicadores]]" pilar="{{pilar}}" tipo="{{tipo}}" nivel="{{nivel}}" subnivel="{{subnivel}}"></sapo-menu-indicadores>
       </paper-card>
 
-      <paper-card id="list-notas" class="card-block">
+      <paper-card id="list-notas-area" class="card-block">
         <paper-spinner active="[[loading]]" class$="[[_computeSpinnerCss(loading)]]" ></paper-spinner>
         <sapo-list-notas on-nota-changed="_updateNota" on-edit-clicked="_editNota" data="[[notas]]" ids-to-show="[[_computeNotasToShow(notas, pilar, tipo, nivel, subnivel)]]" class$="[[_computeListNotasCss(loading)]]" ></sapo-list-notas>
       </paper-card>
@@ -156,22 +156,15 @@
 
       _notasChanged(notas) {
 
-        var addIfUnique = (array, item) => {
-          if (!array.some(i => { return i.id === item.id}))
-            array.push(item);
-        };
-
-        var indicadores = {pilares: [], tipos: [], niveis: [], subniveis: []};
+        //give each nota its pontuacao object, acording with its pontuacao_id
         notas.forEach(nota => {
-          addIfUnique(indicadores.pilares, nota.item.subnivel.nivel.tipo.pilar);
-          addIfUnique(indicadores.tipos, nota.item.subnivel.nivel.tipo);
-          addIfUnique(indicadores.niveis, nota.item.subnivel.nivel);
-          addIfUnique(indicadores.subniveis, nota.item.subnivel);
-
           nota.pontuacao = nota.item.pontuacoes.find(pontuacao => pontuacao.id === nota.pontuacao_id);
         });
 
-        this.indicadores = indicadores;
+        //create indicadores objects
+        var indicadores = this._getIndicadoresFromNotas(notas);
+        this._updateIndicadores(indicadores, notas);
+
         this._updateEvaluationResults();
       }
 
@@ -206,6 +199,7 @@
 
         var response = e.detail.response;
         this._updateNotas(response.nota, response.pontuacao);
+        this._updateIndicadores(this.indicadores, this.notas);
         this._updateEvaluationResults();
       }
 
@@ -221,6 +215,25 @@
         var notaObj = this.notas.find(n => n.id === nota);
         notaObj.pontuacao_id = pontuacao;
         notaObj.pontuacao = notaObj.item.pontuacoes.find(p => p.id === pontuacao);
+      }
+
+      _updateIndicadores(indicadores, notas) {
+
+        var unevaluated = notas.filter(nota => { return nota.pontuacao == null; });
+        var unevaluatedIndicadores = this._getIndicadoresFromNotas(unevaluated);
+
+        var markIndicador = (indicador, warningList) => {
+          indicador.warning = warningList.some(i => i.id === indicador.id);
+        }
+
+        //add update/add warning variable to unevaluated indicadores
+        indicadores.pilares.forEach(pilar => markIndicador(pilar, unevaluatedIndicadores.pilares));
+        indicadores.tipos.forEach(tipo => markIndicador(tipo, unevaluatedIndicadores.tipos));
+        indicadores.niveis.forEach(nivel => markIndicador(nivel, unevaluatedIndicadores.niveis));
+        indicadores.subniveis.forEach(subnivel => markIndicador(subnivel, unevaluatedIndicadores.subniveis));
+
+        this.indicadores = indicadores;
+        this.$.menuIndicadores.softUpdate(indicadores);
       }
 
       _updateEvaluationResults() {
@@ -249,6 +262,24 @@
         note.close();
         note.text = text;
         note.open();
+      }
+
+      _getIndicadoresFromNotas(notas) {
+
+        var addIfUnique = (array, item) => {
+          if (!array.some(i => { return i.id === item.id}))
+            array.push(item);
+        };
+
+        var indicadores = {pilares: [], tipos: [], niveis: [], subniveis: []};
+        notas.forEach(nota => {
+          addIfUnique(indicadores.pilares, nota.item.subnivel.nivel.tipo.pilar);
+          addIfUnique(indicadores.tipos, nota.item.subnivel.nivel.tipo);
+          addIfUnique(indicadores.niveis, nota.item.subnivel.nivel);
+          addIfUnique(indicadores.subniveis, nota.item.subnivel);
+        });
+
+        return indicadores;
       }
 
     }

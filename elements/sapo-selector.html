@@ -12,14 +12,22 @@
       paper-dropdown-menu {
         width: 200px;
       }
-      
+
+      paper-item.warning {
+        background: var(--sapo-selector-item-warning-color);
+      }
+
+      paper-item.green {
+        background: var(--sapo-selector-item-green-color);
+      }
+
     </style>
 
     <paper-dropdown-menu id="contentSelector" label="[[label]]" disabled="[[_isDisabled(data, disabled)]]"
                          no-animations="[[noFun]]" no-label-float="[[noFun]]" noink="[[noFun]]">
       <paper-listbox slot="dropdown-content" selected="{{selected}}" attr-for-selected="value" class="dropdown-content">
         <template is="dom-repeat" items="[[data]]">
-          <paper-item value="[[item.identity]]">[[item.text]]</paper-item>
+          <paper-item class$="[[_computeItemCss(item.warning)]]" value="[[item.identity]]">[[item.text]]</paper-item>
         </template>
       </paper-listbox>
     </paper-dropdown-menu>
@@ -43,6 +51,9 @@
             notify: true,
             observer: '_selectedChanged'
           },
+
+          softUpdating: Boolean,
+
           disabled: Boolean,
           noFun: Boolean
         }
@@ -52,12 +63,27 @@
         return data.length === 0 || disabled;
       }
 
+      _computeItemCss(isWarning) {
+        return (isWarning) ? 'warning' : 'green';
+      }
+
       _dataChanged(newData) {
-        this.selected = 0;
+        if (!this.softUpdating)
+          this.selected = 0;
       }
 
       _selectedChanged(newValue) {
         this.dispatchEvent(new CustomEvent('select', {detail: {id: this.selected}}));
+      }
+
+
+      //
+      //UTILS
+
+      softUpdate(newData) {
+        this.softUpdating = true;
+        this.data = newData;
+        this.softUpdating = false;
       }
 
     }

@@ -22,22 +22,27 @@
         margin: 30px auto 0px 20px;
       }
 
+      sapo-selector {
+        --sapo-selector-item-warning-color: var(--paper-red-200);
+        --sapo-selector-item-green-color: var(--paper-green-200);
+      }
+
     </style>
 
     <div>
-      <sapo-selector label="Pilar" data="[[_computeSelectorData(data.pilares)]]" selected="{{pilar}}"></sapo-selector>
+      <sapo-selector id="pilarSelector" label="Pilar" data="[[_computeSelectorData(data.pilares)]]" selected="{{pilar}}"></sapo-selector>
       <paper-toggle-button disabled="[[!pilarChecked]]" checked="{{pilarChecked}}"></paper-toggle-button>
     </div>
     <div>
-      <sapo-selector label="Tipo" data="[[_computeSelectorData(data.tipos, pilar, 'pilar_id')]]" selected="{{tipo}}"></sapo-selector>
+      <sapo-selector id="tipoSelector" label="Tipo" data="[[_computeSelectorData(data.tipos, pilar, 'pilar_id')]]" selected="{{tipo}}"></sapo-selector>
       <paper-toggle-button disabled="[[!tipoChecked]]" checked="{{tipoChecked}}"></paper-toggle-button>
     </div>
     <div>
-      <sapo-selector label="Nivel" data="[[_computeSelectorData(data.niveis, tipo, 'tipo_id')]]" selected="{{nivel}}"></sapo-selector>
+      <sapo-selector id="nivelSelector" label="Nivel" data="[[_computeSelectorData(data.niveis, tipo, 'tipo_id')]]" selected="{{nivel}}"></sapo-selector>
       <paper-toggle-button disabled="[[!nivelChecked]]" checked="{{nivelChecked}}"></paper-toggle-button>
     </div>
     <div>
-      <sapo-selector label="Subnivel" data="[[_computeSelectorData(data.subniveis, nivel, 'nivel_id')]]" selected="{{subnivel}}"></sapo-selector>
+      <sapo-selector id="subnivelSelector" label="Subnivel" data="[[_computeSelectorData(data.subniveis, nivel, 'nivel_id')]]" selected="{{subnivel}}"></sapo-selector>
       <paper-toggle-button disabled="[[!subnivelChecked]]" checked="{{subnivelChecked}}"></paper-toggle-button>
     </div>
 
@@ -119,13 +124,13 @@
       }
 
       _computeSelectorData(array, fk, fkField) {
-
+        
         var selectorData = array;
 
         if (fkField)
           selectorData = array.filter(item => { return item[fkField] === fk; });
 
-        return selectorData.map(item => { return {identity: item.id, text: item.nome}; });
+        return selectorData.map(item => { return {identity: item.id, text: item.nome, warning: item.warning}; });
       }
 
 
@@ -138,6 +143,19 @@
 
       _checkedChanged(indicador, isChecked) {
         if (!isChecked) this[indicador] = 0;
+      }
+
+      softUpdate(indicadores) {
+
+        var pilares = this._computeSelectorData(indicadores.pilares);
+        var tipos = this._computeSelectorData(indicadores.tipos, this.pilar, 'pilar_id');
+        var niveis = this._computeSelectorData(indicadores.niveis, this.tipo, 'tipo_id');
+        var subniveis = this._computeSelectorData(indicadores.subniveis, this.nivel, 'nivel_id');
+
+        this.$.pilarSelector.softUpdate(pilares);
+        this.$.tipoSelector.softUpdate(tipos);
+        this.$.nivelSelector.softUpdate(niveis);
+        this.$.subnivelSelector.softUpdate(subniveis);
       }
 
     }
