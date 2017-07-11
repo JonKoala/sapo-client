@@ -137,46 +137,32 @@ function Hello($scope, $http) {
       }
       var today = yyyy+'-'+mm+'-'+dd;
 
-
-
-      // Variaveis carregadas, hora de criar as tabelas de notas.
-      // Primeiro passo criar avaliacao.
-      // avaliacao/luciano/123456/1/AvalPostTeste/ObjetivoTeste/2016-01-01/null
-      url = ""+"avaliacao"+"/"+$scope.na_indicador+"/"+$scope.na_nome+"/"+today+"/"+$scope.na_objetivos;
-      $http.post(SapoApiURL + url).
-      success(function(data) {
-        // Segundo passo criar ObjetoDeAvaliacao.
-        avaliacao_id = data.id;
-        console.log(avaliacao_id);
-        for(var i = 0 ; i<$scope.na_entidades.length;i++){
-          // console.log($scope.na_entidades[i]);
-          // POST /objetoavaliacao/@usuario/@senha/@entidade_id/@avaliacao_id/@observacoes=Avaliacoes->postObjetoAvaliacao
-          if($scope.na_observacoes.length>1){
-            url_objetoavaliacao = ""+"objetoavaliacao"+"/"+$scope.na_entidades[i]+"/"+avaliacao_id+"/"+$scope.na_observacoes;
-          }else{
-            url_objetoavaliacao = ""+"objetoavaliacao"+"/"+$scope.na_entidades[i]+"/"+avaliacao_id;
-          }
-          $http.post(SapoApiURL + url_objetoavaliacao).
-          success(function(data2) {
-            objetoavaliacao_id = data2.id;
-            // Criar tabela de nota.
-            // POST /nota/@usuario/@senha/@usuario_id/@item_id/@objetodeavaliacao_id/@observacoes=Avaliacoes->postNota
-            // url_nota = ""+"nota"+"/"+$scope.username+"/"+$scope.password+"/"+$scope.usuario_id+"/"+MUDARR+"/"+objetoavaliacao_id+"/null";
-            for(var j = 0 ; j<$scope.na_itens.length;j++){
-              url_nota = ""+"nota"+"/"+$scope.usuario_id+"/"+$scope.na_itens[j]+"/"+objetoavaliacao_id;
-              $http.post(SapoApiURL + url_nota).
-              success(function(data3) {
-                console.log("Inseri um item");
-              });
-              setTimeout(function(){
-                $scope.setConteudo("avaliacoes-old");
-              }, 2000);
-            }
-          });
-        }
+      //gerando objetos ajax
+      var avaliacao = {
+        indicador: $scope.na_indicador,
+        nome: $scope.na_nome,
+        inicio: today,
+        objetivos: $scope.na_objetivos
+      };
+      var objetosAvaliacao = $scope.na_entidades.map(entidade => {
+        return {entidade: entidade, observacoes: $scope.na_observacoes};
       });
-      // Redirecionar para setConteudo(avaliacoes)
+      var notas = $scope.na_itens.map(item => {
+        return {item: item, usuario: $scope.usuario_id}
+      });
 
+      $http({
+        method: 'POST',
+        url: SapoApiURL + 'avaliacao',
+        data: {avaliacao: avaliacao, objetosAvaliacao: objetosAvaliacao, notas: notas}
+      }).success(function (result) {
+
+        var url = window.location.href;
+        url = url.split('/');
+        url[url.length - 1] = 'avaliacoes/' + result.id;
+        url = url.join('/');
+        window.location.href = url;
+      });
 
 
     }
