@@ -51,6 +51,13 @@ app.get('/criterio-legal/*', function(req, res) {
   res.sendFile('index.html', { root : __dirname})
 });
 
+app.get('/relatorios', function(req, res) {
+  res.sendFile('index.html', { root : __dirname})
+});
+app.get('/relatorios/*', function(req, res) {
+  res.sendFile('index.html', { root : __dirname})
+});
+
 app.get(/^(.+)$/, function(req, res) {
     console.log('static file request : ' + req.params[0]);
     res.sendFile(__dirname + req.params[0]);
