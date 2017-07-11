@@ -94,7 +94,7 @@
                   <ul class="nav navbar-nav" id="menu_topo">
                     <li id="inicio"><a href="/inicio" ng-click="setConteudo('inicio')">Inicio</a></li>
                     <li id="avaliacoes"><a href="/avaliacoes" ng-click="setConteudo('avaliacoes')">Avaliações</a></li>
-                    <li id="avaliacoes-old"><a href="/avaliacoes-old" ng-click="setConteudo('avaliacoes-old')">Avaliações (Antigo)</a></li>
+                    <!--<li id="avaliacoes-old"><a href="/avaliacoes-old" ng-click="setConteudo('avaliacoes-old')">Avaliações (Antigo)</a></li>-->
                     <li id="nova_avaliacao"><a href="/nova_avaliacao" ng-click="setConteudo('nova_avaliacao')">Nova Avaliação</a></li>
                     <li id="indicadores"><a href="/indicadores" ng-click="setConteudo('indicadores')">Indicadores</a></li>
                     <li id="criterio-legal"><a href="/criterio-legal" ng-click="setConteudo('criterio-legal')">Critério Legal</a></li>
@@ -119,13 +119,13 @@
                 <br/>
                 <div class="row" align="center">
                   <div class="col-md-4">
-                    <a href="#" type="button" class="btn btn-primary btn-lg" ng-click="setConteudo('avaliacoes')" data-loading-text="Loading ...">Avaliações</a>
+                    <a href="/avaliacoes" class="btn btn-primary btn-lg" ng-click="setConteudo('avaliacoes')">Avaliações</a>
                   </div>
                   <div class="col-md-4">
-                    <a href="#" class="btn btn-primary btn-lg" ng-click="setConteudo('nova_avaliacao')">Nova Avaliação</a>
+                    <a href="/nova_avaliacao" class="btn btn-primary btn-lg" ng-click="setConteudo('nova_avaliacao')">Nova Avaliação</a>
                   </div>
                   <div class="col-md-4">
-                    <a href="#" class="btn btn-primary btn-lg" ng-click="setConteudo('indicadores')">Indicadores</a>
+                    <a href="indicadores" class="btn btn-primary btn-lg" ng-click="setConteudo('indicadores')">Indicadores</a>
                   </div>
               </div>
             </div>
