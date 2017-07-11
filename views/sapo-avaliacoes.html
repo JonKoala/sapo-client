@@ -13,7 +13,7 @@
 
     <iron-pages selected="[[page]]" selected-attribute="active" attr-for-selected="name">
       <sapo-list-avaliacoes appconfig="[[appconfig]]" name="list-avaliacoes" on-evaluate="_expandAvaliacao"></sapo-list-avaliacoes>
-      <sapo-list-objetos-avaliacao appconfig="[[appconfig]]" name="list-objetos-avaliacao" avaliacao="[[pathData.avaliacao]]" on-evaluate="_expandObjetoAvaliacao"></sapo-list-objetos-avaliacao>
+      <sapo-list-objetos-avaliacao appconfig="[[appconfig]]" name="list-objetos-avaliacao" avaliacao="[[pathData.avaliacao]]" on-evaluate="_expandObjetoAvaliacao" on-report="_showReport"></sapo-list-objetos-avaliacao>
       <sapo-evaluate-objeto-avaliacao appconfig="[[appconfig]]" name="evaluate-objeto-avaliacao" objeto-avaliacao-id="[[pathData.objetoAvaliacao]]"></sapo-evaluate-objeto-avaliacao>
     </iron-pages>
 
@@ -87,6 +87,13 @@
 
       _expandObjetoAvaliacao(e) {
         this.updateObjetoAvaliacao(e.detail);
+      }
+
+      _showReport(e) {
+        var url = '/' + e.detail;
+        this.set('route.prefix', '/relatorios');
+        window.history.pushState({}, null, this.route.prefix + url);
+        window.dispatchEvent(new CustomEvent('location-changed'));
       }
 
 

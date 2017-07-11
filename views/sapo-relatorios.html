@@ -222,7 +222,7 @@
       }
 
       _isReady(route, appconfig) {
-        return route != null && appconfig != null;
+        return route != null && route.prefix === "/relatorios" && appconfig != null;
       }
 
       _computeId(routeData) {
