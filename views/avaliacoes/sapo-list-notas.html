@@ -34,7 +34,7 @@
             <td>[[item.item.nome]]</td>
             <td>[[item.item.exigencia]]</td>
             <td>
-              <sapo-poor-selector on-select="_notaChanged" selected="{{item.pontuacao_id}}" data="[[_computeSelectorData(item.item.pontuacoes)]]" ></sapo-selector>
+              <sapo-poor-selector on-select="_notaChanged" selected="{{item.pontuacao_id}}" data="[[_computeSelectorData(item.item.pontuacoes)]]" ></sapo-poor-selector>
             </td>
             <td>
               <paper-button on-click="_editClicked" tabIndex="-1" raised class="orange"><iron-icon class="tiny" icon="create"></iron-icon>Editar</paper-button>
@@ -63,7 +63,14 @@
       //OBSERVERS & COMPUTEDS
 
       _computeSelectorData(pontuacoes) {
-        return pontuacoes.map(pontuacao => { return { identity: pontuacao.id, text: pontuacao.nota + ' - ' + pontuacao.descricao }; });
+        var pontuacoesMap = pontuacoes.map(pontuacao => {
+          return {
+            identity: pontuacao.id,
+            nota: pontuacao.nota,
+            text: pontuacao.nota + ' - ' + pontuacao.descricao };
+        });
+
+        return pontuacoesMap.sort((a, b) => a.nota - b.nota);
       }
 
       _isNotaHidden(itemId, idsToShow) {

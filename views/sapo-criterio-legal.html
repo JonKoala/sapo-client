@@ -84,21 +84,26 @@
       //OBSERVERS & COMPUTEDS
 
       _computeCriteriosLegais(data) {
-        return data.map(item => {
+        var mapData = data.map(item => {
           return {
             id: item.id,
             text: item.norma.nome + " - " + item.descricao
           }
         });
+
+        return mapData.sort(this._sortMethod);
       }
 
       _computeNormas(data) {
-        return data.map(item => {
+
+        var mapData = data.map(item => {
           return {
             id: item.id,
             text: item.nome
           }
         });
+
+        return mapData.sort(this._sortMethod);
       }
 
 
@@ -192,6 +197,14 @@
         var note = (isPersistent) ? this.$.persistentNote : this.$.quickNote;
         note.text = text;
         note.open();
+      }
+
+      _sortMethod(a, b) {
+        let textA = a.text.toLowerCase();
+        let textB = b.text.toLowerCase();
+        if (textA < textB) return -1;
+        if (textA > textB) return 1;
+        return 0;
       }
 
     }

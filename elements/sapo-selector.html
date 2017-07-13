@@ -2,12 +2,13 @@
 <link rel="import" href="/bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
 <link rel="import" href="/bower_components/paper-listbox/paper-listbox.html">
 <link rel="import" href="/bower_components/paper-item/paper-item.html">
+<link rel="import" href="./sapo-styles.html">
 
 <dom-module id="sapo-selector">
 
   <template>
 
-    <style>
+    <style include="sapo-styles">
 
       paper-dropdown-menu {
         width: 200px;
@@ -23,7 +24,7 @@
 
     </style>
 
-    <paper-dropdown-menu id="contentSelector" label="[[label]]" disabled="[[_isDisabled(data, disabled)]]"
+    <paper-dropdown-menu id="contentSelector" label="[[label]]" class$="[[_computeDropdownCss(hidden)]]" disabled="[[_isDisabled(data, disabled)]]"
                          no-animations="[[noFun]]" no-label-float="[[noFun]]" noink="[[noFun]]">
       <paper-listbox slot="dropdown-content" selected="{{selected}}" attr-for-selected="value" class="dropdown-content">
         <template is="dom-repeat" items="[[data]]">
@@ -55,12 +56,17 @@
           softUpdating: Boolean,
 
           disabled: Boolean,
+          hidden: Boolean,
           noFun: Boolean
         }
       }
 
       _isDisabled(data, disabled) {
         return data.length === 0 || disabled;
+      }
+
+      _computeDropdownCss(hidden) {
+        return (hidden) ? 'hidden' : '';
       }
 
       _computeItemCss(isWarning) {
@@ -81,9 +87,11 @@
       //UTILS
 
       softUpdate(newData) {
+        var softUpdateState = (this.softUpdate === true); //yeah, i know...
+
         this.softUpdating = true;
         this.data = newData;
-        this.softUpdating = false;
+        this.softUpdating = softUpdateState;
       }
 
     }
