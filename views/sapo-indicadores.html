@@ -189,7 +189,7 @@
 
       _selectIndicador(e) {
 
-        var indicador = e.target.getAttribute('indicador');
+        var indicador = e.currentTarget.getAttribute('indicador');
         var selectedValue = e.detail.id;
 
         this[indicador] = selectedValue;
@@ -206,7 +206,7 @@
       }
 
       _newIndicador(e) {
-        this.crud = e.target.getAttribute('indicador');
+        this.crud = e.currentTarget.getAttribute('indicador');
         var previousIndicador = this._getPreviousIndicador(this.crud);
         var crudElement = this.$.crudSelector.selectedItem;
 
@@ -216,7 +216,7 @@
       }
 
       _editIndicador(e) {
-        this.crud = e.target.getAttribute('indicador');
+        this.crud = e.currentTarget.getAttribute('indicador');
         var crudElement = this.$.crudSelector.selectedItem;
 
         crudElement.id = e.detail.id;
@@ -225,7 +225,7 @@
       }
 
       _deleteIndicador(e) {
-        this.crud = e.target.getAttribute('indicador');
+        this.crud = e.currentTarget.getAttribute('indicador');
         var crudElement = this.$.crudSelector.selectedItem;
 
         crudElement.id = e.detail.id;
@@ -255,7 +255,7 @@
       _saveResult(e) {
         this.$.overlayArea.close();
 
-        var indicador = e.target.getAttribute('indicador');
+        var indicador = e.currentTarget.getAttribute('indicador');
         var entity = e.detail;
 
         var ajax = this._getElementByIndicador('iron-ajax', indicador);
@@ -274,7 +274,7 @@
         this.$.overlayArea.close();
 
         var deleted = e.detail.deleted;
-        var indicador = e.target.getAttribute('indicador');
+        var indicador = e.currentTarget.getAttribute('indicador');
         var label = this._getIndicadorLabel(indicador);
 
         if (deleted) {

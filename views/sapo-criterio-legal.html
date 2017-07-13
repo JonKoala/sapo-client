@@ -106,7 +106,7 @@
       //EVENTS
 
       _newEntity(e) {
-        this.crud = e.target.getAttribute('entity');
+        this.crud = e.currentTarget.getAttribute('entity');
         this.$.crudSelector.selected = this.crud;
 
         var crudElement = this.$.crudSelector.selectedItem;
@@ -115,7 +115,7 @@
       }
 
       _editEntity(e) {
-        this.crud = e.target.getAttribute('entity');
+        this.crud = e.currentTarget.getAttribute('entity');
         this.$.crudSelector.selected = this.crud;
 
         var crudElement = this.$.crudSelector.selectedItem;
@@ -125,7 +125,7 @@
       }
 
       _deleteEntity(e) {
-        this.crud = e.target.getAttribute('entity');
+        this.crud = e.currentTarget.getAttribute('entity');
         this.$.crudSelector.selected = this.crud;
 
         var crudElement = this.$.crudSelector.selectedItem;
@@ -168,7 +168,7 @@
       }
 
       _crudClosed(e) {
-        let crudElement = e.target.selectedItem;
+        let crudElement = this.$.crudSelector.selectedItem;
         if (crudElement)
           crudElement.mode = 'closed';
       }

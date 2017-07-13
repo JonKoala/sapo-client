@@ -56,7 +56,7 @@
         </template>
       </paper-listbox>
     </paper-dropdown-menu>
-    <paper-input value="[[_computeNormaText(norma)]]" hidden="[[!deleteMode]]" readonly></paper-input>
+    <paper-input value="[[_computeNormaText(normas, norma)]]" hidden="[[!deleteMode]]" readonly></paper-input>
     <paper-textarea id="descricaoInput" name="descricao" label="Descrição" value="{{data.descricao}}" readonly="[[disabled]]" rows="3" ></paper-textarea>
 
 
@@ -121,9 +121,9 @@
       //
       //OBSERVERS & COMPUTEDS
 
-      _computeNormaText(norma) {
-        if (this.normas && norma)
-          return this.normas.find(item => { return item.id === norma; }).nome;
+      _computeNormaText(normas, norma) {
+        if (normas && norma)
+          return normas.find(item => { return item.id === norma; }).nome;
       }
 
       _idChanged(newId) {
@@ -154,6 +154,7 @@
             break;
           case 'delete':
             this.$.getAjax.generateRequest();
+            this.$.getNormasAjax.generateRequest();
             this._blurTextarea()
               .then(() => {
                 this.disabled = true;
