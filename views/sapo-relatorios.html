@@ -4,6 +4,7 @@
 <link rel="import" href="/bower_components/paper-card/paper-card.html">
 <link rel="import" href="/elements/sapo-styles.html">
 <link rel="import" href="./avaliacoes/sapo-avaliacoes-math.html">
+<link rel="import" href="./relatorios/sapo-avaliacao-information-bar.html">
 
 <dom-module id="sapo-relatorios">
 
@@ -103,6 +104,11 @@
         white-space: pre;
       }
 
+      sapo-avaliacao-information-bar {
+        width: 100%;
+        margin: 5px 100px;
+      }
+
     </style>
 
     <app-route route="{{route}}" pattern="/:id" data="{{routeData}}"></app-route>
@@ -112,11 +118,7 @@
     <iron-ajax auto="[[ready]]" url="[[appconfig.url.api]]/objetosavaliacao/[[id]]/full" last-response="{{objetoAvaliacao}}"></iron-ajax>
     <iron-ajax auto="[[ready]]" url="[[appconfig.url.api]]/notas/objetoavaliacao/[[id]]/full" loading="{{loading}}" last-response="{{notas}}"></iron-ajax>
 
-    <paper-card id="information-area">
-      <div class$="[[_computeTableCss(loading)]]"><b>ENTIDADE:</b> [[objetoAvaliacao.entidade.nome]] <b>   AVALIAÇÃO:</b> [[objetoAvaliacao.avaliacao.nome]]</div>
-      <div class$="[[_computeTableCss(loading)]]"><b>Nota:</b> [[evaluationAbsoluteScore]] <b>   Pontuação Parcial:</b> [[evaluationRelativeScore]]</div>
-      <div class$="[[_computeTableCss(loading)]]"><b>Concluído:</b> [[evaluationConclusionPercentage]]</div>
-    </paper-card>
+    <sapo-avaliacao-information-bar  objeto-avaliacao="[[objetoAvaliacao]]" notas="[[notas]]"></sapo-avaliacao-information-bar>
 
     <paper-card class="card-block">
 
@@ -191,10 +193,7 @@
             computed: '_computePilares(notas)'
           },
 
-          notas: {
-            type: Array,
-            observer: '_notasChanged'
-          },
+          notas: Array,
           objetoAvaliacao: Object,
 
           evaluationConclusionPercentage: String,
@@ -301,38 +300,6 @@
         });
 
         return pilares;
-      }
-
-
-      //
-      //OBSERVERS
-
-      _notasChanged(notas) {
-
-        //give each nota its pontuacao object, acording with its pontuacao_id
-        notas.forEach(nota => {
-          nota.pontuacao = nota.item.pontuacoes.find(pontuacao => pontuacao.id === nota.pontuacao_id);
-        });
-
-        this._updateEvaluationResults();
-      }
-
-
-      //
-      //UTILS
-
-      _updateEvaluationResults() {
-
-        if (this.notas.length === 0) return;
-
-        var conclusionPercentage = this.$.avaliacaoMath.calcPercentageOfConclusion(this.notas);
-        this.evaluationConclusionPercentage = conclusionPercentage + '%';
-
-        var absoluteScore = this.$.avaliacaoMath.calcAbsoluteScore(this.notas);
-        this.evaluationAbsoluteScore = absoluteScore.absoluteScore + ' de ' + absoluteScore.maxScore + '\n(' + absoluteScore.percentage + '%)';
-
-        var relativeScore = this.$.avaliacaoMath.calcRelativeScore(this.notas);
-        this.evaluationRelativeScore = relativeScore.relativeScore + ' de ' + relativeScore.maxScore + '\n(' + relativeScore.percentage + '%)';
       }
 
     }
