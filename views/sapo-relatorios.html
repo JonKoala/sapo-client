@@ -1,8 +1,10 @@
 <link rel="import" href="/bower_components/polymer/polymer-element.html">
 <link rel="import" href="/bower_components/app-route/app-route.html">
 <link rel="import" href="/bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="/bower_components/paper-button/paper-button.html">
 <link rel="import" href="./relatorios/sapo-avaliacao-information-bar.html">
 <link rel="import" href="./relatorios/sapo-relatorio-objeto-avaliacao.html">
+<link rel="import" href="./relatorios/sapo-relatorio-objeto-avaliacao-download.html">
 
 <dom-module id="sapo-relatorios">
 
@@ -13,6 +15,11 @@
       :host {
         display: flex;
         flex-wrap: wrap;
+      }
+
+      paper-button {
+        position: absolute;
+        margin-top: 95px;
       }
 
       sapo-relatorio-objeto-avaliacao {
@@ -32,8 +39,12 @@
     <iron-ajax auto="[[ready]]" url="[[appconfig.url.api]]/objetosavaliacao/[[id]]/full" last-response="{{objetoAvaliacao}}"></iron-ajax>
     <iron-ajax auto="[[ready]]" url="[[appconfig.url.api]]/notas/objetoavaliacao/[[id]]/full" last-response="{{notas}}"></iron-ajax>
 
+    <sapo-relatorio-objeto-avaliacao-download id="relatorioDownloader" notas="[[notas]]" ready="{{downloadReady}}"></sapo-relatorio-objeto-avaliacao-download>
+
     <sapo-avaliacao-information-bar objeto-avaliacao="[[objetoAvaliacao]]" notas="[[notas]]"></sapo-avaliacao-information-bar>
     <sapo-relatorio-objeto-avaliacao notas="[[notas]]"></sapo-relatorio-objeto-avaliacao>
+
+    <paper-button raised class$="[[_computeDownloadButtonCss(downloadReady)]] blue" on-click="_downloadCsv" >CSV</paper-button>
 
   </template>
 
@@ -56,9 +67,17 @@
           ready: {
             type: Boolean,
             computed: '_isReady(route, appconfig)'
+          },
+          downloadReady: {
+            type: Boolean,
+            value: () => { return false; }
           }
         }
       }
+
+
+      //
+      //COMPUTEDS
 
       _isReady(route, appconfig) {
         return route != null && route.prefix === "/relatorios" && appconfig != null;
@@ -66,6 +85,18 @@
 
       _computeId(routeData) {
         return parseInt(routeData.id);
+      }
+
+      _computeDownloadButtonCss(isReady) {
+        return (isReady) ? '' : 'hidden';
+      }
+
+      
+      //
+      //EVENTS
+
+      _downloadCsv() {
+        this.$.relatorioDownloader.downloadCsv();
       }
 
     }

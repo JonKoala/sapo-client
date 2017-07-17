@@ -1,0 +1,123 @@
+<link rel="import" href="/bower_components/polymer/polymer-element.html">
+
+<dom-module id="sapo-relatorio-objeto-avaliacao-download">
+
+  <template>
+
+    <a id="csvAnchor" style="display:none" href="[[csvData]]" download="[[_computeCsvFileName(csvFileName)]]"></a>
+
+  </template>
+
+  <script>
+    class SapoRelatorioObjetoAvaliacaoDownload extends Polymer.Element {
+
+      static get is() { return 'sapo-relatorio-objeto-avaliacao-download'; }
+
+      static get properties() {
+        return {
+          notas: Array,
+          data: {
+            type: Object,
+            computed: '_computeData(notas)'
+          },
+
+          csvData: {
+            type: String,
+            computed: '_computeCsvData(data)'
+          },
+          csvFileName: {
+            type: String,
+            value: () => { return null; }
+          },
+
+          ready: {
+            type: Boolean,
+            notify: true,
+            computed: '_isReady(data)'
+          }
+        }
+      }
+
+      //
+      //COMPUTEDS
+
+      _computeData(notas) {
+
+        var data = notas.map(nota => {
+          return {
+            situacao: (nota.pontuacao == null) ? null : nota.pontuacao.descricao,
+            nota: (nota.pontuacao == null) ? null : nota.pontuacao.nota,
+            notaAtribuida: (nota.pontuacao == null) ? null : (nota.pontuacao.nota * nota.item.notaMaxima),
+            notaMaxima: nota.item.notaMaxima,
+            exigencia: nota.item.exigencia,
+            item: nota.item.nome,
+            subnivel: nota.item.subnivel.nome,
+            nivel: nota.item.subnivel.nivel.nome,
+            tipo: nota.item.subnivel.nivel.tipo.nome,
+            pilar: nota.item.subnivel.nivel.tipo.pilar.nome,
+            indicador: nota.item.subnivel.nivel.tipo.pilar.indicador.nome
+          };
+        });
+
+        return data;
+      }
+
+      _computeCsvData(data) {
+
+        if (data == null)
+          return '';
+
+        var dataAsStringArray = data.map(entry => {
+          let arrayData = [
+            entry.indicador,
+            entry.pilar,
+            entry.tipo,
+            entry.nivel,
+            entry.subnivel,
+            entry.item,
+            entry.exigencia,
+            entry.notaMaxima,
+            entry.nota,
+            entry.notaAtribuida,
+            entry.situacao
+          ];
+          return arrayData.join(';')
+        });
+        dataAsStringArray.unshift('Indicador;Pilar;Tipo;Nível;Subnível;Item;Exigência;Nota Máxima;Nota;Nota atribuída;Situação Encontrada');
+
+        return 'data:text/csv;charset=utf-8,' + escape(dataAsStringArray.join('\n'));
+      }
+
+      _computeCsvFileName(fileName) {
+
+        if (fileName == null) {
+          var date = new Date();
+          var day = date.getDate();
+          day = (day > 9) ? day : '0' + day;
+          var month = date.getMonth() + 1;
+          month = (month > 9) ? month : '0' + month;
+          var year = date.getFullYear();
+
+          fileName = year + '-' + month + '-' + day;
+        }
+
+        return fileName + '.csv';
+      }
+
+      _isReady(data) {
+        return data != null;
+      }
+
+
+      //
+      //PUBLIC API
+
+      downloadCsv() {
+        this.$.csvAnchor.click();
+      }
+
+    }
+
+    window.customElements.define(SapoRelatorioObjetoAvaliacaoDownload.is, SapoRelatorioObjetoAvaliacaoDownload);
+  </script>
+</dom-module>
