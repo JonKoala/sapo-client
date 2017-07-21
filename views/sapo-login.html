@@ -1,0 +1,100 @@
+<link rel="import" href="/bower_components/polymer/polymer-element.html">
+<link rel="import" href="/bower_components/paper-card/paper-card.html">
+<link rel="import" href="/bower_components/paper-toast/paper-toast.html">
+<link rel="import" href="/elements/sapo-styles.html">
+<link rel="import" href="./usuarios/sapo-login-form.html">
+
+<dom-module id="sapo-login">
+
+  <template>
+
+    <style include="sapo-styles">
+
+      :host {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+
+      paper-card.card-block {
+        width: 400px;
+        display: flex;
+        justify-content: flex-start;
+      }
+
+      sapo-login-form {
+        margin-left: 20px;
+        align-self: flex-start;
+      }
+
+    </style>
+
+    <app-route route="{{route}}"></app-route>
+
+    <paper-card class="card-block">
+      <h2>Login</h2>
+      <hr>
+      <sapo-login-form id="loginForm" on-login-response="_loginResponse" appconfig="[[appconfig]]"></sapo-login-form>
+    </paper-card>
+
+    <paper-toast id="quickNote"></paper-toast>
+
+  </template>
+
+  <script>
+    class SapoLogin extends Polymer.Element {
+
+      static get is() { return 'sapo-login'; }
+
+      static get properties() {
+        return {
+          active: {
+            type: Boolean,
+            observer: '_activeChange'
+          }
+        }
+      }
+
+      _activeChange(isActive) {
+        this.$.loginForm.clear();
+      }
+
+      _loginResponse(e) {
+        if (e.detail.success) {
+          this.dispatchEvent(new CustomEvent('login', {detail: e.detail}));
+
+          this._showNotification('Logado como ' + e.detail.user.usuario + '. Redirecionando para tela inicial em 3 segundos...');
+          this.sleep(3000).then(() => { this._redirect('inicio'); });
+        } else {
+          this._showNotification('Erro durante o Login - ' + e.detail.message);
+        }
+      }
+
+      _showNotification(text) {
+        this.$.quickNote.close();
+        this.$.quickNote.text = text;
+        this.$.quickNote.open();
+      }
+
+
+      //
+      //UTILS
+
+      //TODO: tentar deixar isso global
+      sleep(time) {
+        return new Promise(resolve => {
+          setTimeout(resolve, time);
+        });
+      }
+
+      _redirect(page) {
+        this.set('route.prefix', '/' + page);
+        window.history.pushState({}, null, this.route.prefix);
+        window.dispatchEvent(new CustomEvent('location-changed'));
+      }
+
+    }
+
+    window.customElements.define(SapoLogin.is, SapoLogin);
+  </script>
+</dom-module>

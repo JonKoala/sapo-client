@@ -1,0 +1,117 @@
+<link rel="import" href="/bower_components/polymer/polymer-element.html">
+<link rel="import" href="/bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="/bower_components/paper-card/paper-card.html">
+<link rel="import" href="/bower_components/paper-input/paper-input.html">
+<link rel="import" href="/bower_components/paper-button/paper-button.html">
+<link rel="import" href="/elements/sapo-styles.html">
+
+<dom-module id="sapo-login-form">
+
+  <template>
+
+    <style include="sapo-styles">
+
+      :host {
+        display: flex;
+        flex-direction: column;
+      }
+
+      div {
+        margin: 20px 0px 10px;
+      }
+
+    </style>
+
+    <iron-ajax id="postLogin"
+      url="[[appconfig.url.api]]/auth/login/"
+      method="POST"
+      content-type="application/json"
+      handle-as="json"
+      body="[[ajaxData]]"
+      on-response="_loginResponse"
+      on-error="_errorLoginResponse">
+    </iron-ajax>
+
+    <paper-input label="Login" value="{{usuario}}"></paper-input>
+    <paper-input label="Senha" type="password" value="{{senha}}"></paper-input>
+
+    <div>
+      <paper-button disabled="[[saveDisabled]]" class="blue" on-click="_submitClicked" raised><iron-icon icon="input"></iron-icon>&nbsp;&nbsp;Entrar</paper-button>
+      <paper-button class="gray" on-click="_clearClicked" raised><iron-icon icon="rounded-corner"></iron-icon>Limpar</paper-button>
+    </div>
+
+  </template>
+
+  <script>
+    class SapoLoginForm extends Polymer.Element {
+
+      static get is() { return 'sapo-login-form'; }
+
+      static get properties() {
+        return {
+          usuario: String,
+          senha: String,
+          ajaxData: {
+            type: Object,
+            computed: '_computedData(usuario, senha)'
+          },
+
+          saveDisabled: {
+            type: Boolean,
+            computed: '_isSaveDisabled(usuario, senha)',
+            value: () => { return true; }
+          }
+        }
+      }
+
+
+      //
+      //COMPUTEDS
+
+      _computedData(usuario, senha) {
+        return {usuario: usuario, senha: senha};
+      }
+
+      _isSaveDisabled(usuario, senha) {
+        return (usuario == null || usuario == '' || senha == null || senha == '');
+      }
+
+
+      //
+      //EVENTS
+
+      _submitClicked() {
+        this.$.postLogin.generateRequest();
+      }
+
+      _clearClicked() {
+        this.clear();
+      }
+
+      _loginResponse(e) {
+        var detail = { success: true, user: e.detail.response.usuario, token: e.detail.response.token };
+        this.dispatchEvent(new CustomEvent('login-response', {detail: detail}));
+      }
+
+      _errorLoginResponse(e) {
+        console.log(e.detail);
+
+        var code = e.detail.request.xhr.status;
+        if (code == 401)
+          this.dispatchEvent(new CustomEvent('login-response', {detail: {success: false, message: 'Usuário não encontrado'}}));
+      }
+
+
+      //
+      //PUBLIC API
+
+      clear() {
+        this.usuario = null;
+        this.senha = null;
+      }
+
+    }
+
+    window.customElements.define(SapoLoginForm.is, SapoLoginForm);
+  </script>
+</dom-module>

@@ -1,0 +1,47 @@
+<link rel="import" href="/bower_components/polymer/polymer-element.html">
+<link rel="import" href="/bower_components/scary-cookie/scary-cookie.html">
+
+<dom-module id="sapo-cookies">
+
+  <template>
+
+    <scary-cookie name="profile" value="{{profileCookie}}"></scary-cookie>
+
+  </template>
+
+  <script>
+    class SapoCookies extends Polymer.Element {
+
+      static get is() { return 'sapo-cookies'; }
+
+      static get properties() {
+        return {
+          profileCookie: String,
+          profile: {
+            type: Object,
+            notify: true
+          }
+        }
+      }
+
+      static get observers() {
+        return [
+          '_profileObserver(profile.*)',
+          '_profileCookieObserver(profileCookie)'
+        ];
+      }
+
+      _profileObserver(newProfile) {
+        this.profileCookie = JSON.stringify(newProfile.base);
+      }
+
+      _profileCookieObserver(newProfileCookie) {
+        if (JSON.stringify(this.profile) != newProfileCookie)
+          this.profile = JSON.parse(newProfileCookie);
+      }
+
+    }
+
+    window.customElements.define(SapoCookies.is, SapoCookies);
+  </script>
+</dom-module>

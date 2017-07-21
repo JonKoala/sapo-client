@@ -3,12 +3,14 @@
 <link rel="import" href="/bower_components/app-route/app-route.html">
 <link rel="import" href="/bower_components/iron-ajax/iron-ajax.html">
 <link rel="import" href="/bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="/elements/sapo-cookies.html">
 
 <dom-module id="sapo-app">
 
   <template>
 
     <iron-ajax auto url="/appconfig.json" handle-as="json" last-response="{{appconfig}}"></iron-ajax>
+    <sapo-cookies profile="{{profile}}"></sapo-cookies>
 
     <app-location route="{{route}}"></app-location>
     <app-route
@@ -17,11 +19,12 @@
         data="{{routeData}}"
         tail="{{subroute}}"></app-route>
 
-    <iron-pages selected="[[page]]" attr-for-selected="name">
+    <iron-pages selected="[[page]]" attr-for-selected="name" selected-attribute="active">
       <sapo-indicadores appconfig="[[appconfig]]" route="{{subroute}}" name="indicadores"></sapo-indicadores>
       <sapo-criterio-legal appconfig="[[appconfig]]" route="{{subroute}}" name="criterio-legal"></sapo-criterio-legal>
       <sapo-avaliacoes appconfig="[[appconfig]]" route="{{subroute}}" name="avaliacoes"></sapo-avaliacoes>
       <sapo-relatorios appconfig="[[appconfig]]" route="{{subroute}}" name="relatorios"></sapo-relatorios>
+      <sapo-login appconfig="[[appconfig]]" route="{{subroute}}" name="login" on-login="_userLoggedIn"></sapo-login>
       <sapo-nothing name="nothing" ></sapo-nothing>
     </iron-pages>
 
@@ -39,21 +42,31 @@
             type: String,
             reflectToAttribute: true,
             observer: '_pageChanged',
+          },
+
+          appconfig: {
+            type: Object,
+            observer: '_appconfigChanged'
+          },
+          profile: {
+            type: Object,
+            observer: '_profileChanged'
           }
         };
       }
 
       static get observers() {
         return [
-          '_routePageChanged(routeData.page)',
+          '_routePageChanged(routeData.page)'
         ];
       }
 
-      _routePageChanged(page) {
 
-        if (page === undefined) {
-          return;
-        }
+      //
+      //COMPUTEDS & OBSERVERS
+
+      _routePageChanged(page) {
+        if (page === undefined) return;
 
         this.page = page || 'nothing';
       }
@@ -70,14 +83,36 @@
 
         // Load page import on demand. Show 404 page if fails
         var resolvedPageUrl = this.resolveUrl('sapo-' + page + '.html');
-        //console.log('resolvedPageUrl ' + resolvedPageUrl);
-        Polymer.importHref(
-            resolvedPageUrl,
-            null,
-            null,
-            true);
+        Polymer.importHref(resolvedPageUrl, null, null, true);
       }
 
+      _appconfigChanged() {
+        this._updateAppconfigProfile();
+      }
+
+      _profileChanged() {
+        this._updateAppconfigProfile();
+
+        var text = (this.profile) ? 'Logado como ' + this.profile.user.usuario : '';
+        $('#login-information').text(text);
+      }
+
+
+      //
+      //EVENTS
+
+      _userLoggedIn(e) {
+        this.profile = { user: e.detail.user, token: e.detail.token };
+      }
+
+
+      //
+      //UTILS
+
+      _updateAppconfigProfile() {
+        if (this.appconfig != null && this.appconfig.profile == null)
+          this.appconfig.profile = this.profile;
+      }
     }
 
     window.customElements.define(SapoApp.is, SapoApp);
