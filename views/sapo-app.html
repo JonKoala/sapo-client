@@ -87,11 +87,13 @@
       }
 
       _appconfigChanged() {
-        this._updateAppconfigProfile();
+        if (this.appconfig != null && this.appconfig.profile == null)
+          this.appconfig.profile = this.profile;
       }
 
       _profileChanged() {
-        this._updateAppconfigProfile();
+        if (this.appconfig != null)
+          this.appconfig.profile = this.profile;
 
         var text = (this.profile) ? 'Logado como ' + this.profile.user.usuario : '';
         $('#login-information').text(text);
@@ -103,15 +105,6 @@
 
       _userLoggedIn(e) {
         this.profile = { user: e.detail.user, token: e.detail.token };
-      }
-
-
-      //
-      //UTILS
-
-      _updateAppconfigProfile() {
-        if (this.appconfig != null && this.appconfig.profile == null)
-          this.appconfig.profile = this.profile;
       }
     }
 

@@ -165,6 +165,7 @@
 
       _updateNota(e) {
         this.$.putAjax.body = e.detail;
+        this.$.putAjax.headers = {Authorization:'JWT ' + this.appconfig.profile.token};
         this.$.putAjax.generateRequest();
       }
 

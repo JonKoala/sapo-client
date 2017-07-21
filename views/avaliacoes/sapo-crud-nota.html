@@ -95,6 +95,7 @@
       //EVENTS
 
       _submitClicked() {
+        this.$.putAjax.headers = {Authorization:'JWT ' + this.appconfig.profile.token};
         this.$.putAjax.generateRequest();
       }
 
