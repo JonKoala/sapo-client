@@ -64,7 +64,7 @@
 
       <paper-card id="list-notas-area" class="card-block">
         <paper-spinner active="[[loading]]" class$="[[_computeSpinnerCss(loading)]]" ></paper-spinner>
-        <sapo-list-notas on-nota-changed="_updateNota" on-edit-clicked="_editNota" data="[[notas]]" ids-to-show="[[_computeNotasToShow(notas, pilar, tipo, nivel, subnivel)]]" class$="[[_computeListNotasCss(loading)]]" ></sapo-list-notas>
+        <sapo-list-notas on-nota-changed="_updateNota" on-edit-clicked="_editNota" data="[[notas]]" ids-to-show="[[_computeNotasToShow(notas, pilar, tipo, nivel, subnivel)]]" disabled="[[disabled]]" class$="[[_computeListNotasCss(loading)]]" ></sapo-list-notas>
       </paper-card>
     </div>
 
@@ -89,6 +89,10 @@
             observer: '_activeChanged'
           },
           loading: Boolean,
+          disabled: {
+            type: Boolean,
+            computed: '_isEditDisabled(appconfig)'
+          },
 
           objetoAvaliacaoId: Number,
           objetoAvaliacao: Object,
@@ -136,6 +140,11 @@
 
       _computeListNotasCss(isLoading) {
         return (isLoading) ? 'hidden' : '';
+      }
+
+      _isEditDisabled(appconfig) {
+        console.log(appconfig);
+        return (appconfig == null || appconfig.profile == null)
       }
 
       _notasChanged(notas) {

@@ -17,10 +17,10 @@
       select {
         width: 200px;
       }
-      
+
     </style>
 
-    <select value="{{selectedText::change}}" >
+    <select value="{{selectedText::change}}" disabled="[[disabled]]">
       <option value="">Não avaliado</option>
       <template is="dom-repeat" items="[[data]]">
         <option selected$="{{_isOptionSelected(item.identity, selected)}}" value="[[item.identity]]">[[item.text]]</option>

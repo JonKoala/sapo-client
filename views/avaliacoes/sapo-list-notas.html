@@ -34,10 +34,10 @@
             <td>[[item.item.nome]]</td>
             <td>[[item.item.exigencia]]</td>
             <td>
-              <sapo-poor-selector on-select="_notaChanged" selected="{{item.pontuacao_id}}" data="[[_computeSelectorData(item.item.pontuacoes)]]" ></sapo-poor-selector>
+              <sapo-poor-selector on-select="_notaChanged" selected="{{item.pontuacao_id}}" data="[[_computeSelectorData(item.item.pontuacoes)]]" disabled="[[disabled]]"></sapo-poor-selector>
             </td>
             <td>
-              <paper-button on-click="_editClicked" tabIndex="-1" raised class="orange"><iron-icon class="tiny" icon="create"></iron-icon>Editar</paper-button>
+              <paper-button on-click="_editClicked" tabIndex="-1" class="orange" disabled="[[disabled]]" raised><iron-icon class="tiny" icon="create"></iron-icon>Editar</paper-button>
             </td>
           </tr>
         </template>
@@ -54,7 +54,9 @@
       static get properties() {
         return {
           data: Array,
-          idsToShow: Array
+          idsToShow: Array,
+
+          disabled: Boolean
         }
       }
 
