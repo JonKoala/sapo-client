@@ -32,8 +32,8 @@
       on-error="_errorLoginResponse">
     </iron-ajax>
 
-    <paper-input label="Login" value="{{usuario}}"></paper-input>
-    <paper-input label="Senha" type="password" value="{{senha}}"></paper-input>
+    <paper-input label="Login" value="{{usuario}}" on-keydown="_checkIfSubmit"></paper-input>
+    <paper-input label="Senha" type="password" value="{{senha}}" on-keydown="_checkIfSubmit"></paper-input>
 
     <div>
       <paper-button disabled="[[saveDisabled]]" class="blue" on-click="_submitClicked" raised><iron-icon icon="input"></iron-icon>&nbsp;&nbsp;Entrar</paper-button>
@@ -79,6 +79,11 @@
 
       //
       //EVENTS
+
+      _checkIfSubmit(e) {
+        if (e.key === 'Enter' && !this.saveDisabled)
+          this._submitClicked();
+      }
 
       _submitClicked() {
         this.$.postLogin.generateRequest();
