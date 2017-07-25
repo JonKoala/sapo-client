@@ -1,0 +1,28 @@
+<link rel="import" href="/bower_components/polymer/polymer-element.html">
+<link rel="import" href="./usuarios/sapo-crud-usuario.html">
+
+<dom-module id="sapo-usuarios">
+
+  <template>
+
+    <style>
+    </style>
+
+    <sapo-crud-usuario appconfig="[[appconfig]]"></sapo-crud-usuario>
+
+  </template>
+
+  <script>
+    class SapoUsuarios extends Polymer.Element {
+
+      static get is() { return 'sapo-usuarios'; }
+
+      static get properties() {
+        return { }
+      }
+
+    }
+
+    window.customElements.define(SapoUsuarios.is, SapoUsuarios);
+  </script>
+</dom-module>

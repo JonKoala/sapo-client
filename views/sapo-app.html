@@ -25,6 +25,7 @@
       <sapo-avaliacoes appconfig="[[appconfig]]" route="{{subroute}}" name="avaliacoes"></sapo-avaliacoes>
       <sapo-relatorios appconfig="[[appconfig]]" route="{{subroute}}" name="relatorios"></sapo-relatorios>
       <sapo-login appconfig="[[appconfig]]" route="{{subroute}}" name="login" on-login="_userLoggedIn"></sapo-login>
+      <sapo-usuarios appconfig="[[appconfig]]" route="{{subroute}}" name="usuarios"></sapo-usuarios>
       <sapo-nothing name="nothing" ></sapo-nothing>
     </iron-pages>
 
@@ -88,15 +89,18 @@
 
       _appconfigChanged() {
         if (this.appconfig != null && this.appconfig.profile == null)
-          this.appconfig.profile = this.profile;
+          this.set('appconfig.profile', this.profile);
       }
 
       _profileChanged() {
         if (this.appconfig != null)
-          this.appconfig.profile = this.profile;
+          this.set('appconfig.profile', this.profile);
 
-        var text = (this.profile) ? 'Logado como ' + this.profile.user.usuario : '';
-        $('#login-information').text(text);
+        var menuUsuarioDisplay = (this.profile) ? 'block' : 'none';
+        var loggedUserText = (this.profile) ? 'Logado como ' + this.profile.user.usuario : '';
+
+        $('#usuarios').css('display', menuUsuarioDisplay);
+        $('#login-information').text(loggedUserText);
       }
 
 

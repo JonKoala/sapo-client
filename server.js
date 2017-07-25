@@ -58,6 +58,13 @@ app.get('/login/*', function(req, res) {
   res.sendFile('index.html', { root : __dirname})
 });
 
+app.get('/usuarios', function(req, res) {
+  res.sendFile('index.html', { root : __dirname})
+});
+app.get('/usuarios/*', function(req, res) {
+  res.sendFile('index.html', { root : __dirname})
+});
+
 app.get('/relatorios', function(req, res) {
   res.sendFile('index.html', { root : __dirname})
 });

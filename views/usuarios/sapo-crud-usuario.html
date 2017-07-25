@@ -1,0 +1,52 @@
+<link rel="import" href="/bower_components/polymer/polymer-element.html">
+<link rel="import" href="/bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="/bower_components/paper-input/paper-input.html">
+<link rel="import" href="/bower_components/paper-button/paper-button.html">
+<link rel="import" href="/elements/sapo-styles.html">
+<link rel="import" href="/elements/sapo-selector.html">
+
+<dom-module id="sapo-crud-usuario">
+
+  <template>
+
+    <style include="sapo-styles">
+    </style>
+
+    <iron-ajax auto="[[ready]]" url="[[appconfig.url.api]]/navegadores/" last-response="{{navegadores}}"></iron-ajax>
+    <iron-ajax auto="[[ready]]" url="[[appconfig.url.api]]/usuarios/[[appconfig.profile.user.id]]/full" last-response="{{data}}"></iron-ajax>
+
+    <paper-input Label="Usuario" value="{{data.usuario}}" readonly></paper-input>
+    <sapo-selector label="Navegador" data="[[_computeSelectorNavegadores(navegadores)]]" selected="{{data.navegador_id}}" ></sapo-selector>
+
+  </template>
+
+  <script>
+    class SapoCrudUsuario extends Polymer.Element {
+
+      static get is() { return 'sapo-crud-usuario'; }
+
+      static get properties() {
+        return {
+          data: Object,
+          navegadores: Array,
+
+          ready: {
+            type: Boolean,
+            computed: '_isReady(appconfig.profile)'
+          }
+        }
+      }
+
+      _isReady(profile) {
+        return (profile != null)
+      }
+
+      _computeSelectorNavegadores(navegadores) {
+        return navegadores.map(navegador => { return {identity: navegador.id, text: navegador.nome + ' - ' + navegador.versao}; });
+      }
+
+    }
+
+    window.customElements.define(SapoCrudUsuario.is, SapoCrudUsuario);
+  </script>
+</dom-module>
