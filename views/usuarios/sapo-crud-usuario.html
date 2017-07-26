@@ -1,5 +1,6 @@
 <link rel="import" href="/bower_components/polymer/polymer-element.html">
 <link rel="import" href="/bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="/bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="/bower_components/paper-input/paper-input.html">
 <link rel="import" href="/bower_components/paper-button/paper-button.html">
 <link rel="import" href="/elements/sapo-styles.html">
@@ -10,13 +11,29 @@
   <template>
 
     <style include="sapo-styles">
+
+      :host {
+        display: flex;
+        flex-direction: column;
+        flex-wrap: wrap;
+      }
+
+      div {
+        padding-top: 20px;
+      }
+
     </style>
 
     <iron-ajax auto="[[ready]]" url="[[appconfig.url.api]]/navegadores/" last-response="{{navegadores}}"></iron-ajax>
     <iron-ajax auto="[[ready]]" url="[[appconfig.url.api]]/usuarios/[[appconfig.profile.user.id]]/full" last-response="{{data}}"></iron-ajax>
+    <iron-ajax id="putAjax" url="[[appconfig.url.api]]/usuarios/" method="PUT" content-type="application/json" handle-as="json" body="[[data]]" on-response="_putResponse"></iron-ajax>
 
-    <paper-input Label="Usuario" value="{{data.usuario}}" readonly></paper-input>
-    <sapo-selector label="Navegador" data="[[_computeSelectorNavegadores(navegadores)]]" selected="{{data.navegador_id}}" ></sapo-selector>
+    <paper-input Label="Usuário" value="{{data.usuario}}" readonly></paper-input>
+    <sapo-selector label="Navegador Preferêncial" data="[[_computeSelectorNavegadores(navegadores)]]" selected="{{data.navegador_id}}" ></sapo-selector>
+
+    <div>
+      <paper-button class="blue" on-click="_submitClicked" raised><iron-icon icon="save"></iron-icon>&nbsp;&nbsp;Salvar</paper-button>
+    </div>
 
   </template>
 
@@ -37,12 +54,28 @@
         }
       }
 
+
+      //
+      //COMPUTEDS
+
       _isReady(profile) {
         return (profile != null)
       }
 
       _computeSelectorNavegadores(navegadores) {
         return navegadores.map(navegador => { return {identity: navegador.id, text: navegador.nome + ' - ' + navegador.versao}; });
+      }
+
+
+      //
+      //EVENTS
+
+      _submitClicked() {
+        this.$.putAjax.generateRequest();
+      }
+
+      _putResponse(e) {
+        this.dispatchEvent(new CustomEvent('save', {detail: e.detail.response}));
       }
 
     }

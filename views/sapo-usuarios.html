@@ -1,14 +1,50 @@
 <link rel="import" href="/bower_components/polymer/polymer-element.html">
+<link rel="import" href="/bower_components/paper-card/paper-card.html">
+<link rel="import" href="/bower_components/paper-toast/paper-toast.html">
+<link rel="import" href="/elements/sapo-styles.html">
 <link rel="import" href="./usuarios/sapo-crud-usuario.html">
 
 <dom-module id="sapo-usuarios">
 
   <template>
 
-    <style>
+    <style include="sapo-styles">
+
+      :host {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+
+      paper-card.card-block {
+        width: 400px;
+        display: flex;
+        justify-content: flex-start;
+      }
+
+      sapo-crud-usuario {
+        margin-left: 20px;
+        align-self: flex-start;
+      }
+
     </style>
 
-    <sapo-crud-usuario appconfig="[[appconfig]]"></sapo-crud-usuario>
+    <iron-ajax id="postLogin"
+      url="[[appconfig.url.api]]/auth/login/"
+      method="POST"
+      content-type="application/json"
+      handle-as="json"
+      on-response="_loginResponse"
+      on-error="_errorLoginResponse">
+    </iron-ajax>
+
+    <paper-card class="card-block">
+      <h2>Preferências</h2>
+      <hr>
+      <sapo-crud-usuario appconfig="[[appconfig]]" on-save="_usuarioSaved" ></sapo-crud-usuario>
+    </paper-card>
+
+    <paper-toast id="quickNote"></paper-toast>
 
   </template>
 
@@ -19,6 +55,40 @@
 
       static get properties() {
         return { }
+      }
+
+
+      //
+      //EVENTS
+
+      _usuarioSaved(e) {
+        var usuario = e.detail;
+        this.$.postLogin.body = {usuario: usuario.usuario, senha: usuario.senha};
+        this.$.postLogin.generateRequest();
+      }
+
+      _loginResponse(e) {
+        var detail = { success: true, user: e.detail.response.usuario, token: e.detail.response.token };
+        this.dispatchEvent(new CustomEvent('login', {detail: detail}));
+
+        this._showNotification('Preferências salvas com sucesso!');
+      }
+
+      _errorLoginResponse(e) {
+        console.log(e.detail);
+
+        if (e.detail.request.xhr.status == 401)
+          this._showNotification('Erro ao autentificar o novo usuário.');
+      }
+
+
+      //
+      //UTILS
+
+      _showNotification(text) {
+        this.$.quickNote.close();
+        this.$.quickNote.text = text;
+        this.$.quickNote.open();
       }
 
     }
