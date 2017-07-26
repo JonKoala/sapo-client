@@ -192,8 +192,8 @@
       _quickNotaSaved(e) {
         this._notifyPontuacao(e.detail.status === 200);
 
-        var response = e.detail.response;
-        this._updateNotas(response.nota, response.pontuacao);
+        var nota = e.detail.response;
+        this._updateNotas(nota.id, nota.pontuacao_id);
         this._updateIndicadores(this.indicadores, this.notas);
         this.$.informationBar.updateNotas(this.notas);
       }
