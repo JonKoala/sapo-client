@@ -24,8 +24,8 @@
 
     </style>
 
-    <iron-ajax auto="[[ready]]" url="[[appconfig.url.api]]/navegadores/" last-response="{{navegadores}}"></iron-ajax>
-    <iron-ajax auto="[[ready]]" url="[[appconfig.url.api]]/usuarios/[[appconfig.profile.user.id]]/full" last-response="{{data}}"></iron-ajax>
+    <iron-ajax auto="[[active]]" url="[[appconfig.url.api]]/navegadores/" last-response="{{navegadores}}"></iron-ajax>
+    <iron-ajax auto="[[active]]" url="[[appconfig.url.api]]/usuarios/[[appconfig.profile.user.id]]/full" last-response="{{data}}"></iron-ajax>
     <iron-ajax id="putAjax" url="[[appconfig.url.api]]/usuarios/" method="PUT" content-type="application/json" handle-as="json" body="[[data]]" on-response="_putResponse"></iron-ajax>
 
     <paper-input Label="Usuário" value="{{data.usuario}}" readonly></paper-input>
@@ -47,9 +47,9 @@
           data: Object,
           navegadores: Array,
 
-          ready: {
+          active: {
             type: Boolean,
-            computed: '_isReady(appconfig.profile)'
+            computed: '_isactive(appconfig.profile)'
           }
         }
       }
@@ -58,7 +58,7 @@
       //
       //COMPUTEDS
 
-      _isReady(profile) {
+      _isactive(profile) {
         return (profile != null)
       }
 
