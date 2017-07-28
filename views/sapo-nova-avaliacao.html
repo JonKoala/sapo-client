@@ -1,0 +1,77 @@
+<link rel="import" href="/bower_components/polymer/polymer-element.html">
+<link rel="import" href="/bower_components/paper-card/paper-card.html">
+<link rel="import" href="./avaliacoes/nova-avaliacao/sapo-crud-avaliacao.html">
+<link rel="import" href="./avaliacoes/nova-avaliacao/sapo-list-entidades.html">
+<link rel="import" href="/elements/sapo-styles.html">
+
+<dom-module id="sapo-nova-avaliacao">
+
+  <template>
+
+    <style include="sapo-styles">
+
+      :host {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+
+      sapo-crud-avaliacao {
+        width: 100%;
+      }
+
+    </style>
+
+    <paper-card class="card-block">
+      <h2>Nova Avaliação</h2>
+      <hr>
+      <sapo-crud-avaliacao active="[[active]]" appconfig="[[appconfig]]" avaliacao="{{avaliacao}}"></sapo-crud-avaliacao>
+    </paper-card>
+
+    <button style="position:absolute;" on-click="print">Print</button>
+    <paper-card class="card-block" style="visibility:hidden;"></paper-card>
+
+    <paper-card class="card-block">
+      <h2>Entidades</h2>
+      <hr>
+      <sapo-list-entidades id="aa" active="[[active]]" appconfig="[[appconfig]]" entidades="{{entidades}}"></sapo-list-entidades>
+    </paper-card>
+
+    <paper-card class="card-block">
+      <h2>Itens</h2>
+      <hr>
+    </paper-card>
+
+  </template>
+
+  <script>
+    class SapoNovaAvaliacao extends Polymer.Element {
+
+      static get is() { return 'sapo-nova-avaliacao'; }
+
+      static get properties() {
+        return {
+          avaliacao: Object,
+          entidades: {
+            type: Array,
+            observer: '_entidadesChanged'
+          },
+
+          active: Boolean
+        }
+      }
+
+      _entidadesChanged(entidades) {
+        console.log(entidades);
+      }
+
+      print() {
+        this.$.aa.checkall();
+        console.log(this.avaliacao);
+      }
+
+    }
+
+    window.customElements.define(SapoNovaAvaliacao.is, SapoNovaAvaliacao);
+  </script>
+</dom-module>

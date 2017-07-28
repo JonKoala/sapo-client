@@ -1,0 +1,61 @@
+<link rel="import" href="/bower_components/polymer/polymer-element.html">
+<link rel="import" href="/bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="/bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="/bower_components/paper-input/paper-input.html">
+<link rel="import" href="/bower_components/paper-button/paper-button.html">
+<link rel="import" href="/elements/sapo-styles.html">
+<link rel="import" href="/elements/sapo-selector.html">
+
+<dom-module id="sapo-crud-avaliacao">
+
+  <template>
+
+    <style include="sapo-styles">
+
+      paper-input {
+        max-width: 400px;
+      }
+
+      paper-button {
+        margin-top: 50px;
+      }
+
+    </style>
+
+    <iron-ajax auto="[[active]]" url="[[appconfig.url.api]]/indicadores/" last-response="{{indicadores}}"></iron-ajax>
+
+    <sapo-selector label="Indicador" data="[[_computeSelectorIndicadores(indicadores)]]" selected="{{avaliacao.indicador_id}}" ></sapo-selector>
+    <paper-input label="Nome" value="{{avaliacao.nome}}"></paper-input>
+    <paper-input label="Objetivos" value="{{avaliacao.objetivos}}"></paper-input>
+
+    <paper-button class="blue"><iron-icon icon="save"></iron-icon>&nbsp;&nbsp;Salvar</paper-button>
+
+
+  </template>
+
+  <script>
+    class SapoCrudAvaliacao extends Polymer.Element {
+
+      static get is() { return 'sapo-crud-avaliacao'; }
+
+      static get properties() {
+        return {
+          avaliacao: {
+            type: Object,
+            notify: true,
+            value: () => { return {}; }
+          },
+
+          indicadores: Array
+        }
+      }
+
+      _computeSelectorIndicadores(indicadores) {
+        return indicadores.map(indicador => { return {identity: indicador.id, text: indicador.nome}; });
+      }
+
+    }
+
+    window.customElements.define(SapoCrudAvaliacao.is, SapoCrudAvaliacao);
+  </script>
+</dom-module>

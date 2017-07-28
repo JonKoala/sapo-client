@@ -30,6 +30,13 @@ app.get('/avaliacoes-old/*', function(req, res) {
   res.sendFile('index.html', { root : __dirname})
 });
 
+app.get('/nova-avaliacao', function(req, res) {
+  res.sendFile('index.html', { root : __dirname})
+});
+app.get('/nova-avaliacao/*', function(req, res) {
+  res.sendFile('index.html', { root : __dirname})
+});
+
 app.get('/nova_avaliacao', function(req, res) {
   res.sendFile('index.html', { root : __dirname})
 });
