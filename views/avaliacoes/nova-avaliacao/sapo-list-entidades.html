@@ -51,9 +51,9 @@
     <iron-ajax auto="[[active]]" indicador="indicador" url="[[appconfig.url.api]]/entidades/" last-response="{{entidades}}"></iron-ajax>
 
     <div>
-      <paper-checkbox poder="Legislativo" checked="{{legislativo}}" on-change="_poderToggled">Legislativo</paper-checkbox>
-      <paper-checkbox poder="Executivo" checked="{{executivo}}" on-change="_poderToggled">Executivo</paper-checkbox>
-      <paper-checkbox poder="Judiciário" checked="{{judiciario}}" on-change="_poderToggled">Judiciário</paper-checkbox>
+      <paper-checkbox poder="legislativo" label="Legislativo" checked="{{legislativo}}" on-change="_poderToggled">Legislativo</paper-checkbox>
+      <paper-checkbox poder="executivo" label="Executivo" checked="{{executivo}}" on-change="_poderToggled">Executivo</paper-checkbox>
+      <paper-checkbox poder="judiciario" label="Judiciário" checked="{{judiciario}}" on-change="_poderToggled">Judiciário</paper-checkbox>
     </div>
 
     <paper-listbox>
@@ -102,7 +102,9 @@
 
       _poderToggled(e) {
         var poder = e.currentTarget.getAttribute('poder');
-        this.entidades.filter(entidade => { return entidade.poder == poder; }).forEach(entidade => { entidade.checked = true; });
+        var label = e.currentTarget.getAttribute('label');
+        var checked = this[poder];
+        this.entidades.filter(entidade => { return entidade.poder == label; }).forEach(entidade => { entidade.checked = checked; });
 
         this._notifyEntidadesChanged();
       }
