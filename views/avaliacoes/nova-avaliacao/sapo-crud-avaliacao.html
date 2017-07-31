@@ -2,7 +2,6 @@
 <link rel="import" href="/bower_components/iron-ajax/iron-ajax.html">
 <link rel="import" href="/bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="/bower_components/paper-input/paper-input.html">
-<link rel="import" href="/bower_components/paper-button/paper-button.html">
 <link rel="import" href="/elements/sapo-styles.html">
 <link rel="import" href="/elements/sapo-selector.html">
 
@@ -16,19 +15,13 @@
         max-width: 400px;
       }
 
-      paper-button {
-        margin-top: 50px;
-      }
-
     </style>
 
     <iron-ajax auto="[[active]]" url="[[appconfig.url.api]]/indicadores/" last-response="{{indicadores}}"></iron-ajax>
 
     <sapo-selector label="Indicador" data="[[_computeSelectorIndicadores(indicadores)]]" selected="{{avaliacao.indicador_id}}" ></sapo-selector>
-    <paper-input label="Nome" value="{{avaliacao.nome}}"></paper-input>
-    <paper-input label="Objetivos" value="{{avaliacao.objetivos}}"></paper-input>
-
-    <paper-button class="blue"><iron-icon icon="save"></iron-icon>&nbsp;&nbsp;Salvar</paper-button>
+    <paper-input id="nomeInput" label="Nome" value="{{avaliacao.nome}}"></paper-input>
+    <paper-input id="objetivosInput" label="Objetivos" value="{{avaliacao.objetivos}}"></paper-input>
 
 
   </template>
@@ -46,12 +39,23 @@
             value: () => { return {}; }
           },
 
-          indicadores: Array
+          indicadores: Array,
+
+          active: {
+            type: Boolean,
+            observer: '_activeChanged'
+          }
         }
       }
 
       _computeSelectorIndicadores(indicadores) {
         return indicadores.map(indicador => { return {identity: indicador.id, text: indicador.nome}; });
+      }
+
+      _activeChanged() {
+        this.avaliacao.indicador_id = 0;
+        this.$.nomeInput.value = '';
+        this.$.objetivosInput.value = '';
       }
 
     }

@@ -48,16 +48,16 @@
 
     </style>
 
-    <iron-ajax auto="[[active]]" indicador="indicador" url="[[appconfig.url.api]]/entidades/" last-response="{{entidades}}"></iron-ajax>
+    <iron-ajax auto="[[active]]" url="[[appconfig.url.api]]/entidades/" last-response="{{entidades}}"></iron-ajax>
 
     <div>
-      <paper-checkbox poder="legislativo" label="Legislativo" checked="{{legislativo}}" on-change="_poderToggled">Legislativo</paper-checkbox>
       <paper-checkbox poder="executivo" label="Executivo" checked="{{executivo}}" on-change="_poderToggled">Executivo</paper-checkbox>
       <paper-checkbox poder="judiciario" label="Judiciário" checked="{{judiciario}}" on-change="_poderToggled">Judiciário</paper-checkbox>
+      <paper-checkbox poder="legislativo" label="Legislativo" checked="{{legislativo}}" on-change="_poderToggled">Legislativo</paper-checkbox>
     </div>
 
     <paper-listbox>
-      <template id="entidadesTemplate" is="dom-repeat" items="[[entidades]]" mutable-data>
+      <template is="dom-repeat" items="[[entidades]]" sort="_sortEntidades" mutable-data>
         <paper-card>
           <paper-checkbox checked="{{item.checked}}" on-change="_entidadeToggled"></paper-checkbox>
           <p>[[item.nome]] - [[item.poder]]</p>
@@ -111,6 +111,14 @@
 
       _entidadeToggled() {
         this._notifyEntidadesChanged();
+      }
+
+      _sortEntidades(a, b) {
+        var textA = (a.poder+a.nome).toLowerCase();
+        var textB = (b.poder+b.nome).toLowerCase();
+        if (textA < textB) return -1;
+        if (textA > textB) return 1;
+        return 0;
       }
 
 

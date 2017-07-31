@@ -1,0 +1,133 @@
+<link rel="import" href="/bower_components/polymer/polymer-element.html">
+<link rel="import" href="/bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="/bower_components/paper-card/paper-card.html">
+<link rel="import" href="/bower_components/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="/bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="/elements/sapo-styles.html">
+
+<dom-module id="sapo-list-itens">
+
+  <template>
+
+    <style include="sapo-styles">
+
+      :host {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+      }
+
+      div {
+        margin-bottom: 10px;
+      }
+
+      paper-listbox {
+        --paper-listbox-background-color: lightgray;
+
+        height: 250px;
+        padding: 0px;
+        overflow: auto;
+      }
+
+      paper-card {
+        display: flex;
+        justify-content: space-between;
+
+        min-height: 60px;
+        outline: 0;
+      }
+
+      paper-checkbox {
+        margin: auto 10px;
+      }
+
+      p {
+        margin: auto 10px;
+        flex-grow: 1;
+      }
+
+    </style>
+
+    <iron-ajax auto="[[_isReady(active, indicador)]]" url="[[appconfig.url.api]]/itens/indicador/[[indicador]]" last-response="{{itens}}"></iron-ajax>
+
+    <div>
+      <paper-checkbox disabled="[[!_isReady(active, indicador)]]" checked="{{globalChecker}}" on-change="_globalCheckerToggled"></paper-checkbox>
+    </div>
+
+    <paper-listbox>
+      <template is="dom-repeat" items="[[itens]]" sort="_sortItens" mutable-data>
+        <paper-card>
+          <paper-checkbox checked="{{item.checked}}" on-change="_itemToggled"></paper-checkbox>
+          <p>[[item.nome]]</p>
+        </paper-card>
+      </template>
+    </paper-listbox>
+
+  </template>
+
+  <script>
+    class SapoListItens extends Polymer.Element {
+
+      static get is() { return 'sapo-list-itens'; }
+
+      static get properties() {
+        return {
+          itens: {
+            type: Array,
+            notify: true,
+            observer: '_itensChanged'
+          },
+
+          globalChecker: Boolean
+        }
+      }
+
+
+      //
+      //COMPUTEDS & OBSERVERS
+
+      _isReady(active, indicador) {
+        return active && indicador;
+      }
+
+      _itensChanged() {
+        this.globalChecker = !this.itens.some(item => { return !item.checked });
+      }
+
+
+      //
+      //EVENTOS
+
+      _globalCheckerToggled(e) {
+        this.itens.forEach(item => { item.checked = this.globalChecker; });
+
+        this._notifyItensChanged();
+      }
+
+      _itemToggled() {
+        this._notifyItensChanged();
+      }
+
+      _sortItens(a, b) {
+        var textA = (a.nome).toLowerCase();
+        var textB = (b.nome).toLowerCase();
+        if (textA < textB) return -1;
+        if (textA > textB) return 1;
+        return 0;
+      }
+
+
+      //
+      //UTILS
+
+      _notifyItensChanged() {
+        //source: https://www.polymer-project.org/2.0/docs/devguide/data-system#make-observable-changes
+        this.itens = this.itens.slice();
+      }
+
+
+    }
+
+    window.customElements.define(SapoListItens.is, SapoListItens);
+  </script>
+</dom-module>

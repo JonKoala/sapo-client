@@ -1,7 +1,10 @@
 <link rel="import" href="/bower_components/polymer/polymer-element.html">
+<link rel="import" href="/bower_components/iron-ajax/iron-ajax.html">
 <link rel="import" href="/bower_components/paper-card/paper-card.html">
+<link rel="import" href="/bower_components/paper-button/paper-button.html">
 <link rel="import" href="./avaliacoes/nova-avaliacao/sapo-crud-avaliacao.html">
 <link rel="import" href="./avaliacoes/nova-avaliacao/sapo-list-entidades.html">
+<link rel="import" href="./avaliacoes/nova-avaliacao/sapo-list-itens.html">
 <link rel="import" href="/elements/sapo-styles.html">
 
 <dom-module id="sapo-nova-avaliacao">
@@ -20,26 +23,36 @@
         width: 100%;
       }
 
+      paper-button {
+        margin-left: 0px;
+        margin-right: auto;
+        margin-top: 50px;
+      }
+
     </style>
+
+    <iron-ajax id="postAjax" url="[[appconfig.url.api]]/avaliacoes/" method="POST" content-type="application/json" handle-as="json" loading="{{loading}}" on-response="_postResponse"></iron-ajax>
+    <app-route route="{{route}}"></app-route>
 
     <paper-card class="card-block">
       <h2>Nova Avaliação</h2>
       <hr>
       <sapo-crud-avaliacao active="[[active]]" appconfig="[[appconfig]]" avaliacao="{{avaliacao}}"></sapo-crud-avaliacao>
+      <paper-button disabled="[[submitDisabled]]" class="blue" on-click="_submitClicked"><iron-icon icon="[[_computeSubmitIcon(loading)]]"></iron-icon>&nbsp;&nbsp;[[_computeSubmitText(loading)]]</paper-button>
     </paper-card>
 
-    <button style="position:absolute;" on-click="print">Print</button>
     <paper-card class="card-block" style="visibility:hidden;"></paper-card>
 
     <paper-card class="card-block">
       <h2>Entidades</h2>
       <hr>
-      <sapo-list-entidades id="aa" active="[[active]]" appconfig="[[appconfig]]" entidades="{{entidades}}"></sapo-list-entidades>
+      <sapo-list-entidades active="[[active]]" appconfig="[[appconfig]]" entidades="{{entidades}}"></sapo-list-entidades>
     </paper-card>
 
     <paper-card class="card-block">
       <h2>Itens</h2>
       <hr>
+      <sapo-list-itens active="[[active]]" appconfig="[[appconfig]]" indicador="[[avaliacao.indicador_id]]" itens="{{itens}}"></sapo-list-itens>
     </paper-card>
 
   </template>
@@ -52,22 +65,71 @@
       static get properties() {
         return {
           avaliacao: Object,
-          entidades: {
-            type: Array,
-            observer: '_entidadesChanged'
-          },
+          entidades: Array,
+          itens: Array,
 
-          active: Boolean
+          active: Boolean,
+          loading: {
+            type: Boolean,
+            value: () => { return false; }
+          },
+          submitDisabled: {
+            type: Boolean,
+            computed: '_issubmitDisabled(active, loading, avaliacao.nome, entidades, itens)'
+          }
         }
       }
 
-      _entidadesChanged(entidades) {
-        console.log(entidades);
+
+      //
+      //COMPUTEDS
+
+      _issubmitDisabled(active, loading, avaliacao, entidades, itens) {
+
+        //guarantee that they are at least empty arrays
+        itens = (itens) ? itens : [];
+        entidades = (entidades) ? entidades : [];
+
+        var hasEntidade = entidades.find(entidade => { return entidade.checked; });
+        var hasItem = itens.find(item => { return item.checked; });
+        return !active || loading || avaliacao == null || avaliacao == '' || !hasEntidade || !hasItem;
       }
 
-      print() {
-        this.$.aa.checkall();
-        console.log(this.avaliacao);
+      _computeSubmitIcon(loading) {
+        return (loading) ? 'more-horiz' : 'save';
+      }
+
+      _computeSubmitText(loading) {
+        return (loading) ? 'Carregando' : 'Salvar'
+      }
+
+
+      //
+      //EVENTS
+
+      _submitClicked() {
+
+        this.$.postAjax.body = {
+          avaliacao: this.avaliacao,
+          entidades: this.entidades.filter(entidade => { return entidade.checked; }).map(entidade => { return entidade.id; }),
+          itens: this.itens.filter(item => { return item.checked; }).map(item => { return item.id; })
+        };
+        this.$.postAjax.generateRequest();
+      }
+
+      _postResponse(e) {
+        var avaliacao = e.detail.response.id;
+        this._redirect('avaliacoes/' + avaliacao);
+      }
+
+
+      //
+      //UTILS
+
+      _redirect(page) {
+        this.set('route.prefix', '/' + page);
+        window.history.pushState({}, null, this.route.prefix);
+        window.dispatchEvent(new CustomEvent('location-changed'));
       }
 
     }
