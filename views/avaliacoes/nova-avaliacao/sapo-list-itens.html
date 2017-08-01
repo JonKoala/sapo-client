@@ -37,7 +37,7 @@
         outline: 0;
       }
 
-      paper-checkbox {
+      paper-checkbox, input {
         margin: auto 10px;
       }
 
@@ -51,13 +51,13 @@
     <iron-ajax auto="[[_isReady(active, indicador)]]" url="[[appconfig.url.api]]/itens/indicador/[[indicador]]" last-response="{{itens}}"></iron-ajax>
 
     <div>
-      <paper-checkbox disabled="[[!_isReady(active, indicador)]]" checked="{{globalChecker}}" on-change="_globalCheckerToggled"></paper-checkbox>
+      <paper-checkbox disabled="[[!_isReady(active, indicador)]]" checked="{{globalChecker}}" on-change="_globalCheckerToggled" noink>Todos</paper-checkbox>
     </div>
 
     <paper-listbox>
       <template is="dom-repeat" items="[[itens]]" sort="_sortItens" mutable-data>
         <paper-card>
-          <paper-checkbox checked="{{item.checked}}" on-change="_itemToggled"></paper-checkbox>
+          <paper-checkbox checked="{{item.checked}}" on-change="_itemToggled" noink></paper-checkbox>
           <p>[[item.nome]]</p>
         </paper-card>
       </template>
@@ -124,7 +124,6 @@
         //source: https://www.polymer-project.org/2.0/docs/devguide/data-system#make-observable-changes
         this.itens = this.itens.slice();
       }
-
 
     }
 
