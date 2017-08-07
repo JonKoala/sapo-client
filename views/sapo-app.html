@@ -83,7 +83,6 @@
       <sapo-login appconfig="[[appconfig]]" route="{{subroute}}" name="login" on-login="_userLoggedIn"></sapo-login>
       <sapo-usuarios appconfig="[[appconfig]]" route="{{subroute}}" name="usuarios" on-login="_userLoggedIn"></sapo-usuarios>
       <sapo-relatorios appconfig="[[appconfig]]" route="{{subroute}}" name="relatorios"></sapo-relatorios>
-      <sapo-nothing name="nothing" ></sapo-nothing>
     </iron-pages>
 
   </template>
@@ -128,13 +127,13 @@
 
       _routePageChanged(page) {
         if (page === undefined) return;
-
-        this.page = page || 'nothing';
+        
+        this.page = page;
       }
 
       _pageChanged(page) {
 
-        // Load page import on demand. Show 404 page if fails
+        // Load page import on demand
         var resolvedPageUrl = this.resolveUrl('sapo-' + page + '.html');
         Polymer.importHref(resolvedPageUrl, null, null, true);
       }

@@ -7,10 +7,6 @@
     "bower.json"
   ],
   "extraDependencies": [
-    "bower_components/webcomponentsjs/*.js",
-    "bower_components/blockingElements/*.js"
-  ],
-  "lint": {
-    "rules": ["polymer-2"]
-  }
+    "bower_components/webcomponentsjs/*.js"
+  ]
 }
