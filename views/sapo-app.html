@@ -1,23 +1,79 @@
 <link rel="import" href="/bower_components/polymer/polymer-element.html">
+<link rel="import" href="/bower_components/app-layout/app-layout.html">
 <link rel="import" href="/bower_components/app-route/app-location.html">
 <link rel="import" href="/bower_components/app-route/app-route.html">
 <link rel="import" href="/bower_components/iron-ajax/iron-ajax.html">
 <link rel="import" href="/bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="/bower_components/paper-tabs/paper-tabs.html">
+<link rel="import" href="/elements/sapo-styles.html">
 <link rel="import" href="/elements/sapo-cookies.html">
 
 <dom-module id="sapo-app">
 
   <template>
 
+    <style include="sapo-styles">
+
+      :host {
+        --paper-tabs-selection-bar-color: var(--paper-light-blue-500);
+      }
+
+      app-header {
+        background-color: white;
+        border-bottom: 1px solid #ddd;
+        margin-bottom: 10px;
+      }
+
+      app-toolbar {
+        height: auto;
+        padding: auto;
+      }
+
+      paper-tab {
+        flex: none;
+        padding: 0px 20px;
+      }
+
+      paper-tab a {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      a, div {
+        text-decoration: none;
+        text-transform: uppercase;
+        outline: 0;
+        color: var(--paper-grey-600);
+        font-weight: 500;
+      }
+
+      #userDetailsLink {
+        font-weight: bold;
+        text-decoration: underline;
+      }
+
+    </style>
+
     <iron-ajax auto url="/appconfig.json" handle-as="json" last-response="{{appconfig}}"></iron-ajax>
     <sapo-cookies profile="{{profile}}"></sapo-cookies>
 
     <app-location route="{{route}}"></app-location>
-    <app-route
-        route="{{route}}"
-        pattern="/:page"
-        data="{{routeData}}"
-        tail="{{subroute}}"></app-route>
+    <app-route route="{{route}}" pattern="/:page" data="{{routeData}}" tail="{{subroute}}"></app-route>
+
+    <app-header>
+      <app-toolbar>
+        <paper-tabs attr-for-selected="name" selected="[[page]]" noink>
+          <paper-tab name="avaliacoes" link><a href="/avaliacoes" tabindex="-1">Avaliações</a></paper-tab>
+          <paper-tab name="nova-avaliacao" link><a href="/nova-avaliacao" tabindex="-1">Nova Avaliação</a></paper-tab>
+          <paper-tab name="indicadores" link><a href="/indicadores" tabindex="-1">Indicadores</a></paper-tab>
+          <paper-tab name="criterio-legal" link><a href="/criterio-legal" tabindex="-1">Critério Legal</a></paper-tab>
+          <paper-tab name="login" link><a href="/login" tabindex="-1">Login</a></paper-tab>
+        </paper-tabs>
+        <div condensed-title></div>
+        <div class$="[[_computeUserAreaCss(appconfig.profile)]]">Logado como <a id="userDetailsLink" href="/usuarios" tabindex="-1">[[profile.user.usuario]]</a></div>
+      </app-toolbar>
+    </app-header>
 
     <iron-pages selected="[[page]]" attr-for-selected="name" selected-attribute="active">
       <sapo-indicadores appconfig="[[appconfig]]" route="{{subroute}}" name="indicadores"></sapo-indicadores>
@@ -29,7 +85,6 @@
       <sapo-relatorios appconfig="[[appconfig]]" route="{{subroute}}" name="relatorios"></sapo-relatorios>
       <sapo-nothing name="nothing" ></sapo-nothing>
     </iron-pages>
-
 
   </template>
 
@@ -67,6 +122,10 @@
       //
       //COMPUTEDS & OBSERVERS
 
+      _computeUserAreaCss(profile) {
+        return (profile == null) ? 'hidden' : '';
+      }
+
       _routePageChanged(page) {
         if (page === undefined) return;
 
@@ -74,14 +133,6 @@
       }
 
       _pageChanged(page) {
-
-        if (window.angularScope) {
-          let conteudo = (page === 'nothing') ? 'inicio' : page;
-          if ($('#menu_topo #'+ conteudo + ' a').length > 0) {
-              window.angularScope.setConteudo(conteudo);
-              $('#menu_topo #'+ conteudo + ' a').click(); //caso especial - view inicio
-          }
-        }
 
         // Load page import on demand. Show 404 page if fails
         var resolvedPageUrl = this.resolveUrl('sapo-' + page + '.html');
@@ -96,12 +147,6 @@
       _profileChanged() {
         if (this.appconfig != null)
           this.set('appconfig.profile', this.profile);
-
-        var menuUsuarioDisplay = (this.profile) ? 'block' : 'none';
-        var loggedUserText = (this.profile) ? 'Logado como ' + this.profile.user.usuario : '';
-
-        $('#usuarios').css('display', menuUsuarioDisplay);
-        $('#login-information').text(loggedUserText);
       }
 
 

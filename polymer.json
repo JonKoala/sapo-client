@@ -1,17 +1,14 @@
 {
   "entrypoint": "index.html",
   "shell": "views/sapo-app.html",
-  "fragments": [
-    "views/new-item.html"
-  ],
   "sources": [
+    "elements/**/*",
     "views/**/*",
-    "images/**/*",
     "bower.json"
   ],
   "extraDependencies": [
-    "manifest.json",
-    "bower_components/webcomponentsjs/*.js"
+    "bower_components/webcomponentsjs/*.js",
+    "bower_components/blockingElements/*.js"
   ],
   "lint": {
     "rules": ["polymer-2"]
