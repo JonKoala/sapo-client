@@ -63,6 +63,7 @@
 
     <app-header>
       <app-toolbar>
+        <a href="/" tabindex="-1" style="margin-right:20px" >S.A.P.O.</a>
         <paper-tabs attr-for-selected="name" selected="[[page]]" noink>
           <paper-tab name="avaliacoes" link><a href="/avaliacoes" tabindex="-1">Avaliações</a></paper-tab>
           <paper-tab name="nova-avaliacao" link><a href="/nova-avaliacao" tabindex="-1">Nova Avaliação</a></paper-tab>
@@ -76,10 +77,11 @@
     </app-header>
 
     <iron-pages selected="[[page]]" attr-for-selected="name" selected-attribute="active">
-      <sapo-indicadores appconfig="[[appconfig]]" route="{{subroute}}" name="indicadores"></sapo-indicadores>
-      <sapo-criterio-legal appconfig="[[appconfig]]" route="{{subroute}}" name="criterio-legal"></sapo-criterio-legal>
+      <sapo-start appconfig="[[appconfig]]" route="{{subroute}}" name="start"></sapo-start>
       <sapo-avaliacoes appconfig="[[appconfig]]" route="{{subroute}}" name="avaliacoes"></sapo-avaliacoes>
       <sapo-nova-avaliacao appconfig="[[appconfig]]" route="{{subroute}}" name="nova-avaliacao"></sapo-nova-avaliacao>
+      <sapo-indicadores appconfig="[[appconfig]]" route="{{subroute}}" name="indicadores"></sapo-indicadores>
+      <sapo-criterio-legal appconfig="[[appconfig]]" route="{{subroute}}" name="criterio-legal"></sapo-criterio-legal>
       <sapo-login appconfig="[[appconfig]]" route="{{subroute}}" name="login" on-login="_userLoggedIn"></sapo-login>
       <sapo-usuarios appconfig="[[appconfig]]" route="{{subroute}}" name="usuarios" on-login="_userLoggedIn"></sapo-usuarios>
       <sapo-relatorios appconfig="[[appconfig]]" route="{{subroute}}" name="relatorios"></sapo-relatorios>
@@ -127,8 +129,8 @@
 
       _routePageChanged(page) {
         if (page === undefined) return;
-        
-        this.page = page;
+
+        this.page = (page) ? page : 'start'
       }
 
       _pageChanged(page) {

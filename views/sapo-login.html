@@ -64,7 +64,7 @@
           this.dispatchEvent(new CustomEvent('login', {detail: e.detail}));
 
           this._showNotification('Logado como ' + e.detail.user.usuario + '. Redirecionando para tela inicial em 3 segundos...');
-          this.sleep(3000).then(() => { if (this.active) this._redirect('inicio'); });
+          this.sleep(3000).then(() => { if (this.active) this._redirect(''); });
         } else {
           this._showNotification('Erro durante o Login - ' + e.detail.message);
         }

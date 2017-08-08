@@ -1,0 +1,56 @@
+<link rel="import" href="/bower_components/polymer/polymer-element.html">
+<link rel="import" href="/bower_components/paper-card/paper-card.html">
+<link rel="import" href="/elements/sapo-styles.html">
+
+<dom-module id="sapo-start">
+
+  <template>
+
+    <style include="sapo-styles">
+
+      :host {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 80vh;
+      }
+
+      paper-card {
+        margin: 0px 200px;
+        padding: 60px;
+        width: auto;
+        background-color: var(--sapo-light-gray);
+      }
+
+      h1 {
+        font-size: 63px;
+        margin: 0px;
+      }
+
+      p {
+        font-size: 21px;
+      }
+
+    </style>
+
+    <paper-card>
+      <h1>S.A.P.O.</h1>
+      <p>Sistema de avaliações de portais de transparência</p>
+    </paper-card>
+
+  </template>
+
+  <script>
+    class SapoStart extends Polymer.Element {
+
+      static get is() { return 'sapo-start'; }
+
+      static get properties() {
+        return { }
+      }
+
+    }
+
+    window.customElements.define(SapoStart.is, SapoStart);
+  </script>
+</dom-module>
