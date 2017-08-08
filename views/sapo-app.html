@@ -85,6 +85,7 @@
       <sapo-login appconfig="[[appconfig]]" route="{{subroute}}" name="login" on-login="_userLoggedIn"></sapo-login>
       <sapo-usuarios appconfig="[[appconfig]]" route="{{subroute}}" name="usuarios" on-login="_userLoggedIn"></sapo-usuarios>
       <sapo-relatorios appconfig="[[appconfig]]" route="{{subroute}}" name="relatorios"></sapo-relatorios>
+      <sapo-404 appconfig="[[appconfig]]" route="{{subroute}}" name="404"></sapo-404>
     </iron-pages>
 
   </template>
@@ -130,14 +131,14 @@
       _routePageChanged(page) {
         if (page === undefined) return;
 
-        this.page = (page) ? page : 'start'
+        this.page = page || 'start';
       }
 
       _pageChanged(page) {
 
         // Load page import on demand
         var resolvedPageUrl = this.resolveUrl('sapo-' + page + '.html');
-        Polymer.importHref(resolvedPageUrl, null, null, true);
+        Polymer.importHref(resolvedPageUrl, null, this._redirectTo404.bind(this), true);
       }
 
       _appconfigChanged() {
@@ -157,6 +158,15 @@
       _userLoggedIn(e) {
         this.profile = { user: e.detail.user, token: e.detail.token };
       }
+
+
+      //
+      //UTILS
+
+      _redirectTo404() {
+        this.page = '404';
+      }
+
     }
 
     window.customElements.define(SapoApp.is, SapoApp);

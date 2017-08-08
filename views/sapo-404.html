@@ -1,0 +1,32 @@
+<link rel="import" href="/bower_components/polymer/polymer-element.html">
+<link rel="import" href="/elements/sapo-styles.html">
+
+<dom-module id="sapo-404">
+
+  <template>
+
+    <style include="sapo-styles">
+
+      :host {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 80vh;
+      }
+
+    </style>
+
+    <img src="/images/404-kermit.jpg" alt="404" source="http://the-fis.de/wp-content/uploads/2017/06/kermit_404_small.jpg"></img>
+
+  </template>
+
+  <script>
+    class Sapo404 extends Polymer.Element {
+
+      static get is() { return 'sapo-404'; }
+      
+    }
+
+    window.customElements.define(Sapo404.is, Sapo404);
+  </script>
+</dom-module>
