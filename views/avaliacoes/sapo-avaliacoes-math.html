@@ -49,7 +49,9 @@
         var printScore = percentage;
         if (!isNatural) {
           let intLength = parseInt(Math.log10(percentage)) + 1;
-          printScore = (isNaN(intLength)) ? '0' : percentage.toPrecision(intLength + precision);
+          printScore = (isNaN(intLength)) ? '0' : percentage.toPrecision(intLength + precision + 1).slice(0, intLength + precision + 1);
+          //toPrecision has + 1 because it's cauing rounding issues, so i add 1 more decimal place
+          //slice has + 1 because we need to take the comma into account too, to correctly slice this string
         }
 
         return printScore;
