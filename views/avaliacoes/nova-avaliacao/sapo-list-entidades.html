@@ -52,7 +52,6 @@
 
     <div>
       <paper-checkbox poder="executivo" label="Executivo" checked="{{executivo}}" on-change="_poderToggled" noink>Executivo</paper-checkbox>
-      <paper-checkbox poder="judiciario" label="Judiciário" checked="{{judiciario}}" on-change="_poderToggled" noink>Judiciário</paper-checkbox>
       <paper-checkbox poder="legislativo" label="Legislativo" checked="{{legislativo}}" on-change="_poderToggled" noink>Legislativo</paper-checkbox>
     </div>
 
@@ -81,8 +80,7 @@
           },
 
           legislativo: Boolean,
-          executivo: Boolean,
-          judiciario: Boolean
+          executivo: Boolean
         }
       }
 
@@ -93,7 +91,6 @@
       _entidadesChanged() {
         this.legislativo = !this.entidades.some(entidade => { return entidade.poder == 'Legislativo' && !entidade.checked});
         this.executivo = !this.entidades.some(entidade => { return entidade.poder == 'Executivo' && !entidade.checked});
-        this.judiciario = !this.entidades.some(entidade => { return entidade.poder == 'Judiciário' && !entidade.checked});
       }
 
 
