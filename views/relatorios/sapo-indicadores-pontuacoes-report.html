@@ -1,0 +1,145 @@
+<link rel="import" href="/bower_components/polymer/polymer-element.html">
+<link rel="import" href="/bower_components/iron-collapse/iron-collapse.html">
+<link rel="import" href="/elements/sapo-styles.html">
+
+<dom-module id="sapo-indicadores-pontuacoes-report">
+
+  <template>
+
+    <style include="sapo-styles">
+      iron-collapse {
+        margin-left: 20px;
+      }
+
+      .global {
+        width: 700px;
+      }
+
+      .content {
+        position: relative;
+      }
+
+      .pontuacao {
+        position: absolute;
+        right: 0px;
+      }
+
+    </style>
+
+    <iron-ajax auto indicador="pilar" url="[[appconfig.url.api]]/indicadores/full" last-response="{{indicadores}}"></iron-ajax>
+
+    <div class="global" >
+
+    <template is="dom-repeat" items="[[indicadores]]" as="indicador">
+      <div class="content">
+        <div class="pontuacao">[[indicador.notaMaxima]]</div>
+        <button indicador="indicador" identity$="[[indicador.id]]" on-click="toggle">[[indicador.nome]]</button>
+        <iron-collapse indicador="indicador" identity$="[[indicador.id]]">
+
+          <template is="dom-repeat" items="[[indicador.pilares]]" as="pilar">
+            <div class="content">
+              <div class="pontuacao">[[pilar.notaMaxima]]</div>
+              <button indicador="pilar" identity$="[[pilar.id]]" on-click="toggle">[[pilar.nome]]</button>
+              <iron-collapse indicador="pilar" identity$="[[pilar.id]]">
+
+                <template is="dom-repeat" items="[[pilar.tipos]]" as="tipo">
+                  <div class="content">
+                    <div class="pontuacao">[[tipo.notaMaxima]]</div>
+                    <button indicador="tipo" identity$="[[tipo.id]]" on-click="toggle">[[tipo.nome]]</button>
+                    <iron-collapse indicador="tipo" identity$="[[tipo.id]]">
+
+                      <template is="dom-repeat" items="[[tipo.niveis]]" as="nivel">
+                        <div class="content">
+                          <div class="pontuacao">[[nivel.notaMaxima]]</div>
+                          <button indicador="nivel" identity$="[[nivel.id]]" on-click="toggle">[[nivel.nome]]</button>
+                          <iron-collapse indicador="nivel" identity$="[[nivel.id]]">
+
+                            <template is="dom-repeat" items="[[nivel.subniveis]]" as="subnivel">
+                              <div class="content">
+                                <div class="pontuacao">[[subnivel.notaMaxima]]</div>
+                                <button indicador="subnivel" identity$="[[subnivel.id]]" on-click="toggle">[[subnivel.nome]]</button>
+                                <iron-collapse indicador="subnivel" identity$="[[subnivel.id]]">
+
+                                  <template is="dom-repeat" items="[[subnivel.itens]]" as="item">
+                                    <div class="content">
+                                      <div class="pontuacao">[[item.notaMaxima]]</div>
+                                      [[item.nome]]
+                                    </div>
+                                  </template>
+
+                                </iron-collapse>
+                              </div>
+                            </template>
+
+                          </iron-collapse>
+                        </div>
+                      </template>
+
+                    </iron-collapse>
+                  </div>
+                </template>
+
+              </iron-collapse>
+            </div>
+          </template>
+
+        </iron-collapse>
+      </div>
+    </template>
+
+    </div>
+
+  </template>
+
+  <script>
+    class SapoIndicadoresPontuacoesReport extends Polymer.Element {
+
+      static get is() { return 'sapo-indicadores-pontuacoes-report'; }
+
+      static get properties() {
+        return {
+          indicadores: {
+            type: Array,
+            observer: '_indicadoresChanged'
+          }
+        }
+      }
+
+      _indicadoresChanged(indicadores) {
+        indicadores.forEach(indicador => {
+          indicador.notaMaxima = 0;
+          indicador.pilares.forEach(pilar => {
+            pilar.notaMaxima = 0;
+            pilar.tipos.forEach(tipo => {
+              tipo.notaMaxima = 0;
+              tipo.niveis.forEach(nivel => {
+                nivel.notaMaxima = 0;
+                nivel.subniveis.forEach(subnivel => {
+                  subnivel.notaMaxima = 0;
+                  subnivel.itens.forEach(item => {
+                    subnivel.notaMaxima += item.notaMaxima;
+                    nivel.notaMaxima += item.notaMaxima;
+                    tipo.notaMaxima += item.notaMaxima;
+                    pilar.notaMaxima += item.notaMaxima;
+                    indicador.notaMaxima += item.notaMaxima;
+                  })
+                })
+              })
+            })
+          })
+        })
+      }
+
+      toggle(e) {
+        var indicador = e.currentTarget.getAttribute('indicador');
+        var identity = e.currentTarget.getAttribute('identity');
+        var element = this.shadowRoot.querySelector('iron-collapse[indicador=' + indicador + '][identity="' + identity + '"]');
+
+        element.toggle();
+      }
+
+    }
+
+    window.customElements.define(SapoIndicadoresPontuacoesReport.is, SapoIndicadoresPontuacoesReport);
+  </script>
+</dom-module>
