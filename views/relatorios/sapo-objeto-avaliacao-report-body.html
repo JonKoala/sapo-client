@@ -1,0 +1,257 @@
+<link rel="import" href="/bower_components/polymer/polymer-element.html">
+<link rel="import" href="/bower_components/paper-spinner/paper-spinner.html">
+<link rel="import" href="/bower_components/paper-card/paper-card.html">
+<link rel="import" href="/elements/sapo-styles.html">
+<link rel="import" href="/views/avaliacoes/sapo-avaliacoes-math.html">
+
+<dom-module id="sapo-objeto-avaliacao-report-body">
+
+  <template>
+
+    <style include="sapo-styles">
+
+      :host {
+        display: flex;
+        flex-wrap: wrap;
+      }
+
+      paper-card.card-block {
+        width: 100%;
+        padding: 20px;
+        margin: 0px;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      th, td {
+        padding: 2px 10px;
+        border: none;
+      }
+
+      thead {
+        background: var(--paper-indigo-900);
+        color: white;
+        font-weight: bold;
+      }
+
+      .pilar {
+        background: var(--paper-blue-800);
+        color: white;
+        font-weight: bold;
+      }
+
+      .tipo {
+        background: var(--paper-blue-600);
+        color: white;
+        font-weight: bold;
+      }
+
+      .nivel {
+        background: var(--paper-blue-200);
+        font-weight: bold;
+      }
+
+      .subnivel {
+        background: var(--paper-blue-grey-100);
+      }
+
+      .item {
+        background: var(--paper-blue-50);
+        border-bottom-style: solid;
+        border-bottom-width: thin;
+        border-bottom-color: var(--paper-blue-500);
+      }
+
+      .situacao {
+        background: var(--paper-grey-50);
+        border-bottom-style: solid;
+        border-bottom-width: thin;
+      }
+
+      .nota {
+        text-align: center;
+      }
+
+      .warning {
+        background: var(--paper-red-100);
+        color: var(--paper-red-900);
+        border-bottom-style: solid;
+        border-bottom-width: thin;
+        font-weight: bold;
+      }
+
+    </style>
+
+    <sapo-avaliacoes-math id="avaliacaoMath" ></sapo-avaliacoes-math>
+
+    <paper-card class="card-block">
+
+      <paper-spinner active class$="[[_computeSpinnerCss(ready)]]" ></paper-spinner>
+
+      <table class$="[[_computeTableCss(ready)]]">
+        <thead>
+          <th>Pilar</th>
+          <th>Tipo</th>
+          <th>Nível</th>
+          <th>Subnível</th>
+          <th>Item</th>
+          <th>Situação Encontrada</th>
+          <th>% de Atendimento</th>
+        </thead>
+        <tbody>
+          <template is="dom-repeat" items="[[pilares]]" as="pilar">
+            <tr>
+              <td class="pilar" colspan="6">[[pilar.text]]</td>
+              <td class="pilar nota">[[_computeAtendimento(pilar.score, pilar.maxScore, pilar.pending)]]</td>
+            </tr>
+            <template is="dom-repeat" items="[[pilar.tipos]]" as="tipo">
+              <tr>
+                <td></td>
+                <td class="tipo" colspan="5">[[tipo.text]]</td>
+                <td class$="tipo nota [[_computeItemScoreCss(tipo.score)]]">[[_computeAtendimento(tipo.score, tipo.maxScore, tipo.pending)]]</td>
+              </tr>
+              <template is="dom-repeat" items="[[tipo.niveis]]" as="nivel">
+                <tr>
+                  <td colspan="2"></td>
+                  <td class="nivel" colspan="4">[[nivel.text]]</td>
+                  <td class$="nivel nota [[_computeItemScoreCss(nivel.score)]]">[[_computeAtendimento(nivel.score, nivel.maxScore, nivel.pending)]]</td>
+                </tr>
+                <template is="dom-repeat" items="[[nivel.subniveis]]" as="subnivel">
+                  <tr>
+                    <td colspan="3"></td>
+                    <td class="subnivel" colspan="3">[[subnivel.text]]</td>
+                    <td class$="subnivel nota [[_computeItemScoreCss(subnivel.score)]]">[[_computeAtendimento(subnivel.score, subnivel.maxScore, subnivel.pending)]]</td>
+                  </tr>
+                  <template is="dom-repeat" items="[[subnivel.itens]]">
+                    <tr>
+                      <td colspan="4"></td>
+                      <td class="item">[[item.text]]</td>
+                      <td class="situacao">[[item.atendimento.text]]</td>
+                      <td class$="situacao nota [[_computeItemScoreCss(item.atendimento.score)]]">[[item.atendimento.nota]]</td>
+                    </tr>
+                  </template>
+                </template>
+              </template>
+            </template>
+          </template>
+        </tbody>
+      </table>
+    </paper-card>
+    <p class$="[[_computeTableCss(ready)]]">* Nota inclui itens ainda não avaliados.</p>
+
+  </template>
+
+  <script>
+    class SapoObjetoAvaliacaoReportBody extends Polymer.Element {
+
+      static get is() { return 'sapo-objeto-avaliacao-report-body'; }
+
+      static get properties() {
+        return {
+          pilares: {
+            type: Array,
+            computed: '_computePilares(notas)'
+          },
+          notas: Array,
+
+          ready: {
+            type: Boolean,
+            computed: '_isReady(pilares)'
+          }
+        }
+      }
+
+      _isReady(pilares) {
+        return pilares == null;
+      }
+
+      _computeSpinnerCss(isReady) {
+        return (isReady) ? '' : 'hidden';
+      }
+
+      _computeTableCss(isReady) {
+        return (isReady) ? 'hidden' : '';
+      }
+
+      _computeItemScoreCss(score) {
+        if (!score) return 'warning';
+      }
+
+      _computeAtendimento(score, maxScore, isPending) {
+        var percentage = this.$.avaliacaoMath.makePrintableScore(score, maxScore, 2);
+        percentage = (isPending) ? percentage + '%*' : percentage + '%';
+
+        return percentage;
+      }
+
+      _computePilares(notas) {
+
+        var pilares = [];
+        notas.forEach(nota => {
+
+          let notaPilar = nota.item.subnivel.nivel.tipo.pilar;
+          let pilar = pilares.find(pilar => { return pilar.id == notaPilar.id; });
+          if (pilar == null) {
+            pilar = {id: notaPilar.id, text: notaPilar.nome, tipos: [], maxScore: 0, score: 0, pending: false};
+            pilares.push(pilar);
+          }
+
+          let notaTipo = nota.item.subnivel.nivel.tipo;
+          let tipo = pilar.tipos.find(tipo => { return tipo.id == notaTipo.id; });
+          if (tipo == null) {
+            tipo = {id: notaTipo.id, text: notaTipo.nome, niveis: [], maxScore: 0, score: 0, pending: false};
+            pilar.tipos.push(tipo);
+          }
+
+          let notaNivel = nota.item.subnivel.nivel;
+          let nivel = tipo.niveis.find(nivel => { return nivel.id == notaNivel.id; });
+          if (nivel == null) {
+            nivel = {id: notaNivel.id, text: notaNivel.nome, subniveis: [], maxScore: 0, score: 0, pending: false};
+            tipo.niveis.push(nivel);
+          }
+
+          let notaSubnivel = nota.item.subnivel;
+          let subnivel = nivel.subniveis.find(subnivel => { return subnivel.id == notaSubnivel.id; });
+          if (subnivel == null) {
+            subnivel = {id: notaSubnivel.id, text: notaSubnivel.nome, itens: [], maxScore: 0, score: 0, pending: false};
+            nivel.subniveis.push(subnivel);
+          }
+
+          let item = nota.item;
+          item.nota = nota;
+          item.text = nota.item.nome;
+          item.pontuacao = nota.item.pontuacoes.find(pontuacao => pontuacao.id === nota.pontuacao_id);
+          item.atendimento = (item.pontuacao) ? {text: item.pontuacao.descricao, score: item.pontuacao.nota, nota: (item.pontuacao.nota * 100)+'%'} : {text: '', score: 0,nota: 'não avaliado'};
+
+          var maxScore = nota.item.notaMaxima;
+          pilar.maxScore += maxScore;
+          tipo.maxScore += maxScore;
+          nivel.maxScore += maxScore;
+          subnivel.maxScore += maxScore;
+
+          var score = item.atendimento.score * nota.item.notaMaxima;
+          pilar.score += score;
+          tipo.score += score;
+          nivel.score += score;
+          subnivel.score += score;
+
+          var isPending = !item.pontuacao;
+          pilar.pending |= isPending;
+          tipo.pending |= isPending;
+          nivel.pending |= isPending;
+          subnivel.pending |= isPending;
+
+          subnivel.itens.push(item);
+        });
+
+        return pilares;
+      }
+
+    }
+
+    window.customElements.define(SapoObjetoAvaliacaoReportBody.is, SapoObjetoAvaliacaoReportBody);
+  </script>
+</dom-module>

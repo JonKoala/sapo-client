@@ -91,7 +91,7 @@
 
       _showReport(e) {
         var url = '/' + e.detail;
-        this.set('route.prefix', '/relatorios');
+        this.set('route.prefix', '/relatorios/objeto');
         window.history.pushState({}, null, this.route.prefix + url);
         window.dispatchEvent(new CustomEvent('location-changed'));
       }

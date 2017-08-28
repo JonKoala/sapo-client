@@ -1,50 +1,18 @@
 <link rel="import" href="/bower_components/polymer/polymer-element.html">
 <link rel="import" href="/bower_components/app-route/app-route.html">
-<link rel="import" href="/bower_components/iron-ajax/iron-ajax.html">
-<link rel="import" href="/bower_components/paper-button/paper-button.html">
-<link rel="import" href="./relatorios/sapo-avaliacao-information-bar.html">
+<link rel="import" href="/elements/sapo-styles.html">
 <link rel="import" href="./relatorios/sapo-relatorio-objeto-avaliacao.html">
-<link rel="import" href="./relatorios/sapo-relatorio-objeto-avaliacao-download.html">
 
 <dom-module id="sapo-relatorios">
 
   <template>
 
     <style include="sapo-styles">
-
-      :host {
-        display: flex;
-        flex-wrap: wrap;
-      }
-
-      paper-button {
-        position: absolute;
-        margin-top: 95px;
-      }
-
-      sapo-relatorio-objeto-avaliacao {
-        width: 100%;
-        margin: 5px 100px;
-      }
-
-      sapo-avaliacao-information-bar {
-        width: 100%;
-        margin: 5px 100px;
-      }
-
     </style>
 
-    <app-route route="{{route}}" pattern="/:id" data="{{routeData}}"></app-route>
+    <app-route route="{{route}}" pattern="/:relatorio" data="{{routeData}}" tail="{{subroute}}"></app-route>
 
-    <iron-ajax auto="[[ready]]" url="[[appconfig.url.api]]/objetosavaliacao/[[id]]/full" last-response="{{objetoAvaliacao}}"></iron-ajax>
-    <iron-ajax auto="[[ready]]" url="[[appconfig.url.api]]/notas/objetoavaliacao/[[id]]/full" last-response="{{notas}}"></iron-ajax>
-
-    <sapo-relatorio-objeto-avaliacao-download id="relatorioDownloader" notas="[[notas]]" ready="{{downloadReady}}"></sapo-relatorio-objeto-avaliacao-download>
-
-    <sapo-avaliacao-information-bar objeto-avaliacao="[[objetoAvaliacao]]" notas="[[notas]]"></sapo-avaliacao-information-bar>
-    <sapo-relatorio-objeto-avaliacao notas="[[notas]]"></sapo-relatorio-objeto-avaliacao>
-
-    <paper-button raised class$="[[_computeDownloadButtonCss(downloadReady)]] blue" on-click="_downloadCsv" >CSV</paper-button>
+    <sapo-relatorio-objeto-avaliacao appconfig="[[appconfig]]" route="{{subroute}}"></sapo-relatorio-objeto-avaliacao>
 
   </template>
 
@@ -54,49 +22,7 @@
       static get is() { return 'sapo-relatorios'; }
 
       static get properties() {
-        return {
-          id: {
-            type: Number,
-            computed: '_computeId(routeData)'
-          },
-          pilares: Array,
-
-          notas: Array,
-          objetoAvaliacao: Object,
-
-          ready: {
-            type: Boolean,
-            computed: '_isReady(route, appconfig)'
-          },
-          downloadReady: {
-            type: Boolean,
-            value: () => { return false; }
-          }
-        }
-      }
-
-
-      //
-      //COMPUTEDS
-
-      _isReady(route, appconfig) {
-        return route != null && route.prefix === "/relatorios" && appconfig != null;
-      }
-
-      _computeId(routeData) {
-        return parseInt(routeData.id);
-      }
-
-      _computeDownloadButtonCss(isReady) {
-        return (isReady) ? '' : 'hidden';
-      }
-
-      
-      //
-      //EVENTS
-
-      _downloadCsv() {
-        this.$.relatorioDownloader.downloadCsv();
+        return { }
       }
 
     }
