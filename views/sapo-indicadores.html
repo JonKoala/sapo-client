@@ -41,6 +41,12 @@
         margin: 5px auto 5px 0px;
       }
 
+      a {
+        text-decoration: none;
+        position: absolute;
+        left: 20px
+      }
+
     </style>
 
     <app-route
@@ -58,6 +64,10 @@
     <iron-ajax indicador="item" url="[[appconfig.url.api]]/itens/subnivel/[[subnivel]]" last-response="{{itens}}"></iron-ajax>
     <iron-ajax indicador="pontuacao" url="[[appconfig.url.api]]/pontuacoes/item/[[item]]" last-response="{{pontuacoes}}"></iron-ajax>
     <iron-ajax indicador="criterio_legal" url="[[appconfig.url.api]]/criterioslegais/item/[[item]]" last-response="{{criteriosLegais}}"></iron-ajax>
+
+    <a href="/relatorios/indicadores">
+      <paper-button class="blue" raised>Relatório</paper-button>
+    </a>
 
     <paper-card class="card-block">
       <h2>Indicadores</h2>
