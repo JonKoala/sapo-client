@@ -15,16 +15,21 @@
       }
 
       paper-card {
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+
         padding: 40px;
         margin: 0px;
       }
 
     </style>
 
-    <iron-ajax auto indicador="pilar" url="[[appconfig.url.api]]/indicadores/full" last-response="{{indicadores}}"></iron-ajax>
+    <iron-ajax auto loading="{{loading}}" url="[[appconfig.url.api]]/indicadores/full" last-response="{{indicadores}}"></iron-ajax>
 
     <paper-card>
-      <sapo-indicadores-pontuacoes-report appconfig="[[appconfig]]"></sapo-indicadores-pontuacoes-report>
+      <paper-spinner active class$="[[_computeSpinnerCss(loading)]]"></paper-spinner>
+      <sapo-indicadores-pontuacoes-report appconfig="[[appconfig]]" indicadores="[[_computeIndicador(indicadores)]]" ></sapo-indicadores-pontuacoes-report>
     </paper-card>
 
   </template>
@@ -35,7 +40,44 @@
       static get is() { return 'sapo-relatorio-indicadores-pesos'; }
 
       static get properties() {
-        return { }
+        return {
+          loading: Boolean,
+          indicadores: Array
+        }
+      }
+
+      _computeSpinnerCss(loading) {
+        return (loading) ? '' : 'hidden';
+      }
+
+      _computeIndicador(indicadores) {
+
+        var compIndicadores = JSON.parse(JSON.stringify(indicadores));
+
+        compIndicadores.forEach(indicador => {
+          indicador.notaMaxima = 0;
+          indicador.pilares.forEach(pilar => {
+            pilar.notaMaxima = 0;
+            pilar.tipos.forEach(tipo => {
+              tipo.notaMaxima = 0;
+              tipo.niveis.forEach(nivel => {
+                nivel.notaMaxima = 0;
+                nivel.subniveis.forEach(subnivel => {
+                  subnivel.notaMaxima = 0;
+                  subnivel.itens.forEach(item => {
+                    subnivel.notaMaxima += item.notaMaxima;
+                    nivel.notaMaxima += item.notaMaxima;
+                    tipo.notaMaxima += item.notaMaxima;
+                    pilar.notaMaxima += item.notaMaxima;
+                    indicador.notaMaxima += item.notaMaxima;
+                  });
+                });
+              });
+            });
+          });
+        });
+
+        return compIndicadores;
       }
 
     }

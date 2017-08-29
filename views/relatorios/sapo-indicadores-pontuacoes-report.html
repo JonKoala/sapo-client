@@ -73,15 +73,13 @@
 
     </style>
 
-    <iron-ajax auto indicador="pilar" url="[[appconfig.url.api]]/indicadores/full" last-response="{{indicadores}}"></iron-ajax>
-
     <div class="container" >
 
       <template is="dom-repeat" items="[[indicadores]]" as="indicador">
         <div class="content">
           <div class="indicador">
             <div class="pontuacao">[[indicador.notaMaxima]]</div>
-            <button class="astext" indicador="indicador" identity$="[[indicador.id]]" on-click="toggle">[[indicador.nome]]</button>
+            <button class="astext" indicador="indicador" identity$="[[indicador.id]]" on-click="_toggle">[[indicador.nome]]</button>
           </div>
           <iron-collapse indicador="indicador" identity$="[[indicador.id]]">
 
@@ -89,7 +87,7 @@
               <div class="content">
                 <div class="pilar">
                   <div class="pontuacao">[[pilar.notaMaxima]]</div>
-                  <button class="astext" indicador="pilar" identity$="[[pilar.id]]" on-click="toggle">[[pilar.nome]]</button>
+                  <button class="astext" indicador="pilar" identity$="[[pilar.id]]" on-click="_toggle">[[pilar.nome]]</button>
                 </div>
                 <iron-collapse indicador="pilar" identity$="[[pilar.id]]">
 
@@ -97,7 +95,7 @@
                     <div class="content">
                       <div class="tipo">
                         <div class="pontuacao">[[tipo.notaMaxima]]</div>
-                        <button class="astext" indicador="tipo" identity$="[[tipo.id]]" on-click="toggle">[[tipo.nome]]</button>
+                        <button class="astext" indicador="tipo" identity$="[[tipo.id]]" on-click="_toggle">[[tipo.nome]]</button>
                       </div>
                       <iron-collapse indicador="tipo" identity$="[[tipo.id]]">
 
@@ -105,7 +103,7 @@
                           <div class="content">
                             <div class="nivel">
                               <div class="pontuacao">[[nivel.notaMaxima]]</div>
-                              <button class="astext" indicador="nivel" identity$="[[nivel.id]]" on-click="toggle">[[nivel.nome]]</button>
+                              <button class="astext" indicador="nivel" identity$="[[nivel.id]]" on-click="_toggle">[[nivel.nome]]</button>
                             </div>
                             <iron-collapse indicador="nivel" identity$="[[nivel.id]]">
 
@@ -113,7 +111,7 @@
                                 <div class="content">
                                   <div class="subnivel">
                                     <div class="pontuacao">[[subnivel.notaMaxima]]</div>
-                                    <button class="astext" indicador="subnivel" identity$="[[subnivel.id]]" on-click="toggle">[[subnivel.nome]]</button>
+                                    <button class="astext" indicador="subnivel" identity$="[[subnivel.id]]" on-click="_toggle">[[subnivel.nome]]</button>
                                   </div>
                                   <iron-collapse indicador="subnivel" identity$="[[subnivel.id]]">
 
@@ -157,39 +155,11 @@
 
       static get properties() {
         return {
-          indicadores: {
-            type: Array,
-            observer: '_indicadoresChanged'
-          }
+          indicadores: Array
         }
       }
 
-      _indicadoresChanged(indicadores) {
-        indicadores.forEach(indicador => {
-          indicador.notaMaxima = 0;
-          indicador.pilares.forEach(pilar => {
-            pilar.notaMaxima = 0;
-            pilar.tipos.forEach(tipo => {
-              tipo.notaMaxima = 0;
-              tipo.niveis.forEach(nivel => {
-                nivel.notaMaxima = 0;
-                nivel.subniveis.forEach(subnivel => {
-                  subnivel.notaMaxima = 0;
-                  subnivel.itens.forEach(item => {
-                    subnivel.notaMaxima += item.notaMaxima;
-                    nivel.notaMaxima += item.notaMaxima;
-                    tipo.notaMaxima += item.notaMaxima;
-                    pilar.notaMaxima += item.notaMaxima;
-                    indicador.notaMaxima += item.notaMaxima;
-                  })
-                })
-              })
-            })
-          })
-        })
-      }
-
-      toggle(e) {
+      _toggle(e) {
         var indicador = e.currentTarget.getAttribute('indicador');
         var identity = e.currentTarget.getAttribute('identity');
         var element = this.shadowRoot.querySelector('iron-collapse[indicador=' + indicador + '][identity="' + identity + '"]');
