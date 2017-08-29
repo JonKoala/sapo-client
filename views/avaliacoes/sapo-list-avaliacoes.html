@@ -68,15 +68,8 @@
       //OBSERVERS & COMPUTEDS
 
       _computeDate(date) {
-        var dateObject = new Date(date);
-
-        var day = dateObject.getDate();
-        day = (day > 9) ? day : '0' + day;
-        var month = dateObject.getMonth() + 1;
-        month = (month > 9) ? month : '0' + month;
-        var year = dateObject.getFullYear();
-
-        return day + '/' + month + '/' + year;
+        if (!date) return null;
+        return date.substr(0, 10).split('-').reverse().join('/');
       }
 
       _computeSpinnerCss(isLoading) {
