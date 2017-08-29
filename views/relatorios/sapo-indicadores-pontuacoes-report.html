@@ -7,17 +7,26 @@
   <template>
 
     <style include="sapo-styles">
-    
+
       iron-collapse {
         margin-left: 20px;
       }
 
-      .global {
-        width: 700px;
+      button.astext {
+        cursor: pointer;
+      }
+
+      .container {
+        width: var(--sapo-indicadores-pontuacao-report-width, 700px);
       }
 
       .content {
         position: relative;
+      }
+
+      /* indicadores' divs */
+      .content>div {
+        padding: 2px 10px;
       }
 
       .pontuacao {
@@ -25,68 +34,117 @@
         right: 0px;
       }
 
+
+      /* indicadores' specifics */
+
+      .indicador {
+        background: var(--paper-indigo-900);
+        color: white;
+        font-weight: bold;
+      }
+
+      .pilar {
+        background: var(--paper-blue-800);
+        color: white;
+        font-weight: bold;
+      }
+
+      .tipo {
+        background: var(--paper-blue-600);
+        color: white;
+        font-weight: bold;
+      }
+
+      .nivel {
+        background: var(--paper-blue-200);
+        font-weight: bold;
+      }
+
+      .subnivel {
+        background: var(--paper-blue-grey-100);
+      }
+
+      .item {
+        background: var(--paper-blue-50);
+        border-bottom-style: solid;
+        border-bottom-width: thin;
+        border-bottom-color: var(--paper-blue-500);
+      }
+
     </style>
 
     <iron-ajax auto indicador="pilar" url="[[appconfig.url.api]]/indicadores/full" last-response="{{indicadores}}"></iron-ajax>
 
-    <div class="global" >
+    <div class="container" >
 
-    <template is="dom-repeat" items="[[indicadores]]" as="indicador">
-      <div class="content">
-        <div class="pontuacao">[[indicador.notaMaxima]]</div>
-        <button indicador="indicador" identity$="[[indicador.id]]" on-click="toggle">[[indicador.nome]]</button>
-        <iron-collapse indicador="indicador" identity$="[[indicador.id]]">
+      <template is="dom-repeat" items="[[indicadores]]" as="indicador">
+        <div class="content">
+          <div class="indicador">
+            <div class="pontuacao">[[indicador.notaMaxima]]</div>
+            <button class="astext" indicador="indicador" identity$="[[indicador.id]]" on-click="toggle">[[indicador.nome]]</button>
+          </div>
+          <iron-collapse indicador="indicador" identity$="[[indicador.id]]">
 
-          <template is="dom-repeat" items="[[indicador.pilares]]" as="pilar">
-            <div class="content">
-              <div class="pontuacao">[[pilar.notaMaxima]]</div>
-              <button indicador="pilar" identity$="[[pilar.id]]" on-click="toggle">[[pilar.nome]]</button>
-              <iron-collapse indicador="pilar" identity$="[[pilar.id]]">
+            <template is="dom-repeat" items="[[indicador.pilares]]" as="pilar">
+              <div class="content">
+                <div class="pilar">
+                  <div class="pontuacao">[[pilar.notaMaxima]]</div>
+                  <button class="astext" indicador="pilar" identity$="[[pilar.id]]" on-click="toggle">[[pilar.nome]]</button>
+                </div>
+                <iron-collapse indicador="pilar" identity$="[[pilar.id]]">
 
-                <template is="dom-repeat" items="[[pilar.tipos]]" as="tipo">
-                  <div class="content">
-                    <div class="pontuacao">[[tipo.notaMaxima]]</div>
-                    <button indicador="tipo" identity$="[[tipo.id]]" on-click="toggle">[[tipo.nome]]</button>
-                    <iron-collapse indicador="tipo" identity$="[[tipo.id]]">
+                  <template is="dom-repeat" items="[[pilar.tipos]]" as="tipo">
+                    <div class="content">
+                      <div class="tipo">
+                        <div class="pontuacao">[[tipo.notaMaxima]]</div>
+                        <button class="astext" indicador="tipo" identity$="[[tipo.id]]" on-click="toggle">[[tipo.nome]]</button>
+                      </div>
+                      <iron-collapse indicador="tipo" identity$="[[tipo.id]]">
 
-                      <template is="dom-repeat" items="[[tipo.niveis]]" as="nivel">
-                        <div class="content">
-                          <div class="pontuacao">[[nivel.notaMaxima]]</div>
-                          <button indicador="nivel" identity$="[[nivel.id]]" on-click="toggle">[[nivel.nome]]</button>
-                          <iron-collapse indicador="nivel" identity$="[[nivel.id]]">
+                        <template is="dom-repeat" items="[[tipo.niveis]]" as="nivel">
+                          <div class="content">
+                            <div class="nivel">
+                              <div class="pontuacao">[[nivel.notaMaxima]]</div>
+                              <button class="astext" indicador="nivel" identity$="[[nivel.id]]" on-click="toggle">[[nivel.nome]]</button>
+                            </div>
+                            <iron-collapse indicador="nivel" identity$="[[nivel.id]]">
 
-                            <template is="dom-repeat" items="[[nivel.subniveis]]" as="subnivel">
-                              <div class="content">
-                                <div class="pontuacao">[[subnivel.notaMaxima]]</div>
-                                <button indicador="subnivel" identity$="[[subnivel.id]]" on-click="toggle">[[subnivel.nome]]</button>
-                                <iron-collapse indicador="subnivel" identity$="[[subnivel.id]]">
+                              <template is="dom-repeat" items="[[nivel.subniveis]]" as="subnivel">
+                                <div class="content">
+                                  <div class="subnivel">
+                                    <div class="pontuacao">[[subnivel.notaMaxima]]</div>
+                                    <button class="astext" indicador="subnivel" identity$="[[subnivel.id]]" on-click="toggle">[[subnivel.nome]]</button>
+                                  </div>
+                                  <iron-collapse indicador="subnivel" identity$="[[subnivel.id]]">
 
-                                  <template is="dom-repeat" items="[[subnivel.itens]]" as="item">
-                                    <div class="content">
-                                      <div class="pontuacao">[[item.notaMaxima]]</div>
-                                      [[item.nome]]
-                                    </div>
-                                  </template>
+                                    <template is="dom-repeat" items="[[subnivel.itens]]" as="item">
+                                      <div class="content">
+                                        <div class="item" >
+                                          <div class="pontuacao">[[item.notaMaxima]]</div>
+                                          [[item.nome]]
+                                        </div>
+                                      </div>
+                                    </template>
 
-                                </iron-collapse>
-                              </div>
-                            </template>
+                                  </iron-collapse>
+                                </div>
+                              </template>
 
-                          </iron-collapse>
-                        </div>
-                      </template>
+                            </iron-collapse>
+                          </div>
+                        </template>
 
-                    </iron-collapse>
-                  </div>
-                </template>
+                      </iron-collapse>
+                    </div>
+                  </template>
 
-              </iron-collapse>
-            </div>
-          </template>
+                </iron-collapse>
+              </div>
+            </template>
 
-        </iron-collapse>
-      </div>
-    </template>
+          </iron-collapse>
+        </div>
+      </template>
 
     </div>
 

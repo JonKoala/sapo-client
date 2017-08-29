@@ -1,7 +1,9 @@
 <link rel="import" href="/bower_components/polymer/polymer-element.html">
 <link rel="import" href="/bower_components/app-route/app-route.html">
+<link rel="import" href="/bower_components/iron-pages/iron-pages.html">
 <link rel="import" href="/elements/sapo-styles.html">
 <link rel="import" href="./relatorios/sapo-relatorio-objeto-avaliacao.html">
+<link rel="import" href="./relatorios/sapo-relatorio-indicadores-pesos.html">
 
 <dom-module id="sapo-relatorios">
 
@@ -12,7 +14,10 @@
 
     <app-route route="{{route}}" pattern="/:relatorio" data="{{routeData}}" tail="{{subroute}}"></app-route>
 
-    <sapo-relatorio-objeto-avaliacao appconfig="[[appconfig]]" route="{{subroute}}"></sapo-relatorio-objeto-avaliacao>
+    <iron-pages selected="[[relatorio]]" attr-for-selected="name" selected-attribute="active">
+      <sapo-relatorio-objeto-avaliacao appconfig="[[appconfig]]" route="{{subroute}}" name="objeto"></sapo-relatorio-objeto-avaliacao>
+      <sapo-relatorio-indicadores-pesos appconfig="[[appconfig]]" route="{{subroute}}" name="indicadores"></sapo-relatorio-indicadores-pesos>
+    </iron-pages>
 
   </template>
 
@@ -22,7 +27,16 @@
       static get is() { return 'sapo-relatorios'; }
 
       static get properties() {
-        return { }
+        return {
+          relatorio: {
+            type: String,
+            computed: '_computeRelatorio(routeData)'
+          }
+        }
+      }
+
+      _computeRelatorio(routeData) {
+        return routeData.relatorio
       }
 
     }

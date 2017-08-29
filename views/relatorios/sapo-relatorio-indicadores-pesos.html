@@ -1,0 +1,45 @@
+<link rel="import" href="/bower_components/polymer/polymer-element.html">
+<link rel="import" href="/bower_components/paper-card/paper-card.html">
+<link rel="import" href="/elements/sapo-styles.html">
+<link rel="import" href="./sapo-indicadores-pontuacoes-report.html">
+
+<dom-module id="sapo-relatorio-indicadores-pesos">
+
+  <template>
+
+    <style include="sapo-styles">
+
+      :host {
+        display: flex;
+        justify-content: center;
+      }
+
+      paper-card {
+        padding: 40px;
+        margin: 0px;
+      }
+
+    </style>
+
+    <iron-ajax auto indicador="pilar" url="[[appconfig.url.api]]/indicadores/full" last-response="{{indicadores}}"></iron-ajax>
+
+    <paper-card>
+      <sapo-indicadores-pontuacoes-report appconfig="[[appconfig]]"></sapo-indicadores-pontuacoes-report>
+    </paper-card>
+
+  </template>
+
+  <script>
+    class SapoRelatorioIndicadoresPesos extends Polymer.Element {
+
+      static get is() { return 'sapo-relatorio-indicadores-pesos'; }
+
+      static get properties() {
+        return { }
+      }
+
+    }
+
+    window.customElements.define(SapoRelatorioIndicadoresPesos.is, SapoRelatorioIndicadoresPesos);
+  </script>
+</dom-module>
