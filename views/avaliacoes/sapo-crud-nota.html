@@ -32,7 +32,7 @@
     </style>
 
     <iron-ajax auto="[[active]]" url="[[appconfig.url.api]]/notas/[[id]]" last-response="{{data}}"></iron-ajax>
-    <iron-ajax id="putAjax" url="[[appconfig.url.api]]/notas/" method="PUT" content-type="application/json" handle-as="json" body="[[data]]" on-response="_putResponse"></iron-ajax>
+    <iron-ajax id="putAjax" url="[[appconfig.url.api]]/notas/" method="PUT" content-type="application/json" handle-as="json" body="[[data]]" on-response="_putResponse" on-error="_putResponse"></iron-ajax>
 
     <paper-textarea id="observacoesInput" name="observacoes" label="Observações" value="{{data.observacoes}}" rows="3" ></paper-textarea>
     <sapo-selector label="Navegador" data="[[_computeSelectorNavegadores(navegadores)]]" selected="{{data.navegador_id}}" ></sapo-selector>
@@ -101,7 +101,7 @@
       }
 
       _putResponse(e) {
-        this.dispatchEvent(new CustomEvent('save', {detail: {success: (e.detail.status === 200)}}));
+        this.dispatchEvent(new CustomEvent('save', {detail: e.detail}));
       }
 
 

@@ -46,6 +46,11 @@
         width: 100%;
       }
 
+      #persistentNote {
+        font-weight: bold;
+        color: var(--paper-red-a400);
+      }
+
     </style>
 
     <sapo-avaliacoes-math id="avaliacaoMath" ></sapo-avaliacoes-math>
@@ -53,7 +58,7 @@
     <iron-ajax auto="[[active]]" url="[[appconfig.url.api]]/objetosavaliacao/[[objetoAvaliacaoId]]/full" last-response="{{objetoAvaliacao}}"></iron-ajax>
     <iron-ajax auto="[[active]]" url="[[appconfig.url.api]]/notas/objetoavaliacao/[[objetoAvaliacaoId]]/full" loading="{{loading}}" last-response="{{notas}}"></iron-ajax>
     <iron-ajax auto="[[active]]" url="[[appconfig.url.api]]/navegadores/" last-response="{{navegadores}}"></iron-ajax>
-    <iron-ajax id="putAjax" url="[[appconfig.url.api]]/notas/pontuacao" method="PUT" content-type="application/json" handle-as="json" on-response="_quickNotaSaved"></iron-ajax>
+    <iron-ajax id="putAjax" url="[[appconfig.url.api]]/notas/pontuacao" method="PUT" content-type="application/json" handle-as="json" on-response="_putAjaxReponse" on-error="_putAjaxReponse"></iron-ajax>
 
     <sapo-avaliacao-information-bar id="informationBar" objeto-avaliacao="[[objetoAvaliacao]]" notas="[[notas]]"></sapo-avaliacao-information-bar>
 
@@ -73,6 +78,9 @@
     </sapo-overlay>
 
     <paper-toast id="quickNote"></paper-toast>
+    <paper-toast id="persistentNote" duration="0">
+      <paper-button class="close" on-click="_closeNote">Fechar</paper-button>
+    </paper-toast>
 
   </template>
 
@@ -143,7 +151,7 @@
       }
 
       _isEditDisabled(appconfig) {
-        return (appconfig == null || appconfig.profile == null)
+        return (appconfig == null || appconfig.profile == null);
       }
 
       _notasChanged(notas) {
@@ -185,21 +193,38 @@
       }
 
       _notaSaved(e) {
+        var detail = e.detail;
+        var status = detail.status || detail.request.status;
+
         this.$.overlayArea.close();
-        this._notifyPontuacao(e.detail.success);
+
+        this._notifyPontuacao(status === 200);
+        if (status !== 200) console.log('error:', detail);
       }
 
-      _quickNotaSaved(e) {
-        this._notifyPontuacao(e.detail.status === 200);
+      _putAjaxReponse(e) {
+        var detail = e.detail;
+        var status = detail.status || detail.request.status;
 
-        var nota = e.detail.response;
-        this._updateNotas(nota.id, nota.pontuacao_id);
-        this._updateIndicadores(this.indicadores, this.notas);
-        this.$.informationBar.updateNotas(this.notas);
+        if (status === 200) {
+          this._notifyPontuacao(true);
+
+          var nota = detail.response;
+          this._updateNotas(nota.id, nota.pontuacao_id);
+          this._updateIndicadores(this.indicadores, this.notas);
+          this.$.informationBar.updateNotas(this.notas);
+        } else {
+          this._notifyPontuacao(false);
+          console.log('error:', detail);
+        }
       }
 
       _crudClosed() {
         this.$.crudNota.active = false;
+      }
+
+      _closeNote(e) {
+        this.$.persistentNote.close();
       }
 
 
@@ -232,15 +257,19 @@
       }
 
       _notifyPontuacao(success) {
-        if (success) this._showNotification('Pontuação atualizada com sucesso!');
+        if (success)
+          this._showNotification(this.$.quickNote, 'Pontuação atualizada com sucesso!');
+        else
+          this._showNotification(this.$.persistentNote, 'ERRO AO TENTAR ATUALIZAR A PONTUAÇÃO! ENTRE EM CONTATO COM O SUPORTE.');
       }
 
-      _showNotification(text) {
+      _showNotification(note, text) {
 
-        var note = this.$.quickNote;
+        //close all notes
+        Polymer.dom(this.root).querySelectorAll('paper-toast').forEach(note => {
+          note.close();
+        });
 
-        //prepare and show note
-        note.close();
         note.text = text;
         note.open();
       }
