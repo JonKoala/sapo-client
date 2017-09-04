@@ -97,10 +97,10 @@
           obrigatorioOptions: {
             type: Array,
             value: () => { return [
-              {text: 'NULL', identity: null},
-              {text: 'ZERO', identity: 0},
-              {text: 'UM', identity: 1},
-              {text: 'DOIS', identity: 2}
+              {text: 'Não classificado', identity: null},
+              {text: 'Desejável', identity: 0},
+              {text: 'Exigido por norma legal', identity: 1},
+              {text: 'Desejável, com subnível exigido por norma legal', identity: 2}
             ];}
           },
 
@@ -136,6 +136,8 @@
 
       _modeChanged(newMode) {
 
+        this._clear();
+
         switch (newMode) {
           case 'new':
             this.id = 0;
@@ -155,9 +157,6 @@
               .then(() => {
                 this.disabled = true;
               });
-          case 'closed':
-            this._clear();
-            break;
         }
       }
 
