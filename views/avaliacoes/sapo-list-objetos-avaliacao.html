@@ -16,7 +16,7 @@
 
     <sapo-avaliacoes-math id="avaliacaoMath" ></sapo-avaliacoes-math>
 
-    <iron-ajax auto="[[active]]" url="[[appconfig.url.api]]/objetosavaliacao/avaliacao/[[avaliacao]]/full" loading="{{loading}}" last-response="{{objetosAvaliacao}}"></iron-ajax>
+    <iron-ajax auto="[[active]]" url="[[appconfig.url.api]]/objetosavaliacao/avaliacao/[[avaliacao]]/resumo" loading="{{loading}}" last-response="{{resumoObjetosAvaliacao}}"></iron-ajax>
 
     <paper-card class="card-block">
 
@@ -32,12 +32,12 @@
           <th style="width:1%;white-space:nowrap;"></th>
         </thead>
         <tbody>
-          <template is="dom-repeat" items="[[objetosAvaliacao]]">
+          <template is="dom-repeat" items="[[resumoObjetosAvaliacao]]">
             <tr>
-              <td style="white-space:pre">[[item.entidade.nome]]</td>
-              <td style="white-space:pre">[[_computeAbsoluteScore(item.notas)]]</td>
-              <td style="white-space:pre">[[_computeRelativeScore(item.notas)]]</td>
-              <td>[[_computeConclusion(item.notas)]]</td>
+              <td style="white-space:pre">[[item.entidade]]</td>
+              <td style="white-space:pre">[[_computeScore(item.nota, item.totalAbsoluto)]]</td>
+              <td style="white-space:pre">[[_computeScore(item.nota, item.totalRelativo)]]</td>
+              <td>[[_computeConclusion(item.conclusao)]]</td>
               <td>[[item.observacoes]]</td>
               <td class="buttons-area">
                 <paper-button raised class="white" on-click="_evaluateClicked" ><iron-icon icon="open-in-new"></iron-icon>Avaliar</paper-button>
@@ -71,7 +71,7 @@
           loading: Boolean,
 
           avaliacao: Number,
-          objetosAvaliacao: Object
+          resumoObjetosAvaliacao: Object
         }
       }
 
@@ -79,19 +79,13 @@
       //
       //OBSERVERS & COMPUTEDS
 
-      _computeConclusion(notas) {
-        var percentage = this.$.avaliacaoMath.calcPercentageOfConclusion(notas);
-        return percentage + '%';
+      _computeConclusion(conclusao) {
+        return parseInt(conclusao) + '%';
       }
 
-      _computeAbsoluteScore(notas) {
-        var scoreObject = this.$.avaliacaoMath.calcAbsoluteScore(notas);
-        return scoreObject.absoluteScore + ' de ' + scoreObject.maxScore + '\n(' + scoreObject.percentage + '%)';
-      }
-
-      _computeRelativeScore(notas) {
-        var scoreObject = this.$.avaliacaoMath.calcRelativeScore(notas);
-        return scoreObject.relativeScore + ' de ' + scoreObject.maxScore + '\n(' + scoreObject.percentage + '%)';
+      _computeScore(nota, total) {
+        var percentage = this.$.avaliacaoMath.makePrintableScore(nota, total, 2);
+        return nota + ' de ' + total + '\n(' + percentage + '%)';
       }
 
       _computeSpinnerCss(isLoading) {
@@ -104,7 +98,7 @@
 
       _activeChanged(isActive) {
         if (!isActive)
-          this.objetosAvaliacao = [];
+          this.resumoObjetosAvaliacao = [];
       }
 
 
