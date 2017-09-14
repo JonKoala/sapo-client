@@ -3,7 +3,7 @@
 <link rel="import" href="/bower_components/paper-toast/paper-toast.html">
 <link rel="import" href="/bower_components/paper-spinner/paper-spinner.html">
 <link rel="import" href="/elements/sapo-overlay.html">
-<link rel="import" href="/views/relatorios/sapo-avaliacao-information-bar.html">
+<link rel="import" href="/views/relatorios/sapo-objeto-avaliacao-information-bar.html">
 <link rel="import" href="./sapo-avaliacoes-styles.html">
 <link rel="import" href="./sapo-avaliacoes-math.html">
 <link rel="import" href="./sapo-menu-indicadores.html">
@@ -26,7 +26,7 @@
         min-width: 500px;
       }
 
-      sapo-avaliacao-information-bar {
+      sapo-objeto-avaliacao-information-bar {
         width: 100%;
         margin: 5px 100px;
       }
@@ -55,12 +55,11 @@
 
     <sapo-avaliacoes-math id="avaliacaoMath" ></sapo-avaliacoes-math>
 
-    <iron-ajax auto="[[active]]" url="[[appconfig.url.api]]/objetosavaliacao/[[objetoAvaliacaoId]]/full" last-response="{{objetoAvaliacao}}"></iron-ajax>
     <iron-ajax auto="[[active]]" url="[[appconfig.url.api]]/notas/objetoavaliacao/[[objetoAvaliacaoId]]/full" loading="{{loading}}" last-response="{{notas}}"></iron-ajax>
     <iron-ajax auto="[[active]]" url="[[appconfig.url.api]]/navegadores/" last-response="{{navegadores}}"></iron-ajax>
     <iron-ajax id="putAjax" url="[[appconfig.url.api]]/notas/pontuacao" method="PUT" content-type="application/json" handle-as="json" on-response="_putAjaxReponse" on-error="_putAjaxReponse"></iron-ajax>
 
-    <sapo-avaliacao-information-bar id="informationBar" objeto-avaliacao="[[objetoAvaliacao]]" notas="[[notas]]"></sapo-avaliacao-information-bar>
+    <sapo-objeto-avaliacao-information-bar id="informationBar" appconfig="[[appconfig]]" objeto-avaliacao-id="[[objetoAvaliacaoId]]"></sapo-objeto-avaliacao-information-bar>
 
     <div id="evaluation-area" >
       <paper-card id="menu-indicadores-area" class="card-block">
@@ -103,7 +102,6 @@
           },
 
           objetoAvaliacaoId: Number,
-          objetoAvaliacao: Object,
           notas: {
             type: Array,
             observer: '_notasChanged'
@@ -212,7 +210,7 @@
           var nota = detail.response;
           this._updateNotas(nota.id, nota.pontuacao_id);
           this._updateIndicadores(this.indicadores, this.notas);
-          this.$.informationBar.updateNotas(this.notas);
+          this.$.informationBar.update();
         } else {
           this._notifyPontuacao(false);
           console.log('error:', detail);

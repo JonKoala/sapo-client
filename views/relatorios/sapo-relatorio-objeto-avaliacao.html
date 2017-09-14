@@ -3,7 +3,7 @@
 <link rel="import" href="/bower_components/iron-ajax/iron-ajax.html">
 <link rel="import" href="/bower_components/paper-button/paper-button.html">
 <link rel="import" href="/elements/sapo-styles.html">
-<link rel="import" href="./sapo-avaliacao-information-bar.html">
+<link rel="import" href="./sapo-objeto-avaliacao-information-bar.html">
 <link rel="import" href="./sapo-objeto-avaliacao-report-body.html">
 <link rel="import" href="./sapo-objeto-avaliacao-report-download.html">
 
@@ -28,7 +28,7 @@
       margin: 5px 100px;
     }
 
-    sapo-avaliacao-information-bar {
+    sapo-objeto-avaliacao-information-bar {
       width: 100%;
       margin: 5px 100px;
     }
@@ -36,13 +36,12 @@
   </style>
 
   <app-route route="{{route}}" pattern="/:id" data="{{routeData}}"></app-route>
-
-  <iron-ajax auto="[[ready]]" url="[[appconfig.url.api]]/objetosavaliacao/[[id]]/full" last-response="{{objetoAvaliacao}}"></iron-ajax>
+  
   <iron-ajax auto="[[ready]]" url="[[appconfig.url.api]]/notas/objetoavaliacao/[[id]]/full" last-response="{{notas}}"></iron-ajax>
 
   <sapo-objeto-avaliacao-report-download id="relatorioDownloader" notas="[[notas]]" ready="{{downloadReady}}"></sapo-objeto-avaliacao-report-download>
 
-  <sapo-avaliacao-information-bar objeto-avaliacao="[[objetoAvaliacao]]" notas="[[notas]]"></sapo-avaliacao-information-bar>
+  <sapo-objeto-avaliacao-information-bar appconfig="[[appconfig]]" objeto-avaliacao-id="[[id]]"></sapo-objeto-avaliacao-information-bar>
   <sapo-objeto-avaliacao-report-body notas="[[notas]]"></sapo-objeto-avaliacao-report-body>
 
   <paper-button raised class$="[[_computeDownloadButtonCss(downloadReady)]] blue" on-click="_downloadCsv" >CSV</paper-button>
@@ -63,7 +62,6 @@
           pilares: Array,
 
           notas: Array,
-          objetoAvaliacao: Object,
 
           ready: {
             type: Boolean,

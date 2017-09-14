@@ -1,0 +1,108 @@
+<link rel="import" href="/bower_components/polymer/polymer-element.html">
+<link rel="import" href="/bower_components/paper-card/paper-card.html">
+<link rel="import" href="/bower_components/paper-spinner/paper-spinner.html">
+<link rel="import" href="/views/avaliacoes/sapo-avaliacoes-math.html">
+<link rel="import" href="/elements/sapo-styles.html">
+
+<dom-module id="sapo-objeto-avaliacao-information-bar">
+
+  <template>
+
+    <style include="sapo-styles">
+
+      paper-card {
+        width: 100% !important;
+        margin: 0px !important;
+      }
+
+      paper-card.spinner-block {
+        justify-content: center;
+      }
+
+      paper-card.card-block {
+        flex-direction: row;
+      }
+
+      paper-spinner {
+        margin: 6px 0px;
+      }
+
+      div {
+        margin: 10px 40px 10px 10px;
+      }
+
+      b {
+        white-space: pre;
+      }
+
+    </style>
+
+    <iron-ajax id="getAjax" auto="[[ready]]" url="[[appconfig.url.api]]/objetosavaliacao/[[objetoAvaliacaoId]]/resumo" last-response="{{resumo}}" loading="{{loading}}" ></iron-ajax>
+
+    <sapo-avaliacoes-math id="avaliacaoMath"></sapo-avaliacoes-math>
+
+    <paper-card class$="[[_computeSpinnerBarCss(loading)]]">
+      <paper-spinner active="[[!loading]]" ></paper-spinner>
+    </paper-card>
+
+    <paper-card class$="[[_computeInformationBarCss(loading)]]">
+      <div><b>ENTIDADE:</b> [[resumo.entidade]] <b>   AVALIAÇÃO:</b> [[resumo.avaliacao]]</div>
+      <div><b>Nota:</b> [[_computeScore(resumo.nota, resumo.totalAbsoluto)]] <b>   Pontuação Parcial:</b> [[_computeScore(resumo.nota, resumo.totalRelativo)]]</div>
+      <div><b>Concluído:</b> [[_computeConclusion(resumo.conclusao)]]</div>
+    </paper-card>
+
+  </template>
+
+  <script>
+    class SapoObjetoAvaliacaoInformationBar extends Polymer.Element {
+
+      static get is() { return 'sapo-objeto-avaliacao-information-bar'; }
+
+      static get properties() {
+        return {
+          objetoAvaliacaoId: Number,
+
+          resumo: Object,
+
+          ready: {
+            type: Boolean,
+            computed: '_isReady(objetoAvaliacaoId)'
+          },
+          loading: Boolean
+        }
+      }
+
+      _isReady(objetoAvaliacaoId) {
+        return !isNaN(objetoAvaliacaoId);
+      }
+
+      _computeInformationBarCss(loading) {
+        return (typeof loading == 'boolean' && !loading) ? 'card-block' : 'hidden';
+      }
+
+      _computeSpinnerBarCss(loading) {
+        return (typeof loading == 'boolean' && loading) ? 'card-block spinner-block' : 'hidden';
+      }
+
+      _computeConclusion(conclusao) {
+        return parseInt(conclusao) + '%';
+      }
+
+      _computeScore(nota, total) {
+        var percentage = this.$.avaliacaoMath.makePrintableScore(nota, total, 2);
+        return nota + ' de ' + total + '\n(' + percentage + '%)';
+      }
+
+
+      //
+      //UTILS
+
+      update() {
+        this.$.getAjax.generateRequest();
+      }
+
+    }
+
+    window.customElements.define(SapoObjetoAvaliacaoInformationBar.is, SapoObjetoAvaliacaoInformationBar);
+  </script>
+</dom-module>
