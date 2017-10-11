@@ -49,7 +49,10 @@
       }
 
       _computeSelectorIndicadores(indicadores) {
-        return indicadores.map(indicador => { return {identity: indicador.id, text: indicador.nome}; });
+        var filtered = indicadores.filter(indicador => indicador.nome.toLowerCase().indexOf('deprecated') == -1);
+        var computed = filtered.map(indicador => { return {identity: indicador.id, text: indicador.nome}; });
+
+        return computed;
       }
 
       _activeChanged() {
