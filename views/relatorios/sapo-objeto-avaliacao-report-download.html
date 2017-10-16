@@ -81,11 +81,16 @@
             entry.notaAtribuida,
             entry.situacao
           ];
-          return arrayData.join(';')
-        });
-        dataAsStringArray.unshift('Indicador;Pilar;Tipo;Nível;Subnível;Item;Exigência;Nota Máxima;Nota;Nota atribuída;Situação Encontrada');
+          arrayData.forEach((val, index, array) => {
+            if (typeof val === 'string' || val instanceof String)
+              array[index] = val.replace(/(?:\r\n|\r|\n)/g, ' ');
+          });
 
-        return 'data:text/csv;charset=utf-8,' + escape(dataAsStringArray.join('\n'));
+          return arrayData.join('|');
+        });
+        dataAsStringArray.unshift(['Indicador', 'Pilar', 'Tipo', 'Nível', 'Subnível', 'Item', 'Exigência', 'Nota Máxima', 'Nota', 'Nota atribuída', 'Situação Encontrada'].join('|'));
+
+        return 'data:text/csv;charset=utf-8,' + escape('sep=|\n') + escape(dataAsStringArray.join('\n'));
       }
 
       _computeCsvFileName(fileName) {
