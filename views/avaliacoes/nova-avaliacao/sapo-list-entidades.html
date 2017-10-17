@@ -17,16 +17,24 @@
         width: 100%;
       }
 
-      div {
+      div.checkbox-area {
         margin-bottom: 10px;
+      }
+
+      div.listbox-area {
+        display: flex;
+        flex-direction: column;
+
+        height: 250px;
+        overflow: auto;
+        width: 100%;
+
+        background-color: lightgray;
       }
 
       paper-listbox {
         --paper-listbox-background-color: lightgray;
-
-        height: 250px;
         padding: 0px;
-        overflow: auto;
       }
 
       paper-card {
@@ -50,19 +58,21 @@
 
     <iron-ajax auto="[[active]]" url="[[appconfig.url.api]]/entidades/" last-response="{{entidades}}"></iron-ajax>
 
-    <div>
+    <div class="checkbox-area">
       <paper-checkbox poder="executivo" label="Executivo" checked="{{executivo}}" on-change="_poderToggled" noink>Executivo</paper-checkbox>
       <paper-checkbox poder="legislativo" label="Legislativo" checked="{{legislativo}}" on-change="_poderToggled" noink>Legislativo</paper-checkbox>
     </div>
 
-    <paper-listbox>
-      <template is="dom-repeat" items="[[entidades]]" sort="_sortEntidades" mutable-data>
-        <paper-card>
-          <paper-checkbox checked="{{item.checked}}" on-change="_entidadeToggled" noink></paper-checkbox>
-          <p>[[item.nome]] - [[item.poder]]</p>
-        </paper-card>
-      </template>
-    </paper-listbox>
+    <div class="listbox-area">
+      <paper-listbox>
+        <template is="dom-repeat" items="[[entidades]]" sort="_sortEntidades" mutable-data>
+          <paper-card>
+            <paper-checkbox checked="{{item.checked}}" on-change="_entidadeToggled" noink></paper-checkbox>
+            <p>[[item.nome]] - [[item.poder]]</p>
+          </paper-card>
+        </template>
+      </paper-listbox>
+    </div>
 
   </template>
 

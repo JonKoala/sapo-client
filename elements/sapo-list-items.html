@@ -11,15 +11,17 @@
       :host {
         display: flex;
         flex-direction: column;
+
+        height: 250px;
+        overflow: auto;
         width: 100%;
+
+        background-color: lightgray;
       }
 
       paper-listbox {
         --paper-listbox-background-color: lightgray;
-
-        height: 250px;
         padding: 0px;
-        overflow: auto;
       }
 
       paper-listbox.unselectable {
