@@ -1,6 +1,6 @@
 bower_components/
 node_modules/
-package-lock.json
 npm-debug.log
 error_log
-appconfig.json
+.env
+docker-compose*.yml

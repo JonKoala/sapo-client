@@ -1,8 +1,0 @@
-{
-  "url": {
-    "api": "API-URL"
-  },
-  "server": {
-    "port": "NUMERO"
-  }
-}

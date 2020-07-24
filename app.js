@@ -1,9 +1,6 @@
 var express = require('express');
-var app = express();
-
 var fs = require('fs');
-var configFile = fs.readFileSync('appconfig.json');
-var appconfig = JSON.parse(configFile);
+var app = express();
 
 app.use(express.static(__dirname));
 
@@ -13,10 +10,12 @@ app.get(/.+\.\w+$/, function(req, res) {
 });
 
 app.get('*', function(req, res) {
-  res.sendFile('index.html', { root : __dirname});
+  res.sendFile('index.html', { root : __dirname });
 });
 
-var port = appconfig.server.port;
+var port = process.env['SAPO_CLIENT_PORT'];
 app.listen(port, () => {
+  fs.writeFile("appconfig.json", JSON.stringify({ url: { api: process.env['SAPO_API_URL'] } }), () => { /* just to avoid DeprecationWarning */ });
+
   console.log('Client up! Listening on ' + port + '...')
 })
