@@ -1,0 +1,32 @@
+{
+  "name": "blockingElements",
+  "description": "A polyfill for the proposed blocking elments stack API",
+  "main": "blocking-elements.html",
+  "authors": [
+    "Valdrin Koshi <valdrin@google.com>"
+  ],
+  "license": "Apache-2.0",
+  "keywords": [
+    "blocking",
+    "elements",
+    "polyfill",
+    "browser"
+  ],
+  "homepage": "https://github.com/PolymerLabs/blockingElements",
+  "private": true,
+  "devDependencies": {
+    "inert": "WICG/inert#^1",
+    "web-component-tester": "Polymer/web-component-tester#^6",
+    "webcomponentsjs": "webcomponents/webcomponentsjs#^1"
+  },
+  "ignore": [],
+  "_release": "77d98cca0b",
+  "_resolution": {
+    "type": "branch",
+    "branch": "master",
+    "commit": "77d98cca0be9791bb997bd35480a24efdebd1f12"
+  },
+  "_source": "https://github.com/PolymerLabs/blockingElements.git",
+  "_target": "*",
+  "_originalSource": "PolymerLabs/blockingElements"
+}
